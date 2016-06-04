@@ -3,7 +3,7 @@
 
 	<groupId>onoguera</groupId>
 	<artifactId>login-web-application</artifactId>
-	<version>0.2.3</version>
+	<version>0.2.4</version>
 	<name>Login Web Application</name>
 	<description>
 		Login Web Application using com.sun.net.httpserver.HttpServer

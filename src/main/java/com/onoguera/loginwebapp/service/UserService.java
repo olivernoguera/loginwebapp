@@ -57,4 +57,15 @@ public class UserService implements  Service
         collection.forEach(user -> this.userDao.insert(user));
     }
 
+    public boolean validateAdmin(User user) {
+        if( user.getPassword() == null){
+            return false;
+        }
+        User userStore = this.getUser(user.getId());
+        if( userStore == null){
+            return false;
+        }
+
+        return user.getPassword().equals(userStore.getPassword());
+    }
 }

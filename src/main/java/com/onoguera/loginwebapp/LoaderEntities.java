@@ -27,6 +27,10 @@ public class LoaderEntities {
         UserService userService = UserService.getInstance();
         List<User> users = LoaderEntities.createUsers(3);
         userService.bulkCreateUsers(users);
+
+        User admin = new User("ADMIN","ADMIN");
+        userService.addUser(admin);
+
     }
 
     private static List<User> createUsers(Integer numUsers){

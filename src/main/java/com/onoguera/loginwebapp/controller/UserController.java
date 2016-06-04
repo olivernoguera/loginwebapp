@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * Created by oliver on 1/06/16.
  */
-public class UserController extends  BaseController{
+public class UserController extends  BaseController implements AuthController {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 

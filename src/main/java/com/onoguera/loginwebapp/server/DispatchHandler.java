@@ -2,9 +2,13 @@ package com.onoguera.loginwebapp.server;
 
 import com.onoguera.loginwebapp.controller.Controller;
 import com.onoguera.loginwebapp.controller.ControllerContainer;
+import com.onoguera.loginwebapp.controller.AuthController;
+import com.onoguera.loginwebapp.model.User;
+import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseInternalServerError;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
+import com.onoguera.loginwebapp.view.ResponseUnauthorized;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
@@ -12,6 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,9 +28,12 @@ public class DispatchHandler implements HttpHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatchHandler.class);
     private final ControllerContainer controllerContainer;
+    private final UserService userService;
 
-    public DispatchHandler(){
+    public DispatchHandler()
+    {
         controllerContainer =  ControllerContainer.getInstance();
+        userService = UserService.getInstance();
     }
 
     @Override
@@ -67,8 +77,11 @@ public class DispatchHandler implements HttpHandler {
         Response response = controller.dispatch(
                     httpExchange.getRequestURI(),
                     httpExchange.getRequestBody(),
-                    httpExchange.getRequestMethod());
+                    httpExchange.getRequestMethod(),
+                    httpExchange.getRequestHeaders());
         return response;
 
     }
+
+
 }

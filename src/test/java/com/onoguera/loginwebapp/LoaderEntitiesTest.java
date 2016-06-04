@@ -21,7 +21,7 @@ public class LoaderEntitiesTest {
 
         this.loaderEntities.loadEntities();
         Collection<UserVO> userCollection = UserService.getInstance().getUsersVO();
-        Assert.assertThat("Must load 3 Users", userCollection.size(), is(3));
+        Assert.assertThat("Must load 4 Users", userCollection.size(), is(4));
 
         //Restore state
         for(UserVO user: userCollection){
