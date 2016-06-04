@@ -18,4 +18,5 @@ dump.rdb
 tomcat.*
 .testdata
 *.jar
+*~
 
