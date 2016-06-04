@@ -1,0 +1,15 @@
+package com.onoguera.loginwebapp.view;
+
+
+import java.net.HttpURLConnection;
+
+/**
+ * Created by oliver on 4/06/16.
+ */
+public class ResponseNotImplemented extends Response {
+
+    public ResponseNotImplemented()
+    {
+        super(HttpURLConnection.HTTP_NOT_IMPLEMENTED, "Not implemented.");
+    }
+}

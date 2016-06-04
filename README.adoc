@@ -1,0 +1,125 @@
+= Login Web Application
+Oliver Noguera
+:toc: left
+:numbered:
+:lang: en
+:icons: font
+
+:toc!: // Leave this here with a line obove it to remove TOC generation in other parts of the document
+
+
+== Introduction
+
+
+This application will have 3 different private pages and a login form.
+
+In order to access any of these private pages the user will need to have a session started through the login form and ¡
+
+will need to have the right role to be able to access the page.
+
+The application will also have a REST API endpoint exposing the `User` resource.
+Creating, deleting and modifying users and their permissions will be done through this API.
+[source,Shell]
+
+
+== Compiling
+
+To compile the application use:
+
+[source,Shell]
+----
+mvn clean package
+----
+
+To deploy documentation:
+
+[source,Shell]
+----
+mvn clean site-deploy
+----
+
+== Runnning
+
+To run application:
+
+[source,Shell]
+----
+java -jar target/login-web-application-0.2.3.jar
+----
+
+
+// **********************************************************************************
+== Endpoints
+
+All endpoints must be prefixed with `/users`. Thay all consume and produce the Json specified below.
+
+
+// **********************************************************************************
+
+=== Get Users
+
+.Get Users
+Description:: Returns the users on the system.
+Endpoint:: `/users{userid}`
+
+* userid: To get only one user with username `userid`
+
+Method:: `GET`
+Produces:: `application/json`
+
+[source,sell]
+.Get Users Request Sample
+----
+http://localhost:8080/users
+----
+
+.Get Users Response Payload Sample
+[source,json,linenums,options="nowrap"]
+[subs="verbatim,attributes"]
+----
+[
+  {
+    "username": "USER_2"
+  },
+  {
+    "username": "USER_3"
+  },
+  {
+    "username": "USER_1"
+  }
+]
+
+----
+[source,sell]
+.Get User Request Sample
+----
+http://localhost:8080/users/USER_3
+----
+
+.Get User Response Payload Sample
+[source,json,linenums,options="nowrap"]
+[subs="verbatim,attributes"]
+----
+[
+  {
+    "username": "USER_2"
+  },
+  {
+    "username": "USER_3"
+  },
+  {
+    "username": "USER_1"
+  }
+]
+
+----
+
+
+// **************************************************************************************
+
+== TODOs
+
+This is the TODO list of improvements and refactorings, this does not include business requirements.
+
+- [ ]
+
