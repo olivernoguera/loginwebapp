@@ -44,7 +44,7 @@ To run application:
 
 [source,Shell]
 ----
-java -jar target/login-web-application-0.2.3.jar
+java -jar target/login-web-application-0.2.4.jar
 ----
 
 
@@ -65,6 +65,7 @@ Endpoint:: `/users{userid}`
 * userid: To get only one user with username `userid`
 
 Method:: `GET`
+Headers:: `Authorization: Basic QURNSU46QURNSU4=`
 Produces:: `application/json`
 
 [source,sell]
