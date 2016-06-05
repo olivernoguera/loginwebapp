@@ -1,5 +1,6 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.UserVO;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
@@ -9,10 +10,12 @@ import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 
 import java.net.HttpURLConnection;
+import java.text.CollationElementIterator;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -26,9 +29,14 @@ public class UserController extends  BaseController implements AuthController {
 
     private static final String USER_ID = "userId";
 
+    private static final String ROLE_ID = "roleId";
+
+    private static final String PATH_ROLES = "roles";
+
     private static final UserService userService = UserService.getInstance();
 
-    private static final Pattern p = Pattern.compile(PATH+"/*(?<" + USER_ID + ">\\S*)");
+    private static final Pattern p =
+            Pattern.compile("/users\\/*(?<"+USER_ID+">[^:\\/\\s]+)?\\/?(?<"+PATH_ROLES+">roles)?\\/?(?<"+ROLE_ID+">[^:\\/\\s]+)?");
 
     @Override
     public Pattern getURLPattern() {
@@ -37,7 +45,7 @@ public class UserController extends  BaseController implements AuthController {
 
     @Override
     public List<String> getPathParams() {
-        return  Arrays.asList(USER_ID);
+        return  Arrays.asList(USER_ID,PATH_ROLES,ROLE_ID);
     }
 
     @Override
@@ -51,18 +59,43 @@ public class UserController extends  BaseController implements AuthController {
             Collection<UserVO> users = userService.getUsersVO();
             response = new JsonResponse(HttpURLConnection.HTTP_OK,users);
 
-        }
-        else{
-
+        } else {
             String userId = pathParams.get(USER_ID);
             if( userId == null){
                 return new ResponseBadRequest();
             }
+
             UserVO user = userService.getUserVO(userId);
             if (user == null) {
                 return new ResponseNotFound();
             }
+
+            if (pathParams.get(PATH_ROLES) != null){
+                return this.getRoles(request,user);
+            }
+
             response = new JsonResponse(HttpURLConnection.HTTP_OK, user);
+        }
+        return response;
+    }
+
+    private Response getRoles(Request request, UserVO user) {
+        Response response;
+
+        Map<String,String> pathParams = request.getPathParams();
+        String roleId = pathParams.get(ROLE_ID);
+        Collection<Role> roles = user.getRoles();
+        if( roleId == null){
+            response = new JsonResponse(HttpURLConnection.HTTP_OK, roles);
+        }
+        else{
+            Optional<Role> role = roles.stream().filter(r-> r.getId().equals(roleId)).findFirst();
+            if( role.isPresent()){
+                response = new JsonResponse(HttpURLConnection.HTTP_OK, role.get());
+            }
+            else{
+                response = new ResponseNotFound();
+            }
         }
         return response;
     }
