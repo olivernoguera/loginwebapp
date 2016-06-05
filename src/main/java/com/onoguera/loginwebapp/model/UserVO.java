@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.model;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by olivernoguera on 04/06/2016.

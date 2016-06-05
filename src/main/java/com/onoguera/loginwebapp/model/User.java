@@ -2,7 +2,6 @@ package com.onoguera.loginwebapp.model;
 
 import com.onoguera.loginwebapp.dao.AbstractDao;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

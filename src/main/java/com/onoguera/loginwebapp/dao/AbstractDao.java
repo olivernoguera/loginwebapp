@@ -1,12 +1,10 @@
 package com.onoguera.loginwebapp.dao;
 
 import com.onoguera.loginwebapp.model.Entity;
-import com.onoguera.loginwebapp.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

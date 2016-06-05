@@ -10,7 +10,6 @@ import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 
 import java.net.HttpURLConnection;
-import java.text.CollationElementIterator;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

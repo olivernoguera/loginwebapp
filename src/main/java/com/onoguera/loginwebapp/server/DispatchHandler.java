@@ -2,13 +2,10 @@ package com.onoguera.loginwebapp.server;
 
 import com.onoguera.loginwebapp.controller.Controller;
 import com.onoguera.loginwebapp.controller.ControllerContainer;
-import com.onoguera.loginwebapp.controller.AuthController;
-import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseInternalServerError;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
-import com.onoguera.loginwebapp.view.ResponseUnauthorized;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
@@ -16,9 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 /**
