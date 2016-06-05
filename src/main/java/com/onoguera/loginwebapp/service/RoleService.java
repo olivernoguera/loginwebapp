@@ -37,4 +37,8 @@ public class RoleService implements  Service
     public void removeRole(final String id) {
         this.roleDao.delete(id);
     }
+
+    public Role getRole(final String roleId) {
+        return this.roleDao.findOne(roleId);
+    }
 }
