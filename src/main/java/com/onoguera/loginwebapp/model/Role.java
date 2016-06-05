@@ -5,16 +5,12 @@ package com.onoguera.loginwebapp.model;
  */
 public class Role extends Entity<Role>{
 
-    private boolean fullAccess;
-
     public Role(String id) {
         super(id);
-        this.fullAccess = false;
     }
 
     public Role(String id, boolean fullAccess){
         super(id);
-        this.fullAccess = fullAccess;
     }
 
 }

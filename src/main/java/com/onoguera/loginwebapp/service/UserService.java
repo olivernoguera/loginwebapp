@@ -32,6 +32,12 @@ public class UserService implements  Service
         this.userDao.insert(user);
     }
 
+    public void addUser(final User user, final List<Role> roles){
+        user.addRoles(roles);
+        this.userDao.insert(user);
+    }
+
+
     public User getUser(final String id){
         return this.userDao.findOne(id);
     }

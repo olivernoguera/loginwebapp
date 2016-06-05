@@ -2,6 +2,7 @@ package com.onoguera.loginwebapp;
 
 import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
+import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
 
 import java.util.ArrayList;
@@ -26,12 +27,15 @@ public class LoaderEntities {
     public void loadEntities()
     {
         UserService userService = UserService.getInstance();
+        RoleService roleService = RoleService.getInstance();
         List<User> users = LoaderEntities.createUsers(3);
         userService.bulkCreateUsers(users);
 
-        User adminUser = new User("ADMIN","ADMIN");
-        Role adminRole = new Role("ADMIN",true);
-        userService.addUser(adminUser,adminRole);
+        User adminUser = new User("ADMIN","ADMIN",true);
+
+        List<Role> roles = LoaderEntities.createRoles(3);
+        roleService.bulkCreateRoles(roles);
+        userService.addUser(adminUser,roles);
 
     }
 
@@ -46,6 +50,17 @@ public class LoaderEntities {
         }
         return users;
     }
+
+    private static List<Role> createRoles(Integer numRoles){
+        List<Role> roles = new ArrayList<>();
+
+        for(int i = 1; i <= numRoles; i++){
+            Role role = new Role(ROLE_PREFIX +i);
+            roles.add(role);
+        }
+        return roles;
+    }
+
 
 
 }
