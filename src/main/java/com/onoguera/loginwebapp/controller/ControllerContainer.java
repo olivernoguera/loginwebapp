@@ -17,7 +17,9 @@ public class ControllerContainer {
     private ControllerContainer(){
 
         UserController userController = new UserController();
+        RoleController roleController = new RoleController();
         controllers.add(userController);
+        controllers.add(roleController);
     }
 
     public static ControllerContainer getInstance(){

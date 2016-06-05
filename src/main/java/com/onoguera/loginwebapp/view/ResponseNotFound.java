@@ -6,7 +6,7 @@ import java.net.HttpURLConnection;
 /**
  * Created by oliver on 4/06/16.
  */
-public class ResponseNotFound extends Response {
+public final class ResponseNotFound extends Response {
 
     public ResponseNotFound()
     {

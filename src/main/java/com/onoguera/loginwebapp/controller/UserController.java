@@ -35,7 +35,7 @@ public class UserController extends  BaseController implements AuthController {
     private static final UserService userService = UserService.getInstance();
 
     private static final Pattern p =
-            Pattern.compile("/users\\/*(?<"+USER_ID+">[^:\\/\\s]+)?\\/?(?<"+PATH_ROLES+">roles)?\\/?(?<"+ROLE_ID+">[^:\\/\\s]+)?");
+            Pattern.compile(PATH+"/*(?<"+USER_ID+">[^:\\/\\s]+)?\\/?(?<"+PATH_ROLES+">roles)?\\/?(?<"+ROLE_ID+">[^:\\/\\s]+)?");
 
     @Override
     public Pattern getURLPattern() {
@@ -106,6 +106,15 @@ public class UserController extends  BaseController implements AuthController {
 
     @Override
     public Response doPut(Request request) {
+
+        /*
+        JsonRequest jsonRequest;
+
+        if( request instanceof  JsonRequest){
+            jsonRequest = (JsonRequest)request;
+        }else{
+            return new ResponseUnsupportedMediaType();
+        }*/
         return new ResponseNotImplemented();
     }
 

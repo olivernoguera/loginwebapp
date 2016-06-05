@@ -5,7 +5,7 @@ import java.net.HttpURLConnection;
 /**
  * Created by oliver on 4/06/16.
  */
-public class ResponseBadRequest extends Response {
+public final class ResponseBadRequest extends Response {
 
     public ResponseBadRequest()
     {

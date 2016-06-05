@@ -7,6 +7,7 @@ import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
 import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
 import com.onoguera.loginwebapp.view.ResponseUnauthorized;
+import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -24,6 +25,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +38,6 @@ public abstract class BaseController  implements  Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
     private UserService userService = UserService.getInstance();
-
 
     private final static String METHOD_POST = "POST";
     private final static String METHOD_GET = "GET";
@@ -74,7 +75,7 @@ public abstract class BaseController  implements  Controller {
     {
         Request request;
         try {
-            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody);
+            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody,headers);
         }catch (IOException io){
             LOGGER.warn("Bad request." ,io);
             return new ResponseBadRequest();
@@ -83,9 +84,13 @@ public abstract class BaseController  implements  Controller {
         if( this instanceof AuthController){
             List<String> authorizations = headers.get("Authorization");
             List<Role> roles = this.getRoles(authorizations);
-            if(roles.isEmpty()){
+            if(roles.isEmpty()) {
                 return new ResponseUnauthorized();
             }
+            if(!validMediaType(request.getRawBody(),method,headers)){
+                return new ResponseUnsupportedMediaType();
+            }
+
         }
 
         if (METHOD_GET.equals(method)) {
@@ -102,12 +107,39 @@ public abstract class BaseController  implements  Controller {
         }
     }
 
-    private Request getRequest(final String query, final String path, InputStream requestBody) throws IOException {
+    private boolean validMediaType(String rawBody, String method,Headers headers) {
+        if( method.equals(METHOD_GET ) || method.equals(METHOD_DELETE)){
+            return true;
+        }
+        if( rawBody == null || rawBody.length() == 0){
+            return true;
+        }
+
+        if( !this.isApplicationJson(headers)){
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean isApplicationJson(Headers headers){
+        List<String> contentTypes = headers.get("Content-type");
+        if( contentTypes == null){
+            return false;
+        }
+        Optional<String> exists =
+                contentTypes.stream().filter(ct->contentTypes.equals("application/json")).findFirst();
+        return exists.isPresent();
+    }
+
+    private Request getRequest(final String query, final String path, InputStream requestBody, Headers headers) throws IOException {
 
         Map<String, String> queryParams = this.parseQueryParams(query);
         Map<String, String> pathParams =
                 this.parsePathParams(path, this.getPathParams(), this.getURLPattern());
         String rawBody = this.parseFirstRequestBody(requestBody);
+        if( isApplicationJson(headers)){
+            return new JsonRequest(queryParams,pathParams,rawBody);
+        }
         return new Request(queryParams,pathParams,rawBody);
     }
 
