@@ -1,5 +1,6 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.Response;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +82,8 @@ public abstract class BaseController  implements  Controller {
 
         if( this instanceof AuthController){
             List<String> authorizations = headers.get("Authorization");
-            if(!this.validateAuthorizations(authorizations)){
+            List<Role> roles = this.getRoles(authorizations);
+            if(roles.isEmpty()){
                 return new ResponseUnauthorized();
             }
         }
@@ -165,11 +168,12 @@ public abstract class BaseController  implements  Controller {
     /**
      *
      * @param authorizations
-     * @return auth ok TODO must be return role, there are read only roles and write roles
+     * @return auth ok
      */
-    private boolean validateAuthorizations(List<String> authorizations) {
+    private List<Role> getRoles(List<String> authorizations) {
+        List<Role> roles = new ArrayList<>();
         if( authorizations == null){
-            return false;
+            return roles;
         }
         for( String auth: authorizations){
             if (auth != null && auth.startsWith("Basic")) {
@@ -183,13 +187,10 @@ public abstract class BaseController  implements  Controller {
                     continue;
                 }
                 User user = new User(values[0],values[1]);
-                if( userService.validateAdmin(user)){
-                    return true;
-                }
-
+                roles.addAll( userService.getRoles(user));
             }
         }
-        return false;
+        return roles;
     }
 
 }

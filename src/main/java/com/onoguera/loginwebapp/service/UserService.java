@@ -5,6 +5,8 @@ import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.model.UserVO;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,15 +65,26 @@ public class UserService implements  Service
         collection.forEach(user -> this.userDao.insert(user));
     }
 
-    public boolean validateAdmin(User user) {
+    /**
+     * Validate user and returns Roles of this.
+     * If user not exist or not validate return null (whithout role)
+     * @param user
+     * @return
+     */
+    public List<Role> getRoles(User user) {
+        List<Role> roles = new ArrayList<Role>();
         if( user.getPassword() == null){
-            return false;
+            return roles;
         }
         User userStore = this.getUser(user.getId());
         if( userStore == null){
-            return false;
+            return roles;
         }
 
-        return user.getPassword().equals(userStore.getPassword());
+        if(user.getPassword().equals(userStore.getPassword())){
+            roles = new ArrayList<>(userStore.getRoles());
+        }
+        return roles;
+
     }
 }

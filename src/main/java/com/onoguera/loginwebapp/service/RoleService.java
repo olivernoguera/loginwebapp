@@ -5,4 +5,6 @@ package com.onoguera.loginwebapp.service;
  */
 public class RoleService implements  Service
 {
+
+
 }
