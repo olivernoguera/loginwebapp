@@ -8,7 +8,7 @@ import org.junit.Test;
 public class DispatchHandlerTest {
 
     @Test
-    public void correctDispatchHandler(){
+    public void correctDispatchHandler() {
         DispatchHandler dispatchHandler = new DispatchHandler();
 
 

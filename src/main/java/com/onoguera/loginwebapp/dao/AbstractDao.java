@@ -15,29 +15,29 @@ public class AbstractDao<T extends Entity> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDao.class);
 
-    private final Map<String,T> entitySet;
+    private final Map<String, T> entitySet;
 
-    public AbstractDao(){
+    public AbstractDao() {
         this.entitySet = new ConcurrentHashMap<>();
     }
 
-    public void insert(final T entity){
-        this.entitySet.put(entity.getId(),entity);
+    public void insert(final T entity) {
+        this.entitySet.put(entity.getId(), entity);
     }
 
-    public T findOne(final String id){
+    public T findOne(final String id) {
         return this.entitySet.get(id);
     }
 
-    public Collection<T> elements(){
+    public Collection<T> elements() {
         return this.entitySet.values();
     }
 
-    public void delete(final String id){
+    public void delete(final String id) {
         this.entitySet.remove(id);
     }
 
-    public void update(final T entity){
+    public void update(final T entity) {
         this.entitySet.put(entity.getId(), entity);
     }
 

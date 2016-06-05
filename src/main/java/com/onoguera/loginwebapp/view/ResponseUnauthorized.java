@@ -8,8 +8,7 @@ import java.net.HttpURLConnection;
  */
 public final class ResponseUnauthorized extends Response {
 
-    public ResponseUnauthorized()
-    {
+    public ResponseUnauthorized() {
         super(HttpURLConnection.HTTP_UNAUTHORIZED, "Unauthorized.");
     }
 }

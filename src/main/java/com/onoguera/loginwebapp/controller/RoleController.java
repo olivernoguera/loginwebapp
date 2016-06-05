@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * Created by oliver on 1/06/16.
  */
-public class RoleController extends  BaseController implements AuthController {
+public class RoleController extends BaseController implements AuthController {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(RolesController.class);
 
@@ -29,7 +29,7 @@ public class RoleController extends  BaseController implements AuthController {
 
     private static final RoleService roleService = RoleService.getInstance();
 
-    private static final Pattern p = Pattern.compile(PATH+"/*(?<"+ROLE_ID+">\\S*)");
+    private static final Pattern p = Pattern.compile(PATH + "/*(?<" + ROLE_ID + ">\\S*)");
 
     @Override
     public Pattern getURLPattern() {
@@ -38,25 +38,24 @@ public class RoleController extends  BaseController implements AuthController {
 
     @Override
     public List<String> getPathParams() {
-        return  Arrays.asList(ROLE_ID);
+        return Arrays.asList(ROLE_ID);
     }
 
     @Override
     public Response doGet(Request request) {
 
-        Map<String,String> pathParams = request.getPathParams();
+        Map<String, String> pathParams = request.getPathParams();
         Response response;
 
-        if( pathParams == null || pathParams.isEmpty()){
+        if (pathParams == null || pathParams.isEmpty()) {
 
             Collection<Role> roles = roleService.getRoles();
-            response = new JsonResponse(HttpURLConnection.HTTP_OK,roles);
+            response = new JsonResponse(HttpURLConnection.HTTP_OK, roles);
 
-        }
-        else{
+        } else {
 
-            String roleId =  pathParams.get(ROLE_ID);
-            if( roleId == null){
+            String roleId = pathParams.get(ROLE_ID);
+            if (roleId == null) {
                 return new ResponseBadRequest();
             }
             Role role = roleService.getRole(roleId);
@@ -76,20 +75,27 @@ public class RoleController extends  BaseController implements AuthController {
     @Override
     public Response doPut(Request request) {
 
-        Map<String,String> pathParams = request.getPathParams();
-        String roleId =  pathParams.get(ROLE_ID);
+        Map<String, String> pathParams = request.getPathParams();
+        if (pathParams == null) {
+            return new ResponseBadRequest();
+        }
+        String roleId = pathParams.get(ROLE_ID);
+        if (roleId == null || roleId.isEmpty()) {
+            return new ResponseBadRequest();
+        }
         Role role = new Role(roleId);
         roleService.addRole(role);
-        Response response =  new JsonResponse(HttpURLConnection.HTTP_CREATED,role);
+        Response response = new JsonResponse(HttpURLConnection.HTTP_CREATED, role);
         return response;
     }
 
     @Override
     public Response doDelete(Request request) {
-        Map<String,String> pathParams = request.getPathParams();
-        String roleId =  pathParams.get(ROLE_ID);
+
+        Map<String, String> pathParams = request.getPathParams();
+        String roleId = pathParams.get(ROLE_ID);
         roleService.removeRole(roleId);
-        Response response =  new ResponseEmpty();
+        Response response = new ResponseEmpty();
         return response;
     }
 }

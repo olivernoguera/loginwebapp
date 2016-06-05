@@ -8,12 +8,11 @@ import java.util.Collection;
 /**
  * Created by oliver on 1/06/16.
  */
-public class RoleService implements  Service
-{
+public class RoleService implements Service {
     private final static RoleService INSTANCE = new RoleService();
-    private final RoleDao roleDao  = RoleDao.getInstance();
+    private final RoleDao roleDao = RoleDao.getInstance();
 
-    private RoleService(){
+    private RoleService() {
         super();
     }
 
@@ -21,15 +20,15 @@ public class RoleService implements  Service
         return INSTANCE;
     }
 
-    public void addRole(Role role){
+    public void addRole(Role role) {
         this.roleDao.insert(role);
     }
 
-    public void bulkCreateRoles(Collection<Role> roles){
+    public void bulkCreateRoles(Collection<Role> roles) {
         roles.forEach(role -> this.roleDao.insert(role));
     }
 
-    public Collection<Role> getRoles(){
+    public Collection<Role> getRoles() {
         return this.roleDao.elements();
     }
 

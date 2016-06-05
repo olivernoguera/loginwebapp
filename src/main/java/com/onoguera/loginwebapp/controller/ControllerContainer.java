@@ -14,7 +14,7 @@ public class ControllerContainer {
     private final static ControllerContainer INSTANCE = new ControllerContainer();
 
 
-    private ControllerContainer(){
+    private ControllerContainer() {
 
         UserController userController = new UserController();
         RoleController roleController = new RoleController();
@@ -22,16 +22,15 @@ public class ControllerContainer {
         controllers.add(roleController);
     }
 
-    public static ControllerContainer getInstance(){
+    public static ControllerContainer getInstance() {
         return INSTANCE;
     }
 
-    public Optional<Controller> findController( String path )
-    {
+    public Optional<Controller> findController(String path) {
         Optional<Controller> controller =
-        controllers.stream().
-                filter(c -> c.filter(path)).
-                findFirst();
+                controllers.stream().
+                        filter(c -> c.filter(path)).
+                        findFirst();
         return controller;
 
     }

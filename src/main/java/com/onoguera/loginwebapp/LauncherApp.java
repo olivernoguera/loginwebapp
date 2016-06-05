@@ -6,27 +6,23 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class LauncherApp
-{
-	private static final Logger LOGGER = LoggerFactory.getLogger(LauncherApp.class);
-	
-	private final Server server;
+public class LauncherApp {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LauncherApp.class);
+
+    private final Server server;
     private final LoaderEntities loaderEntities;
-		
-	public LauncherApp(Server server) throws IOException
-	{
-		this.server = server;
+
+    public LauncherApp(Server server) throws IOException {
+        this.server = server;
         this.loaderEntities = new LoaderEntities();
-	}
-	
-	public void start() throws IOException 
-	{
+    }
+
+    public void start() throws IOException {
         this.loaderEntities.loadEntities();
         this.server.start();
-	}
+    }
 
-	public void stop()
-	{
-		this.server.stop(0);
-	}
+    public void stop() {
+        this.server.stop(0);
+    }
 }

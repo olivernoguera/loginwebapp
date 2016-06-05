@@ -10,9 +10,9 @@ import java.util.Map;
  */
 public class JsonRequest extends Request {
 
-    private static final Gson GSON  = new GsonBuilder().create();
+    private static final Gson GSON = new GsonBuilder().create();
 
-    public JsonRequest(final Map<String, String> queryParams, final Map<String, String> pathParams,final String rawBody) {
+    public JsonRequest(final Map<String, String> queryParams, final Map<String, String> pathParams, final String rawBody) {
         super(queryParams, pathParams, rawBody);
     }
 

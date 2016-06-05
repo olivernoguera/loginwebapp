@@ -35,11 +35,11 @@ public class BaseControllerTest {
     private static final Gson GSON = new Gson();
     private static final String ADMIN_AUTH = "Basic QURNSU46QURNSU4=";
     private static Headers adminHeaders;
-    private static final User adminUser = new User("ADMIN","ADMIN");
-    private static final Role adminRole = new Role("ADMIN",true);
+    private static final User adminUser = new User("ADMIN", "ADMIN");
+    private static final Role adminRole = new Role("ADMIN", true);
 
     @Before
-    public void before(){
+    public void before() {
         adminHeaders = new Headers();
         adminHeaders.put("Authorization", Arrays.asList(ADMIN_AUTH));
         UserService userService = UserService.getInstance();
@@ -47,7 +47,7 @@ public class BaseControllerTest {
     }
 
     @After
-    public void after(){
+    public void after() {
         UserService userService = UserService.getInstance();
         userService.removeUser(adminUser.getId());
     }
@@ -59,7 +59,7 @@ public class BaseControllerTest {
         Controller controller = new UserController();
         UserService userService = UserService.getInstance();
 
-        User user = new User("test","test");
+        User user = new User("test", "test");
         userService.addUser(user, new Role("test"));
         userService.removeUser(adminUser.getId());
 
@@ -70,9 +70,9 @@ public class BaseControllerTest {
 
         Headers headers = new Headers();
         headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
-        Response response = controller.dispatch(uri,null,"GET", headers);
+        Response response = controller.dispatch(uri, null, "GET", headers);
 
-        UserVO expectedUser = new UserVO(user.getId(),user.getRoles());
+        UserVO expectedUser = new UserVO(user.getId(), user.getRoles());
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(ResponseUnauthorized.class));
         //Restore inital test state
@@ -86,8 +86,8 @@ public class BaseControllerTest {
         Controller controller = new UserController();
         UserService userService = UserService.getInstance();
 
-        User user = new User("test","test");
-        userService.addUser(user,new Role("test"));
+        User user = new User("test", "test");
+        userService.addUser(user, new Role("test"));
 
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
@@ -96,12 +96,12 @@ public class BaseControllerTest {
 
         Headers headers = new Headers();
         headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
-        Response response = controller.dispatch(uri,null,"GET", headers);
+        Response response = controller.dispatch(uri, null, "GET", headers);
 
-        UserVO expectedUser = new UserVO(user.getId(),user.getRoles());
+        UserVO expectedUser = new UserVO(user.getId(), user.getRoles());
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
-        Assert.assertThat(" Response must be empty" , response.getOutput(), is(GSON.toJson(expectedUser)));
+        Assert.assertThat(" Response must be empty", response.getOutput(), is(GSON.toJson(expectedUser)));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
 
         //Restore inital test state
@@ -113,7 +113,7 @@ public class BaseControllerTest {
     public void doPostDispatch() throws URISyntaxException {
         Controller controller = new UserController();
         URI uri = new URI("/users/test");
-        Response response = controller.dispatch(uri,null,"POST", adminHeaders);
+        Response response = controller.dispatch(uri, null, "POST", adminHeaders);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }
 
@@ -121,7 +121,7 @@ public class BaseControllerTest {
     public void doPutDispatch() throws URISyntaxException {
         Controller controller = new UserController();
         URI uri = new URI("/users/test");
-        Response response = controller.dispatch(uri,null,"PUT", adminHeaders);
+        Response response = controller.dispatch(uri, null, "PUT", adminHeaders);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }
 
@@ -129,7 +129,7 @@ public class BaseControllerTest {
     public void doDeleteDispatch() throws URISyntaxException {
         Controller controller = new UserController();
         URI uri = new URI("/users/test");
-        Response response = controller.dispatch(uri,null,"DELETE", adminHeaders);
+        Response response = controller.dispatch(uri, null, "DELETE", adminHeaders);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
 
     }
@@ -138,7 +138,7 @@ public class BaseControllerTest {
     public void doPatchDispatch() throws URISyntaxException {
         Controller controller = new UserController();
         URI uri = new URI("/users/test");
-        Response response = controller.dispatch(uri,null,"PATH", adminHeaders);
+        Response response = controller.dispatch(uri, null, "PATH", adminHeaders);
         Assert.assertThat(" Response must be mehod not allowed", response, instanceOf(ResponseMethodNotAllowed.class));
 
     }

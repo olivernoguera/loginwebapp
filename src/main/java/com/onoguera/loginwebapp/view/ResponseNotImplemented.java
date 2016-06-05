@@ -8,8 +8,7 @@ import java.net.HttpURLConnection;
  */
 public final class ResponseNotImplemented extends Response {
 
-    public ResponseNotImplemented()
-    {
+    public ResponseNotImplemented() {
         super(HttpURLConnection.HTTP_NOT_IMPLEMENTED, "Not implemented.");
     }
 }

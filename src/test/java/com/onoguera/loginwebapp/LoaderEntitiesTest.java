@@ -19,21 +19,21 @@ public class LoaderEntitiesTest {
     private LoaderEntities loaderEntities = new LoaderEntities();
 
     @Test
-    public void loadEntities(){
+    public void loadEntities() {
 
         this.loaderEntities.loadEntities();
         Collection<UserVO> userCollection = UserService.getInstance().getUsersVO();
         Collection<Role> rolesCollection = RoleService.getInstance().getRoles();
         Assert.assertThat("Must load 4 Users", userCollection.size(), is(4));
-        Assert.assertThat("Must load 3 Roles", rolesCollection.size(), is(3));
+        Assert.assertThat("Must load 4 Roles", rolesCollection.size(), is(4));
 
         //Restore state
-        for(UserVO user: userCollection){
+        for (UserVO user : userCollection) {
             UserService.getInstance().removeUser(user.getUsername());
         }
 
         //Restore state
-        for(Role role: rolesCollection){
+        for (Role role : rolesCollection) {
             RoleService.getInstance().removeRole(role.getId());
         }
 

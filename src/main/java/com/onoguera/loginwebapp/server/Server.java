@@ -1,11 +1,10 @@
 package com.onoguera.loginwebapp.server;
 
 
-public interface Server
-{
-	void start();
+public interface Server {
+    void start();
 
-	void stop(int delay);
+    void stop(int delay);
 
 
 }

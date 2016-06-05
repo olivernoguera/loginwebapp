@@ -9,50 +9,46 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
 /**
- *  This class implements a httpserver
+ * This class implements a httpserver
  */
-public class ServerImpl implements Server
-{
-	private static final Logger LOGGER = LoggerFactory.getLogger(ServerImpl.class);
-	private static final String CONTEXT_PATH = "/";
+public class ServerImpl implements Server {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerImpl.class);
+    private static final String CONTEXT_PATH = "/";
 
-	private final HttpServer server;
-	
-	public ServerImpl(int port, int threadPoolSize) throws IOException
-    {
-		server = HttpServer.create(new InetSocketAddress(port), 0);
-		server.setExecutor(Executors.newFixedThreadPool(threadPoolSize));
-		server.createContext(CONTEXT_PATH,  new DispatchHandler());
-	}
+    private final HttpServer server;
 
-	/**
-	 * Start server
-	 */
-	public void start()
-    {
+    public ServerImpl(int port, int threadPoolSize) throws IOException {
+        server = HttpServer.create(new InetSocketAddress(port), 0);
+        server.setExecutor(Executors.newFixedThreadPool(threadPoolSize));
+        server.createContext(CONTEXT_PATH, new DispatchHandler());
+    }
 
-		LOGGER.info("{} Starting server on port {}", getClass().getSimpleName(), server.getAddress().getPort());
+    /**
+     * Start server
+     */
+    public void start() {
 
-		server.start();
+        LOGGER.info("{} Starting server on port {}", getClass().getSimpleName(), server.getAddress().getPort());
 
-		LOGGER.info("{} Listening on http://localhost: {}", getClass().getSimpleName(), server.getAddress().getPort());
-		LOGGER.info("{} Server started {}", getClass().getSimpleName(), server.getAddress().getPort());
-	}
+        server.start();
 
-	/**
-	 *  Stop server
-	 *  @delay is delay to stop in milliseconds
-	 */
-	public void stop(int delay)
-    {
+        LOGGER.info("{} Listening on http://localhost: {}", getClass().getSimpleName(), server.getAddress().getPort());
+        LOGGER.info("{} Server started {}", getClass().getSimpleName(), server.getAddress().getPort());
+    }
 
-		LOGGER.info("{} Stopping server with delay: {}", getClass().getSimpleName(), delay);
+    /**
+     * Stop server
+     *
+     * @delay is delay to stop in milliseconds
+     */
+    public void stop(int delay) {
 
-		server.stop(delay);
+        LOGGER.info("{} Stopping server with delay: {}", getClass().getSimpleName(), delay);
 
-		LOGGER.info("{} Server stopped", getClass().getSimpleName());
-	}
-	
+        server.stop(delay);
+
+        LOGGER.info("{} Server stopped", getClass().getSimpleName());
+    }
 
 
 }

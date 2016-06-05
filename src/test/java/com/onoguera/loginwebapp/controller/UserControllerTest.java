@@ -41,7 +41,7 @@ public class UserControllerTest {
     private UserController userController = new UserController();
 
     @Test
-      public void correctFiltersTest(){
+    public void correctFiltersTest() {
 
         Assert.assertThat(getClass().getSimpleName() + " correctFiltersTest::Path::" +
                         BASE_PATH,
@@ -65,7 +65,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void badFiltersTest(){
+    public void badFiltersTest() {
 
         Assert.assertThat(getClass().getSimpleName() + " correctFiltersTest::Path::" +
                         BAD_PATH,
@@ -82,7 +82,7 @@ public class UserControllerTest {
     @Test
     public void doGetBadPathParamResource() {
         Map<String, String> pathParams = new HashMap<>();
-        pathParams.put("badparam","badparam");
+        pathParams.put("badparam", "badparam");
 
         Request request = new Request(null, pathParams, null);
         Response response = userController.doGet(request);
@@ -91,7 +91,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void doGetEmptyResource(){
+    public void doGetEmptyResource() {
 
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
@@ -102,83 +102,83 @@ public class UserControllerTest {
     }
 
     @Test
-    public void doGeWithResource(){
+    public void doGeWithResource() {
 
         UserService userService = UserService.getInstance();
-        User user = new User("test","test");
-        userService.addUser(user,new Role("test"));
+        User user = new User("test", "test");
+        userService.addUser(user, new Role("test"));
 
-        UserVO userVO = new UserVO(user.getId(),user.getRoles());
+        UserVO userVO = new UserVO(user.getId(), user.getRoles());
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
 
         Request request = new Request(null, pathParams, null);
         Response response = userController.doGet(request);
 
-        Assert.assertThat(" Response must be jsonResponse" , response, instanceOf(JsonResponse.class));
-        Assert.assertThat(" Response must be empty" , response.getOutput(), is(GSON.toJson(userVO)));
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be empty", response.getOutput(), is(GSON.toJson(userVO)));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
 
         //Restore inital test state
-        userService.removeUser("test");
+        userService.removeUser(user.getId());
 
     }
 
 
     @Test
-    public void doGetEmptyCollection(){
+    public void doGetEmptyCollection() {
 
         Request request = new Request(null, null, null);
         Response response = userController.doGet(request);
-        Assert.assertThat(" Response must be jsonResponse" , response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be empty", response.getOutput(), is("[]"));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
     }
 
     @Test
-    public void doGeWithCollectionResource(){
+    public void doGeWithCollectionResource() {
 
         UserService userService = UserService.getInstance();
 
-        User user = new User("test","test");
-        userService.addUser(user,new Role("test"));
-        User user2 = new User("test2","test2");
-        userService.addUser(user2,new Role("test2"));
+        User user = new User("test", "test");
+        userService.addUser(user, new Role("test"));
+        User user2 = new User("test2", "test2");
+        userService.addUser(user2, new Role("test2"));
 
         List<UserVO> collectionUser = new ArrayList<>();
-        collectionUser.add(new UserVO(user2.getId(),user2.getRoles()));
-        collectionUser.add(new UserVO(user.getId(),user.getRoles()));
+        collectionUser.add(new UserVO(user2.getId(), user2.getRoles()));
+        collectionUser.add(new UserVO(user.getId(), user.getRoles()));
 
         Request request = new Request(null, null, null);
         Response response = userController.doGet(request);
 
-        Assert.assertThat(" Response must be jsonResponse" , response, instanceOf(JsonResponse.class));
-        Assert.assertThat(" Response must be empty" , response.getOutput(), is(GSON.toJson(collectionUser)));
-        Assert.assertThat(" Response status must be "+ HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be empty", response.getOutput(), is(GSON.toJson(collectionUser)));
+        Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
 
         //Restore inital test state
-        userService.removeUser("test");
-        userService.removeUser("test2");
+        userService.removeUser(user.getId());
+        userService.removeUser(user2.getId());
     }
 
     @Test
-    public void doPost(){
+    public void doPost() {
         Request request = new Request(null, null, null);
         Response response = userController.doPost(request);
-        Assert.assertThat(" Response must be ResponseNotImplemented" , response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }
 
     @Test
-     public void doPut(){
+    public void doPut() {
         Request request = new Request(null, null, null);
         Response response = userController.doPut(request);
-        Assert.assertThat(" Response must be ResponseNotImplemented" , response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }
 
     @Test
-    public void doDelete(){
+    public void doDelete() {
         Request request = new Request(null, null, null);
         Response response = userController.doPut(request);
-        Assert.assertThat(" Response must be ResponseNotImplemented" , response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }
 }

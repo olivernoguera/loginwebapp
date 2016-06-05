@@ -7,8 +7,7 @@ import java.net.HttpURLConnection;
  */
 public class ResponseEmpty extends Response {
 
-    public ResponseEmpty()
-    {
+    public ResponseEmpty() {
         super(HttpURLConnection.HTTP_OK, "");
     }
 }

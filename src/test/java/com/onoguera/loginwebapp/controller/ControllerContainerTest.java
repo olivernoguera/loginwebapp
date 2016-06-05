@@ -13,7 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 public class ControllerContainerTest {
 
     @Test
-    public void getControllerByNullPath(){
+    public void getControllerByNullPath() {
 
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
         Optional<Controller> controller = controllerContainer.findController(null);
@@ -23,7 +23,7 @@ public class ControllerContainerTest {
     }
 
     @Test
-    public void getControllerByEmptyPath(){
+    public void getControllerByEmptyPath() {
 
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
         Optional<Controller> controller = controllerContainer.findController("");
@@ -34,7 +34,7 @@ public class ControllerContainerTest {
     }
 
     @Test
-    public void getControllerByTestPath(){
+    public void getControllerByTestPath() {
 
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
         Optional<Controller> controller = controllerContainer.findController("");
@@ -44,7 +44,7 @@ public class ControllerContainerTest {
     }
 
     @Test
-    public void getControllerByUserCorrectPaths(){
+    public void getControllerByUserCorrectPaths() {
 
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
 
@@ -65,11 +65,7 @@ public class ControllerContainerTest {
                 controller.isPresent(), is(Boolean.TRUE));
 
 
-
-
     }
-
-
 
 
 }

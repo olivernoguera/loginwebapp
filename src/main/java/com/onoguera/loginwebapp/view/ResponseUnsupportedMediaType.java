@@ -8,8 +8,7 @@ import java.net.HttpURLConnection;
  */
 public final class ResponseUnsupportedMediaType extends Response {
 
-    public ResponseUnsupportedMediaType()
-    {
+    public ResponseUnsupportedMediaType() {
         super(HttpURLConnection.HTTP_UNSUPPORTED_TYPE, "Unsupported mediatype.");
     }
 }

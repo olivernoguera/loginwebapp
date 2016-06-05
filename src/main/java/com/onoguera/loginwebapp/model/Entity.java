@@ -3,24 +3,22 @@ package com.onoguera.loginwebapp.model;
 /**
  * Created by olivernoguera on 04/06/2016.
  */
-public abstract class Entity<T> implements  Cloneable{
+public abstract class Entity<T> implements Cloneable {
 
     private String id;
 
-    public Entity(String id){
+    public Entity(String id) {
         this.id = id;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return getId().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if(obj != null && obj instanceof Entity) {
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Entity) {
             return this.getClass().isAssignableFrom(obj.getClass())
                     && ((Entity<?>) obj).getId().equals(this.getId());
         } else {
@@ -34,8 +32,7 @@ public abstract class Entity<T> implements  Cloneable{
     }
 
     @Override
-    public Object clone()
-    {
+    public Object clone() {
         try {
             return super.clone();
         } catch (CloneNotSupportedException e) {

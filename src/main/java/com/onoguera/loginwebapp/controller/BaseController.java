@@ -5,6 +5,7 @@ import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
+import com.onoguera.loginwebapp.view.ResponseForbidden;
 import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
 import com.onoguera.loginwebapp.view.ResponseUnauthorized;
 import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Created by oliver on 1/06/16.
  */
-public abstract class BaseController  implements  Controller {
+public abstract class BaseController implements Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
@@ -71,63 +72,88 @@ public abstract class BaseController  implements  Controller {
     public Response dispatch(final URI requestURI,
                              final InputStream requestBody,
                              final String method,
-                             final Headers headers)
-    {
+                             final Headers headers) {
+        if (!checkMethodAllowed(method)) {
+            LOGGER.warn(String.format("Method %s not allowed", method));
+            return new ResponseMethodNotAllowed();
+        }
+
         Request request;
         try {
-            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody,headers);
-        }catch (IOException io){
-            LOGGER.warn("Bad request." ,io);
+            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody, headers);
+        } catch (IOException io) {
+            LOGGER.warn("Bad request.", io);
             return new ResponseBadRequest();
         }
 
-        if( this instanceof AuthController){
+        if (this instanceof AuthController) {
             List<String> authorizations = headers.get("Authorization");
             List<Role> roles = this.getRoles(authorizations);
-            if(roles.isEmpty()) {
+            if (roles.isEmpty()) {
                 return new ResponseUnauthorized();
             }
-            if(!validMediaType(request.getRawBody(),method,headers)){
+            if (!validMediaType(request.getRawBody(), method, headers)) {
                 return new ResponseUnsupportedMediaType();
             }
-
+            if (!method.equals(METHOD_GET)) {
+                //Modify and create and delete
+                Optional<Role> writRole = roles.stream().filter(r -> r.isWriteAccess()).findFirst();
+                if (!writRole.isPresent()) {
+                    return new ResponseForbidden();
+                }
+            }
         }
 
+        return dispatch(request, method);
+    }
+
+    private Response dispatch(final Request request, final String method) {
         if (METHOD_GET.equals(method)) {
             return doGet(request);
         } else if (METHOD_POST.equals(method)) {
             return doPost(request);
         } else if (METHOD_PUT.equals(method)) {
             return doPut(request);
-        } else if (METHOD_DELETE.equals(method)) {
+        } else {
+            //only delete
             return doDelete(request);
-        } else{
-            LOGGER.warn(String.format("Method %s not allowed", method));
-            return new ResponseMethodNotAllowed();
         }
     }
 
-    private boolean validMediaType(String rawBody, String method,Headers headers) {
-        if( method.equals(METHOD_GET ) || method.equals(METHOD_DELETE)){
+    protected boolean checkMethodAllowed(final String method) {
+        if (METHOD_GET.equals(method)) {
+            return true;
+        } else if (METHOD_POST.equals(method)) {
+            return true;
+        } else if (METHOD_PUT.equals(method)) {
+            return true;
+        } else if (METHOD_DELETE.equals(method)) {
             return true;
         }
-        if( rawBody == null || rawBody.length() == 0){
+        return false;
+    }
+
+    private boolean validMediaType(String rawBody, String method, Headers headers) {
+        if (method.equals(METHOD_GET) || method.equals(METHOD_DELETE)) {
+            return true;
+        }
+        if (rawBody == null || rawBody.length() == 0) {
             return true;
         }
 
-        if( !this.isApplicationJson(headers)){
+        if (!this.isApplicationJson(headers)) {
             return false;
         }
         return true;
     }
 
-    protected boolean isApplicationJson(Headers headers){
+    protected boolean isApplicationJson(Headers headers) {
         List<String> contentTypes = headers.get("Content-type");
-        if( contentTypes == null){
+        if (contentTypes == null) {
             return false;
         }
         Optional<String> exists =
-                contentTypes.stream().filter(ct->contentTypes.equals("application/json")).findFirst();
+                contentTypes.stream().filter(ct -> ct.equals("application/json")).findFirst();
         return exists.isPresent();
     }
 
@@ -137,23 +163,23 @@ public abstract class BaseController  implements  Controller {
         Map<String, String> pathParams =
                 this.parsePathParams(path, this.getPathParams(), this.getURLPattern());
         String rawBody = this.parseFirstRequestBody(requestBody);
-        if( isApplicationJson(headers)){
-            return new JsonRequest(queryParams,pathParams,rawBody);
+        if (isApplicationJson(headers)) {
+            return new JsonRequest(queryParams, pathParams, rawBody);
         }
-        return new Request(queryParams,pathParams,rawBody);
+        return new Request(queryParams, pathParams, rawBody);
     }
 
     public static Map<String, String> parsePathParams(final String path,
                                                       List<String> params,
-                                                      Pattern pattern ) {
+                                                      Pattern pattern) {
         Map<String, String> result = new HashMap<>();
         if (params != null && !params.isEmpty()) {
             Matcher m = pattern.matcher(path);
             if (m.find()) {
-                for(String param: params){
+                for (String param : params) {
                     String value = m.group(param);
-                    if( value != null && !value.trim().equals(EMPTY_STRING)){
-                        result.put(param,value);
+                    if (value != null && !value.trim().equals(EMPTY_STRING)) {
+                        result.put(param, value);
                     }
                 }
             }
@@ -166,9 +192,9 @@ public abstract class BaseController  implements  Controller {
      * @param query uri
      * @return
      */
-    private Map<String,String> parseQueryParams(final String query) {
+    private Map<String, String> parseQueryParams(final String query) {
         Map<String, String> queryParams = new HashMap<>();
-        if( query != null){
+        if (query != null) {
             //TODO examinate header to change charset enconding
             List<NameValuePair> paramsPair = URLEncodedUtils.parse(query, Charset.defaultCharset());
             paramsPair.forEach(pair -> {
@@ -198,28 +224,27 @@ public abstract class BaseController  implements  Controller {
     }
 
     /**
-     *
      * @param authorizations
      * @return auth ok
      */
     private List<Role> getRoles(List<String> authorizations) {
         List<Role> roles = new ArrayList<>();
-        if( authorizations == null){
+        if (authorizations == null) {
             return roles;
         }
-        for( String auth: authorizations){
+        for (String auth : authorizations) {
             if (auth != null && auth.startsWith("Basic")) {
                 // Authorization: Basic base64credentials
                 String base64Credentials = auth.substring("Basic".length()).trim();
                 String credentials = new String(Base64.getDecoder().decode(base64Credentials),
                         Charset.defaultCharset());
                 // credentials = username:password
-                final String[] values = credentials.split(":",2);
-                if( values.length < 2){
+                final String[] values = credentials.split(":", 2);
+                if (values.length < 2) {
                     continue;
                 }
-                User user = new User(values[0],values[1]);
-                roles.addAll( userService.getRoles(user));
+                User user = new User(values[0], values[1]);
+                roles.addAll(userService.getRoles(user));
             }
         }
         return roles;

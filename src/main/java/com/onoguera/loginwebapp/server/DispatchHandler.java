@@ -24,9 +24,8 @@ public class DispatchHandler implements HttpHandler {
     private final ControllerContainer controllerContainer;
     private final UserService userService;
 
-    public DispatchHandler()
-    {
-        controllerContainer =  ControllerContainer.getInstance();
+    public DispatchHandler() {
+        controllerContainer = ControllerContainer.getInstance();
         userService = UserService.getInstance();
     }
 
@@ -40,8 +39,7 @@ public class DispatchHandler implements HttpHandler {
         } catch (RuntimeException e) {
             LOGGER.error("An error occurred when dispatching request.", e);
             response = new ResponseInternalServerError();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("An error occurred when dispatching request.", e);
             response = new ResponseInternalServerError();
         }
@@ -63,16 +61,16 @@ public class DispatchHandler implements HttpHandler {
         Optional<Controller> controllerOpt =
                 controllerContainer.findController(httpExchange.getRequestURI().getPath());
 
-        if( controllerOpt == null || !controllerOpt.isPresent()){
+        if (controllerOpt == null || !controllerOpt.isPresent()) {
             return new ResponseNotFound();
         }
         Controller controller = controllerOpt.get();
 
         Response response = controller.dispatch(
-                    httpExchange.getRequestURI(),
-                    httpExchange.getRequestBody(),
-                    httpExchange.getRequestMethod(),
-                    httpExchange.getRequestHeaders());
+                httpExchange.getRequestURI(),
+                httpExchange.getRequestBody(),
+                httpExchange.getRequestMethod(),
+                httpExchange.getRequestHeaders());
         return response;
 
     }

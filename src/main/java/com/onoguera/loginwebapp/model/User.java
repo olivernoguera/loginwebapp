@@ -9,11 +9,9 @@ import java.util.List;
  * Created by oliver on 1/06/16.
  */
 
-public class User extends Entity<User>{
+public class User extends Entity<User> {
 
     private String password;
-
-    private boolean fullAccess;
 
     private final AbstractDao<Role> roles;
 
@@ -21,14 +19,6 @@ public class User extends Entity<User>{
         super(username);
         this.password = password;
         this.roles = new AbstractDao<>();
-        this.fullAccess = false;
-    }
-
-    public User(String username, String password, boolean fullAccess) {
-        super(username);
-        this.password = password;
-        this.roles = new AbstractDao<>();
-        this.fullAccess = false;
     }
 
     public String getPassword() {
@@ -39,16 +29,16 @@ public class User extends Entity<User>{
         this.password = password;
     }
 
-    public Collection<Role> getRoles(){
+    public Collection<Role> getRoles() {
         return roles.elements();
     }
 
-    public void addRole(final Role role){
+    public void addRole(final Role role) {
         roles.insert(role);
     }
 
-    public void addRoles(final List<Role> roles){
-        roles.stream().forEach(r-> this.roles.insert(r));
+    public void addRoles(final List<Role> roles) {
+        roles.stream().forEach(r -> this.roles.insert(r));
     }
 
     public void deleteRoles() {

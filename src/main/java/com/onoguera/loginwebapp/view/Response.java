@@ -19,7 +19,7 @@ public abstract class Response {
     }
 
     public Response(int httpStatus) {
-        this.httpStatus =httpStatus;
+        this.httpStatus = httpStatus;
     }
 
     public byte[] getBytes() throws UnsupportedEncodingException {

@@ -7,8 +7,7 @@ import java.net.HttpURLConnection;
  */
 public final class ResponseBadRequest extends Response {
 
-    public ResponseBadRequest()
-    {
+    public ResponseBadRequest() {
         super(HttpURLConnection.HTTP_BAD_REQUEST, "Bad Request.");
     }
 }

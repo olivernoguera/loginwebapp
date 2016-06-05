@@ -6,6 +6,7 @@ import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,47 +21,48 @@ public class LoaderEntities {
 
     private static final String ROLE_PREFIX = "PAGE_";
 
-    public LoaderEntities(){
+    public LoaderEntities() {
         userService = UserService.getInstance();
     }
 
-    public void loadEntities()
-    {
+    public void loadEntities() {
         UserService userService = UserService.getInstance();
         RoleService roleService = RoleService.getInstance();
         List<User> users = LoaderEntities.createUsers(3);
         userService.bulkCreateUsers(users);
 
-        User adminUser = new User("ADMIN","ADMIN",true);
+        User adminUser = new User("ADMIN", "ADMIN");
 
         List<Role> roles = LoaderEntities.createRoles(3);
         roleService.bulkCreateRoles(roles);
-        userService.addUser(adminUser,roles);
+
+        Role adminRole = new Role("ADMIN", true);
+        userService.addUser(adminUser, Arrays.asList(adminRole));
+        roleService.addRole(adminRole);
 
     }
 
-    private static List<User> createUsers(Integer numUsers){
+    private static List<User> createUsers(Integer numUsers) {
         List<User> users = new ArrayList<>();
 
-        for(int i = 1; i <= numUsers; i++){
+        for (int i = 1; i <= numUsers; i++) {
             User user = new User(USER_PREFIX + i, PASSWORD_PREFIX + i);
-            Role role = new Role(ROLE_PREFIX +i);
+            Role role = new Role(ROLE_PREFIX + i);
             user.addRole(role);
             users.add(user);
         }
         return users;
     }
 
-    private static List<Role> createRoles(Integer numRoles){
+    private static List<Role> createRoles(Integer numRoles) {
         List<Role> roles = new ArrayList<>();
 
-        for(int i = 1; i <= numRoles; i++){
-            Role role = new Role(ROLE_PREFIX +i);
+        for (int i = 1; i <= numRoles; i++) {
+            Role role = new Role(ROLE_PREFIX + i);
             roles.add(role);
         }
         return roles;
     }
-
 
 
 }

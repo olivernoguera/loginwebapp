@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * Created by oliver on 1/06/16.
  */
-public class UserController extends  BaseController implements AuthController {
+public class UserController extends BaseController implements AuthController {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -35,7 +35,7 @@ public class UserController extends  BaseController implements AuthController {
     private static final UserService userService = UserService.getInstance();
 
     private static final Pattern p =
-            Pattern.compile(PATH+"/*(?<"+USER_ID+">[^:\\/\\s]+)?\\/?(?<"+PATH_ROLES+">roles)?\\/?(?<"+ROLE_ID+">[^:\\/\\s]+)?");
+            Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">roles)?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
 
     @Override
     public Pattern getURLPattern() {
@@ -44,23 +44,23 @@ public class UserController extends  BaseController implements AuthController {
 
     @Override
     public List<String> getPathParams() {
-        return  Arrays.asList(USER_ID,PATH_ROLES,ROLE_ID);
+        return Arrays.asList(USER_ID, PATH_ROLES, ROLE_ID);
     }
 
     @Override
     public Response doGet(Request request) {
 
-        Map<String,String> pathParams = request.getPathParams();
+        Map<String, String> pathParams = request.getPathParams();
         Response response;
 
-        if( pathParams == null || pathParams.isEmpty()){
+        if (pathParams == null || pathParams.isEmpty()) {
 
             Collection<UserVO> users = userService.getUsersVO();
-            response = new JsonResponse(HttpURLConnection.HTTP_OK,users);
+            response = new JsonResponse(HttpURLConnection.HTTP_OK, users);
 
         } else {
             String userId = pathParams.get(USER_ID);
-            if( userId == null){
+            if (userId == null) {
                 return new ResponseBadRequest();
             }
 
@@ -69,8 +69,8 @@ public class UserController extends  BaseController implements AuthController {
                 return new ResponseNotFound();
             }
 
-            if (pathParams.get(PATH_ROLES) != null){
-                return this.getRoles(request,user);
+            if (pathParams.get(PATH_ROLES) != null) {
+                return this.getRoles(request, user);
             }
 
             response = new JsonResponse(HttpURLConnection.HTTP_OK, user);
@@ -81,18 +81,16 @@ public class UserController extends  BaseController implements AuthController {
     private Response getRoles(Request request, UserVO user) {
         Response response;
 
-        Map<String,String> pathParams = request.getPathParams();
+        Map<String, String> pathParams = request.getPathParams();
         String roleId = pathParams.get(ROLE_ID);
         Collection<Role> roles = user.getRoles();
-        if( roleId == null){
+        if (roleId == null) {
             response = new JsonResponse(HttpURLConnection.HTTP_OK, roles);
-        }
-        else{
-            Optional<Role> role = roles.stream().filter(r-> r.getId().equals(roleId)).findFirst();
-            if( role.isPresent()){
+        } else {
+            Optional<Role> role = roles.stream().filter(r -> r.getId().equals(roleId)).findFirst();
+            if (role.isPresent()) {
                 response = new JsonResponse(HttpURLConnection.HTTP_OK, role.get());
-            }
-            else{
+            } else {
                 response = new ResponseNotFound();
             }
         }

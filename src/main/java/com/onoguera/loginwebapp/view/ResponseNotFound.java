@@ -8,8 +8,7 @@ import java.net.HttpURLConnection;
  */
 public final class ResponseNotFound extends Response {
 
-    public ResponseNotFound()
-    {
+    public ResponseNotFound() {
         super(HttpURLConnection.HTTP_NOT_FOUND, "Not Found.");
     }
 }

@@ -12,15 +12,16 @@ public class RoleDao extends AbstractDao<Role> {
     /**
      * Protect singleton
      */
-    private RoleDao(){
+    private RoleDao() {
         super();
     }
 
     /**
      * Get Singleton instance
+     *
      * @return
      */
-    public static RoleDao getInstance(){
+    public static RoleDao getInstance() {
         return INSTANCE;
     }
 
