@@ -8,6 +8,7 @@ import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
+import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import org.junit.Assert;
@@ -15,12 +16,14 @@ import org.junit.Test;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 /**
  * Created by olivernoguera on 04/06/2016.
@@ -176,9 +179,153 @@ public class UserControllerTest {
     }
 
     @Test
-    public void doDelete() {
+    public void doDeleteEmptyParams() {
         Request request = new Request(null, null, null);
-        Response response = userController.doPut(request);
-        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
     }
+
+    @Test
+    public void doDeleteWithoutUserParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put("badparam", "badparam");
+        Request request = new Request(null, null, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
+    }
+
+    @Test
+    public void doDeleteUserNotExistParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put("userId", "test");
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseNotFound", response, instanceOf(ResponseNotFound.class));
+    }
+
+    @Test
+    public void doDeleteRolesUserParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        UserService userService = UserService.getInstance();
+
+        //Prepare test cases
+        User userTest = new User("test","test");
+        List<Role> roles = Arrays.asList(new Role("role1"), new Role("role2"));
+        userService.addUser(userTest,roles);
+
+
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        pathParams.put("userId", "test");
+        pathParams.put("roles", "");
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(0));
+        Assert.assertThat("Not delete user", userService.getUsersVO().size(), is(0));
+
+
+    }
+
+    @Test
+    public void doDeleteRolesUserNullPathParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        UserService userService = UserService.getInstance();
+
+        //Prepare test cases
+        User userTest = new User("test","test");
+        List<Role> roles = Arrays.asList(new Role("role1"), new Role("role2"));
+        userService.addUser(userTest,roles);
+
+
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        pathParams.put("userId", "test");
+        pathParams.put("roles", null);
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(0));
+        Assert.assertThat("Not delete user", userService.getUsersVO().size(), is(0));
+
+
+    }
+
+    @Test
+    public void doDeleteRolesPathParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        UserService userService = UserService.getInstance();
+
+        //Prepare test cases
+        User userTest = new User("test","test");
+        List<Role> roles = Arrays.asList(new Role("role1"), new Role("role2"));
+        userService.addUser(userTest,roles);
+
+
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        pathParams.put("userId", "test");
+        pathParams.put("roles", "roles");
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(0));
+        Assert.assertThat("Not delete user", userService.getUsersVO().size(), is(1));
+        //Restore state test
+        userService.removeUser(userTest.getId());
+        Assert.assertThat(" There are 0 users", userService.getUsersVO().size(), is(0));
+
+    }
+
+
+    @Test
+    public void doDeleteExistingRolePathParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        UserService userService = UserService.getInstance();
+
+        //Prepare test cases
+        User userTest = new User("test","test");
+        List<Role> roles = Arrays.asList(new Role("role1"), new Role("role2"));
+        userService.addUser(userTest,roles);
+
+
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        pathParams.put("userId", "test");
+        pathParams.put("roles", "roles");
+        pathParams.put("roleId", "role1");
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
+        Assert.assertThat(" There are 1 roles", userService.getRoles(userTest).size(), is(1));
+        Assert.assertThat("Not delete user", userService.getUsersVO().size(), is(1));
+        //Restore state test
+        userService.removeUser(userTest.getId());
+        Assert.assertThat(" There are 0 users", userService.getUsersVO().size(), is(0));
+
+    }
+
+    @Test
+    public void doDeleteNotExistingRolePathParams() {
+        Map<String, String> pathParams = new HashMap<>();
+        UserService userService = UserService.getInstance();
+
+        //Prepare test cases
+        User userTest = new User("test","test");
+        List<Role> roles = Arrays.asList(new Role("role1"), new Role("role2"));
+        userService.addUser(userTest,roles);
+
+
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        pathParams.put("userId", "test");
+        pathParams.put("roles", "roles");
+        pathParams.put("roleId", "Fakerole");
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doDelete(request);
+        Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
+        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat("Not delete user", userService.getUsersVO().size(), is(1));
+        //Restore state test
+        userService.removeUser(userTest.getId());
+        Assert.assertThat(" There are 0 users", userService.getUsersVO().size(), is(0));
+
+    }
+
+
 }

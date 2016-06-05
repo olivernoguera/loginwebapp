@@ -7,7 +7,9 @@ import com.onoguera.loginwebapp.model.UserVO;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
+import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
+import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.ResponseUnauthorized;
 import com.sun.net.httpserver.Headers;
@@ -130,7 +132,7 @@ public class BaseControllerTest {
         Controller controller = new UserController();
         URI uri = new URI("/users/test");
         Response response = controller.dispatch(uri, null, "DELETE", adminHeaders);
-        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseNotFound.class));
 
     }
 
@@ -138,7 +140,7 @@ public class BaseControllerTest {
     public void doPatchDispatch() throws URISyntaxException {
         Controller controller = new UserController();
         URI uri = new URI("/users/test");
-        Response response = controller.dispatch(uri, null, "PATH", adminHeaders);
+        Response response = controller.dispatch(uri, null, "PATCH", adminHeaders);
         Assert.assertThat(" Response must be mehod not allowed", response, instanceOf(ResponseMethodNotAllowed.class));
 
     }

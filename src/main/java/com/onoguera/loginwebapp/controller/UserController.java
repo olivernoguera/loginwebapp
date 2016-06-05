@@ -1,11 +1,13 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.model.Role;
+import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.model.UserVO;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
+import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 
@@ -118,6 +120,31 @@ public class UserController extends BaseController implements AuthController {
 
     @Override
     public Response doDelete(Request request) {
-        return new ResponseNotImplemented();
+        Map<String, String> pathParams = request.getPathParams();
+        if(pathParams == null ||  pathParams.get(USER_ID) == null) {
+        //Delete all users, but not specify by security badrequest
+            return new  ResponseBadRequest();
+        }
+        String userId = pathParams.get(USER_ID);
+        User user = userService.getUser(userId);
+        if(user == null){
+            return new ResponseNotFound();
+        }
+        String roles = pathParams.get(PATH_ROLES);
+        if( roles != null && !roles.isEmpty()){
+            String roleId = pathParams.get(ROLE_ID);
+            if( roleId == null || roleId.isEmpty()){
+                //delete all roles of user
+                user.deleteRoles();
+            }else{
+                user.removeRole(roleId);
+            }
+            userService.updateUser(user);
+        }else{
+            userService.removeUser(userId);
+        }
+
+        Response response = new ResponseEmpty();
+        return response;
     }
 }

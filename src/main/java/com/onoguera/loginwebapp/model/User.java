@@ -44,4 +44,8 @@ public class User extends Entity<User> {
     public void deleteRoles() {
         roles.deleteAll();
     }
+
+    public void removeRole(final String roleId) {
+        roles.delete(roleId);
+    }
 }
