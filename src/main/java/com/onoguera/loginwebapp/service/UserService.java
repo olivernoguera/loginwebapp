@@ -1,6 +1,7 @@
 package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.dao.UserDao;
+import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.model.UserVO;
 
@@ -24,7 +25,8 @@ public class UserService implements  Service
         return INSTANCE;
     }
 
-    public void addUser(final User user){
+    public void addUser(final User user, final Role role){
+        user.addRole(role);
         this.userDao.insert(user);
     }
 
@@ -37,16 +39,20 @@ public class UserService implements  Service
         if( user == null){
             return null;
         }
-        return new UserVO(user.getId());
+        return new UserVO(user.getId(),user.getRoles());
     }
 
     public List<UserVO> getUsersVO(){
         return this.userDao.elements().stream().map(u->
-                new UserVO(u.getId())).collect(Collectors.toList());
+                new UserVO(u.getId(),u.getRoles())).collect(Collectors.toList());
     }
 
     public void removeUser(final String id){
-        this.userDao.delete(id);
+        User user = userDao.findOne(id);
+        if( user != null){
+            user.deleteRoles();
+            this.userDao.delete(id);
+        }
     }
 
     public void updateUser(final User user){

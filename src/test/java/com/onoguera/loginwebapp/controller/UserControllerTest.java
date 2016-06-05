@@ -1,6 +1,7 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.google.gson.Gson;
+import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.model.UserVO;
 import com.onoguera.loginwebapp.service.UserService;
@@ -105,9 +106,9 @@ public class UserControllerTest {
 
         UserService userService = UserService.getInstance();
         User user = new User("test","test");
-        userService.addUser(user);
+        userService.addUser(user,new Role("test"));
 
-        UserVO userVO = new UserVO(user.getId());
+        UserVO userVO = new UserVO(user.getId(),user.getRoles());
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
 
@@ -140,13 +141,13 @@ public class UserControllerTest {
         UserService userService = UserService.getInstance();
 
         User user = new User("test","test");
-        userService.addUser(user);
+        userService.addUser(user,new Role("test"));
         User user2 = new User("test2","test2");
-        userService.addUser(user2);
+        userService.addUser(user2,new Role("test2"));
 
         List<UserVO> collectionUser = new ArrayList<>();
-        collectionUser.add(new UserVO(user2.getId()));
-        collectionUser.add(new UserVO(user.getId()));
+        collectionUser.add(new UserVO(user2.getId(),user2.getRoles()));
+        collectionUser.add(new UserVO(user.getId(),user.getRoles()));
 
         Request request = new Request(null, null, null);
         Response response = userController.doGet(request);

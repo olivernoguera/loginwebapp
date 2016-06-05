@@ -1,6 +1,7 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.google.gson.Gson;
+import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.model.UserVO;
 import com.onoguera.loginwebapp.service.UserService;
@@ -35,13 +36,14 @@ public class BaseControllerTest {
     private static final String ADMIN_AUTH = "Basic QURNSU46QURNSU4=";
     private static Headers adminHeaders;
     private static final User adminUser = new User("ADMIN","ADMIN");
+    private static final Role adminRole = new Role("ADMIN",true);
 
     @Before
     public void before(){
         adminHeaders = new Headers();
         adminHeaders.put("Authorization", Arrays.asList(ADMIN_AUTH));
         UserService userService = UserService.getInstance();
-        userService.addUser(adminUser);
+        userService.addUser(adminUser, adminRole);
     }
 
     @After
@@ -58,7 +60,7 @@ public class BaseControllerTest {
         UserService userService = UserService.getInstance();
 
         User user = new User("test","test");
-        userService.addUser(user);
+        userService.addUser(user, new Role("test"));
         userService.removeUser(adminUser.getId());
 
         Map<String, String> pathParams = new HashMap<>();
@@ -70,7 +72,7 @@ public class BaseControllerTest {
         headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
         Response response = controller.dispatch(uri,null,"GET", headers);
 
-        UserVO expectedUser = new UserVO(user.getId());
+        UserVO expectedUser = new UserVO(user.getId(),user.getRoles());
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(ResponseUnauthorized.class));
         //Restore inital test state
@@ -85,7 +87,7 @@ public class BaseControllerTest {
         UserService userService = UserService.getInstance();
 
         User user = new User("test","test");
-        userService.addUser(user);
+        userService.addUser(user,new Role("test"));
 
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
@@ -96,7 +98,7 @@ public class BaseControllerTest {
         headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
         Response response = controller.dispatch(uri,null,"GET", headers);
 
-        UserVO expectedUser = new UserVO(user.getId());
+        UserVO expectedUser = new UserVO(user.getId(),user.getRoles());
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be empty" , response.getOutput(), is(GSON.toJson(expectedUser)));

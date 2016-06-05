@@ -1,5 +1,6 @@
 package com.onoguera.loginwebapp;
 
+import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
 import com.onoguera.loginwebapp.service.UserService;
 
@@ -16,7 +17,7 @@ public class LoaderEntities {
     private static final String USER_PREFIX = "USER_";
     private static final String PASSWORD_PREFIX = "PASS_";
 
-
+    private static final String ROLE_PREFIX = "PAGE_";
 
     public LoaderEntities(){
         userService = UserService.getInstance();
@@ -28,8 +29,9 @@ public class LoaderEntities {
         List<User> users = LoaderEntities.createUsers(3);
         userService.bulkCreateUsers(users);
 
-        User admin = new User("ADMIN","ADMIN");
-        userService.addUser(admin);
+        User adminUser = new User("ADMIN","ADMIN");
+        Role adminRole = new Role("ADMIN",true);
+        userService.addUser(adminUser,adminRole);
 
     }
 
@@ -38,6 +40,8 @@ public class LoaderEntities {
 
         for(int i = 1; i <= numUsers; i++){
             User user = new User(USER_PREFIX + i, PASSWORD_PREFIX + i);
+            Role role = new Role(ROLE_PREFIX +i);
+            user.addRole(role);
             users.add(user);
         }
         return users;
