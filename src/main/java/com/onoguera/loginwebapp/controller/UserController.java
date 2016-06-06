@@ -1,7 +1,10 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.onoguera.loginwebapp.model.Role;
+import com.onoguera.loginwebapp.model.RoleVO;
 import com.onoguera.loginwebapp.model.User;
+import com.onoguera.loginwebapp.model.UserRolesVO;
 import com.onoguera.loginwebapp.model.UserVO;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
@@ -10,7 +13,9 @@ import com.onoguera.loginwebapp.view.ResponseBadRequest;
 import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
+import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,46 +106,93 @@ public class UserController extends BaseController implements AuthController {
 
     @Override
     public Response doPost(Request request) {
-        return new ResponseNotImplemented();
+        Map<String, String> pathParams = request.getPathParams();
+        if (pathParams == null) {
+            return new ResponseBadRequest();
+        }
+        String userId = pathParams.get(USER_ID);
+        String roles = pathParams.get(PATH_ROLES);
+        String roleId = pathParams.get(ROLE_ID);
+        if (userId != null && roles == null) {
+            //Post must not be path variable of users
+            //To create only one user use put
+            return new ResponseBadRequest();
+        }
+        if (userId != null && roleId != null) {
+            //Post must not be path variable of users
+            //To create only one role of user use put
+            return new ResponseBadRequest();
+        }
+
+        JsonRequest jsonRequest;
+        Object object;
+        if (request instanceof JsonRequest) {
+            jsonRequest = (JsonRequest) request;
+            if (userId != null) {
+                User user = userService.getUser(userId);
+                if( user == null){
+                    return new ResponseNotFound();
+                }
+                if (roles != null) {
+                    //only update roles
+                    List<RoleVO> rolesBody;
+                    try {
+                        rolesBody = (List<RoleVO>) jsonRequest.getBodyObject(new TypeReference<List<RoleVO>>() {});
+                        user.addVORoles(rolesBody);
+                        userService.updateUser(user);
+                        return  new JsonResponse(HttpURLConnection.HTTP_CREATED, rolesBody);
+                    } catch (IOException io) {
+                        return new ResponseBadRequest();
+                    }
+
+                } else {
+                    return new ResponseNotFound();
+                }
+            } else {
+                List<UserRolesVO> usersBody;
+
+                try {
+                    usersBody = (List<UserRolesVO>) jsonRequest.getBodyObject(new TypeReference<List<UserRolesVO>>() {});
+                    userService.bulkCreateUsers(usersBody);
+                    return new JsonResponse(HttpURLConnection.HTTP_CREATED, usersBody);
+                } catch (IOException e) {
+                    return new ResponseBadRequest();
+                }
+            }
+        } else {
+            return new ResponseUnsupportedMediaType();
+        }
+
     }
 
     @Override
     public Response doPut(Request request) {
-
-        /*
-        JsonRequest jsonRequest;
-
-        if( request instanceof  JsonRequest){
-            jsonRequest = (JsonRequest)request;
-        }else{
-            return new ResponseUnsupportedMediaType();
-        }*/
         return new ResponseNotImplemented();
     }
 
     @Override
     public Response doDelete(Request request) {
         Map<String, String> pathParams = request.getPathParams();
-        if(pathParams == null ||  pathParams.get(USER_ID) == null) {
-        //Delete all users, but not specify by security badrequest
-            return new  ResponseBadRequest();
+        if (pathParams == null || pathParams.get(USER_ID) == null) {
+            //Delete all users, but not specify by security badrequest
+            return new ResponseBadRequest();
         }
         String userId = pathParams.get(USER_ID);
         User user = userService.getUser(userId);
-        if(user == null){
+        if (user == null) {
             return new ResponseNotFound();
         }
         String roles = pathParams.get(PATH_ROLES);
-        if( roles != null && !roles.isEmpty()){
+        if (roles != null && !roles.isEmpty()) {
             String roleId = pathParams.get(ROLE_ID);
-            if( roleId == null || roleId.isEmpty()){
+            if (roleId == null || roleId.isEmpty()) {
                 //delete all roles of user
                 user.deleteRoles();
-            }else{
+            } else {
                 user.removeRole(roleId);
             }
             userService.updateUser(user);
-        }else{
+        } else {
             userService.removeUser(userId);
         }
 

@@ -30,7 +30,7 @@ public class DispatchHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange httpExchange) {
+    public void handle(HttpExchange httpExchange) throws IOException {
         Response response;
 
         try {
@@ -39,9 +39,11 @@ public class DispatchHandler implements HttpHandler {
         } catch (RuntimeException e) {
             LOGGER.error("An error occurred when dispatching request.", e);
             response = new ResponseInternalServerError();
+            sendResponse(httpExchange, response);
         } catch (IOException e) {
             LOGGER.error("An error occurred when dispatching request.", e);
             response = new ResponseInternalServerError();
+            sendResponse(httpExchange, response);
         }
 
     }

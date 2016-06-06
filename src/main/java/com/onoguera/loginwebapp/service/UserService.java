@@ -3,6 +3,7 @@ package com.onoguera.loginwebapp.service;
 import com.onoguera.loginwebapp.dao.UserDao;
 import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.model.User;
+import com.onoguera.loginwebapp.model.UserRolesVO;
 import com.onoguera.loginwebapp.model.UserVO;
 
 import java.util.ArrayList;
@@ -91,5 +92,11 @@ public class UserService implements Service {
         }
         return roles;
 
+    }
+
+    public void bulkCreateUsers(List<UserRolesVO> usersRolesVO) {
+        List<User> users = usersRolesVO.stream().map( u-> new User(u.getUsername(),u.getPassword(),
+                u.getRoles().stream().map(roleVO -> new Role(roleVO.getRole())).collect(Collectors.toList()))).collect(Collectors.toList());
+        this.bulkCreateUsers(users);
     }
 }

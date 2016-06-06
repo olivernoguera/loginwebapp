@@ -2,10 +2,10 @@ package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.model.Role;
 import com.onoguera.loginwebapp.service.RoleService;
-import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
+import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 

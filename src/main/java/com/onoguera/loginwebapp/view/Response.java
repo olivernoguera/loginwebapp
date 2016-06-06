@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
  */
 public abstract class Response {
 
-    protected final int httpStatus;
+    protected int httpStatus;
     protected String output;
     protected String contentType = "text/plain; charset=UTF-8";
 
@@ -26,6 +26,10 @@ public abstract class Response {
         return output.getBytes(Charset.defaultCharset());
     }
 
+    public void setHttpStatus(int httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
     public String getOutput() {
         return output;
     }
@@ -37,6 +41,8 @@ public abstract class Response {
     public int getHttpStatus() {
         return httpStatus;
     }
+
+
 
     public String getContentType() {
         return contentType;

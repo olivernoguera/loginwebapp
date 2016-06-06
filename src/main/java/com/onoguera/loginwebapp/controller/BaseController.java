@@ -205,23 +205,32 @@ public abstract class BaseController implements Controller {
     }
 
 
-    private String parseFirstRequestBody(InputStream requestBody) throws IOException {
+
+    public String parseFirstRequestBody(InputStream requestBody) throws IOException {
 
         if (requestBody == null) {
             return null;
         }
 
-        String requestRawBody = EMPTY_STRING;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(requestBody))) {
-            requestRawBody += reader.readLine();
+        InputStreamReader isr =  new InputStreamReader(requestBody,Charset.defaultCharset());
+        BufferedReader br = new BufferedReader(isr);
+        int b;
+        StringBuilder buf = new StringBuilder();
+        while ((b = br.read()) != -1) {
+            buf.append((char) b);
         }
 
-        if (requestRawBody.equals(EMPTY_STRING)) {
+        br.close();
+        isr.close();
+
+        if (buf.toString().isEmpty()) {
             return null;
         }
 
-        return requestRawBody;
+        return buf.toString();
+
     }
+
 
     /**
      * @param authorizations

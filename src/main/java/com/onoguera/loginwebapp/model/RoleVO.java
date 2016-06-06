@@ -6,6 +6,9 @@ package com.onoguera.loginwebapp.model;
 public class RoleVO {
     private String role;
 
+    public RoleVO(){
+
+    }
     public RoleVO(String role) {
         this.role = role;
     }
