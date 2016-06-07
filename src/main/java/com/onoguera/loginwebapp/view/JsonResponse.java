@@ -2,8 +2,6 @@ package com.onoguera.loginwebapp.view;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +13,6 @@ import java.net.HttpURLConnection;
 public class JsonResponse extends Response {
 
     protected final static String CONTENT_TYPE = "application/json; charset=UTF-8";
-    private static final Gson GSON = new GsonBuilder().create();
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonResponse.class);

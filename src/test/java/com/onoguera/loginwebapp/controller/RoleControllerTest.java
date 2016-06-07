@@ -1,7 +1,10 @@
 package com.onoguera.loginwebapp.controller;
 
-import com.google.gson.Gson;
-import com.onoguera.loginwebapp.model.Role;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onoguera.loginwebapp.entities.Role;
+import com.onoguera.loginwebapp.model.ReadRole;
+import com.onoguera.loginwebapp.service.RoleConverter;
 import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -35,9 +39,10 @@ public class RoleControllerTest {
     private final static String BAD_PATH_2 = "badpath";
 
     private static final String CORRECT_PARAM = "roleId";
-    private static final Gson GSON = new Gson();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RoleController roleController = new RoleController();
+    private RoleConverter roleConverter = new RoleConverter();
 
     @Test
     public void correctFiltersTest() {
@@ -101,7 +106,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void doGeWithResource() {
+    public void doGeWithResource() throws JsonProcessingException {
 
         RoleService roleService = RoleService.getInstance();
         Role role = new Role("test");
@@ -113,8 +118,10 @@ public class RoleControllerTest {
         Request request = new Request(null, pathParams, null);
         Response response = roleController.doGet(request);
 
+        ReadRole expectedRole = roleConverter.entityToReadDTO(role);
+
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
-        Assert.assertThat(" Response must be empty", response.getOutput(), is(GSON.toJson(role)));
+        Assert.assertThat(" Response must be empty", response.getOutput(), is(MAPPER.writeValueAsString(expectedRole)));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
 
         //Restore inital test state
@@ -134,7 +141,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void doGeWithCollectionResource() {
+    public void doGeWithCollectionResource() throws JsonProcessingException {
 
         RoleService roleService = RoleService.getInstance();
 
@@ -151,8 +158,12 @@ public class RoleControllerTest {
         Request request = new Request(null, null, null);
         Response response = roleController.doGet(request);
 
+
+        List<ReadRole> expectedRoles =
+                collectionRole.stream().map(r-> roleConverter.entityToReadDTO(r)).collect(Collectors.toList());
+
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
-        Assert.assertThat(" Response must be empty", response.getOutput(), is(GSON.toJson(collectionRole)));
+        Assert.assertThat(" Response must be", response.getOutput(), is(MAPPER.writeValueAsString(expectedRoles)));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
 
         //Restore inital test state
@@ -170,10 +181,11 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void doPut() {
+    public void doPut() throws JsonProcessingException {
 
         Role role = new Role("test");
-        String output = GSON.toJson(role);
+        String output = MAPPER.writeValueAsString(roleConverter.entityToWriteDTO(role));
+
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", role.getId());
 
@@ -216,10 +228,10 @@ public class RoleControllerTest {
 
 
     @Test
-    public void doPutNullBody() {
+    public void doPutNullBody() throws JsonProcessingException {
 
         Role role = new Role("test");
-        String output = GSON.toJson(role);
+        String output = MAPPER.writeValueAsString(roleConverter.entityToWriteDTO(role));
 
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", role.getId());

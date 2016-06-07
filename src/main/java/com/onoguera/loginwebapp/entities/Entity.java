@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.model;
+package com.onoguera.loginwebapp.entities;
 
 /**
  * Created by olivernoguera on 04/06/2016.

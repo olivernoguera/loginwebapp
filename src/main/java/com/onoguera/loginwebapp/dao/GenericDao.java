@@ -1,6 +1,7 @@
 package com.onoguera.loginwebapp.dao;
 
-import com.onoguera.loginwebapp.model.Entity;
+
+import com.onoguera.loginwebapp.entities.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,13 +12,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by olivernoguera on 04/06/2016.
  */
-public class AbstractDao<T extends Entity> {
+public abstract class GenericDao<T extends Entity> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericDao.class);
 
     private final Map<String, T> entitySet;
 
-    public AbstractDao() {
+    public GenericDao() {
         this.entitySet = new ConcurrentHashMap<>();
     }
 

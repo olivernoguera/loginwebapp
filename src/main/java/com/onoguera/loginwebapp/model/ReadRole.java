@@ -3,13 +3,14 @@ package com.onoguera.loginwebapp.model;
 /**
  * Created by olivernoguera on 05/06/2016.
  */
-public class RoleVO {
+public class ReadRole implements ReadDTO {
+
     private String role;
 
-    public RoleVO(){
+    public ReadRole(){
 
     }
-    public RoleVO(String role) {
+    public ReadRole(String role) {
         this.role = role;
     }
 

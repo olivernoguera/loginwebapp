@@ -1,11 +1,11 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.onoguera.loginwebapp.model.Role;
-import com.onoguera.loginwebapp.model.RoleVO;
-import com.onoguera.loginwebapp.model.User;
-import com.onoguera.loginwebapp.model.UserRolesVO;
-import com.onoguera.loginwebapp.model.UserVO;
+import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.model.ReadRole;
+import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
+import com.onoguera.loginwebapp.model.WriteUser;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
@@ -62,7 +62,7 @@ public class UserController extends BaseController implements AuthController {
 
         if (pathParams == null || pathParams.isEmpty()) {
 
-            Collection<UserVO> users = userService.getUsersVO();
+            Collection<ReadUser> users = userService.getReadUsers();
             response = new JsonResponse(HttpURLConnection.HTTP_OK, users);
 
         } else {
@@ -71,7 +71,7 @@ public class UserController extends BaseController implements AuthController {
                 return new ResponseBadRequest();
             }
 
-            UserVO user = userService.getUserVO(userId);
+            ReadUser user = userService.getReadUser(userId);
             if (user == null) {
                 return new ResponseNotFound();
             }
@@ -85,18 +85,20 @@ public class UserController extends BaseController implements AuthController {
         return response;
     }
 
-    private Response getRoles(Request request, UserVO user) {
-        Response response;
+    private Response getRoles(Request request, ReadUser user) {
 
+        Response response;
         Map<String, String> pathParams = request.getPathParams();
+
         String roleId = pathParams.get(ROLE_ID);
-        Collection<Role> roles = user.getRoles();
+
         if (roleId == null) {
-            response = new JsonResponse(HttpURLConnection.HTTP_OK, roles);
+            response = new JsonResponse(HttpURLConnection.HTTP_OK, user.getRoles());
         } else {
-            Optional<Role> role = roles.stream().filter(r -> r.getId().equals(roleId)).findFirst();
-            if (role.isPresent()) {
-                response = new JsonResponse(HttpURLConnection.HTTP_OK, role.get());
+
+            Optional<ReadRole> readRole =  user.getRoles().stream().filter(r->r.getRole().equals(roleId)).findFirst();
+            if (readRole.isPresent()) {
+                response = new JsonResponse(HttpURLConnection.HTTP_OK, readRole.get());
             } else {
                 response = new ResponseNotFound();
             }
@@ -115,11 +117,13 @@ public class UserController extends BaseController implements AuthController {
         String roleId = pathParams.get(ROLE_ID);
         if (userId != null && roles == null) {
             //Post must not be path variable of users
+            //Not generate id's on this api
             //To create only one user use put
             return new ResponseBadRequest();
         }
         if (userId != null && roleId != null) {
             //Post must not be path variable of users
+            //Not generate id's on this api
             //To create only one role of user use put
             return new ResponseBadRequest();
         }
@@ -129,17 +133,17 @@ public class UserController extends BaseController implements AuthController {
         if (request instanceof JsonRequest) {
             jsonRequest = (JsonRequest) request;
             if (userId != null) {
-                User user = userService.getUser(userId);
-                if( user == null){
+                WriteUser writeUser = userService.getWriteUser(userId);
+                if( writeUser == null){
                     return new ResponseNotFound();
                 }
                 if (roles != null) {
                     //only update roles
-                    List<RoleVO> rolesBody;
+                    List<WriteRole> rolesBody;
                     try {
-                        rolesBody = (List<RoleVO>) jsonRequest.getBodyObject(new TypeReference<List<RoleVO>>() {});
-                        user.addVORoles(rolesBody);
-                        userService.updateUser(user);
+                        rolesBody = (List<WriteRole>) jsonRequest.getBodyObject(new TypeReference<List<WriteRole>>() {});
+                        writeUser.setRoles(rolesBody);
+                        userService.updateWriteUser(writeUser);
                         return  new JsonResponse(HttpURLConnection.HTTP_CREATED, rolesBody);
                     } catch (IOException io) {
                         return new ResponseBadRequest();
@@ -149,11 +153,11 @@ public class UserController extends BaseController implements AuthController {
                     return new ResponseNotFound();
                 }
             } else {
-                List<UserRolesVO> usersBody;
+                List<WriteUser> usersBody;
 
                 try {
-                    usersBody = (List<UserRolesVO>) jsonRequest.getBodyObject(new TypeReference<List<UserRolesVO>>() {});
-                    userService.bulkCreateUsers(usersBody);
+                    usersBody = (List<WriteUser>) jsonRequest.getBodyObject(new TypeReference<List<WriteUser>>() {});
+                    userService.createWriteUsers(usersBody);
                     return new JsonResponse(HttpURLConnection.HTTP_CREATED, usersBody);
                 } catch (IOException e) {
                     return new ResponseBadRequest();
@@ -177,17 +181,22 @@ public class UserController extends BaseController implements AuthController {
             //Delete all users, but not specify by security badrequest
             return new ResponseBadRequest();
         }
+
         String userId = pathParams.get(USER_ID);
         User user = userService.getUser(userId);
+
         if (user == null) {
             return new ResponseNotFound();
         }
+
         String roles = pathParams.get(PATH_ROLES);
+
         if (roles != null && !roles.isEmpty()) {
+
             String roleId = pathParams.get(ROLE_ID);
+
             if (roleId == null || roleId.isEmpty()) {
-                //delete all roles of user
-                user.deleteRoles();
+                user.removeRoles();
             } else {
                 user.removeRole(roleId);
             }

@@ -1,7 +1,8 @@
 package com.onoguera.loginwebapp.controller;
 
-import com.onoguera.loginwebapp.model.Role;
-import com.onoguera.loginwebapp.model.User;
+
+import com.onoguera.loginwebapp.entities.Role;
+import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;

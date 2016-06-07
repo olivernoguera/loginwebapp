@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.model;
+package com.onoguera.loginwebapp.entities;
 
 /**
  * Created by oliver on 1/06/16.
@@ -9,6 +9,7 @@ public class Role extends Entity<Role> {
 
     public Role(String id) {
         super(id);
+        this.writeAccess = false;
     }
 
     public Role(String id, boolean writeAccess) {
@@ -19,4 +20,5 @@ public class Role extends Entity<Role> {
     public boolean isWriteAccess() {
         return writeAccess;
     }
+
 }

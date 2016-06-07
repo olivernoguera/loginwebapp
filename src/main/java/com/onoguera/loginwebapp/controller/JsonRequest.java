@@ -1,15 +1,9 @@
 package com.onoguera.loginwebapp.controller;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -17,7 +11,6 @@ import java.util.Map;
  */
 public class JsonRequest extends Request {
 
-    private static final Gson GSON = new GsonBuilder().create();
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public JsonRequest(final Map<String, String> queryParams, final Map<String, String> pathParams,

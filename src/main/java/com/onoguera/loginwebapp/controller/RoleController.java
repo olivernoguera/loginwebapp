@@ -1,6 +1,7 @@
 package com.onoguera.loginwebapp.controller;
 
-import com.onoguera.loginwebapp.model.Role;
+import com.onoguera.loginwebapp.model.ReadRole;
+import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
@@ -49,7 +50,7 @@ public class RoleController extends BaseController implements AuthController {
 
         if (pathParams == null || pathParams.isEmpty()) {
 
-            Collection<Role> roles = roleService.getRoles();
+            Collection<ReadRole> roles = roleService.getReadRoles();
             response = new JsonResponse(HttpURLConnection.HTTP_OK, roles);
 
         } else {
@@ -58,7 +59,7 @@ public class RoleController extends BaseController implements AuthController {
             if (roleId == null) {
                 return new ResponseBadRequest();
             }
-            Role role = roleService.getRole(roleId);
+            ReadRole role = roleService.getReadRole(roleId);
             if (role == null) {
                 return new ResponseNotFound();
             }
@@ -83,8 +84,8 @@ public class RoleController extends BaseController implements AuthController {
         if (roleId == null || roleId.isEmpty()) {
             return new ResponseBadRequest();
         }
-        Role role = new Role(roleId);
-        roleService.addRole(role);
+        WriteRole role = new WriteRole(roleId);
+        roleService.addWriteRole(role);
         Response response = new JsonResponse(HttpURLConnection.HTTP_CREATED, role);
         return response;
     }
