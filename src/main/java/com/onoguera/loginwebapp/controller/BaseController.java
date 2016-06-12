@@ -13,6 +13,7 @@ import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,6 @@ public abstract class BaseController implements Controller {
     private final static String METHOD_PUT = "PUT";
     private final static String METHOD_DELETE = "DELETE";
 
-    private static final String EMPTY_STRING = "";
 
     public abstract Pattern getURLPattern();
 
@@ -79,17 +79,30 @@ public abstract class BaseController implements Controller {
             return new ResponseMethodNotAllowed();
         }
 
+        ContentType contentType;
+
+        try {
+            contentType = RequestUtils.getContentType(headers);
+        }  catch (IllegalArgumentException i) {
+            LOGGER.warn("Bad request.", i);
+            return new ResponseBadRequest();
+        }
+
+
+
         Request request;
         try {
-            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody, headers);
+            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody, headers,contentType);
         } catch (IOException io) {
             LOGGER.warn("Bad request.", io);
             return new ResponseBadRequest();
         }
 
+
+
         if (this instanceof AuthController) {
             List<String> authorizations = headers.get("Authorization");
-            List<Role> roles = this.getRoles(authorizations);
+            List<Role> roles = this.getRoles(authorizations,contentType.getCharset());
             if (roles.isEmpty()) {
                 return new ResponseUnauthorized();
             }
@@ -158,105 +171,35 @@ public abstract class BaseController implements Controller {
         return exists.isPresent();
     }
 
-    private Request getRequest(final String query, final String path, InputStream requestBody, Headers headers) throws IOException {
+    private Request getRequest(final String query, final String path,
+                               InputStream requestBody, Headers headers,
+                               ContentType contentType) throws IOException {
 
-        Map<String, String> queryParams = this.parseQueryParams(query);
+
+        Map<String, String> queryParams = RequestUtils.parseQueryParams(query, contentType.getCharset());
         Map<String, String> pathParams =
-                this.parsePathParams(path, this.getPathParams(), this.getURLPattern());
-        String rawBody = this.parseFirstRequestBody(requestBody);
+                RequestUtils.parsePathParams(path, this.getPathParams(), this.getURLPattern());
+        String rawBody = RequestUtils.parseFirstRequestBody(requestBody, contentType.getCharset());
         if (isApplicationJson(headers)) {
             return new JsonRequest(queryParams, pathParams, rawBody);
         }
         return new Request(queryParams, pathParams, rawBody);
     }
 
-    public static Map<String, String> parsePathParams(final String path,
-                                                      List<String> params,
-                                                      Pattern pattern) {
-        Map<String, String> result = new HashMap<>();
-        if (params != null && !params.isEmpty()) {
-            Matcher m = pattern.matcher(path);
-            if (m.find()) {
-                for (String param : params) {
-                    String value = m.group(param);
-                    if (value != null && !value.trim().equals(EMPTY_STRING)) {
-                        result.put(param, value);
-                    }
-                }
-            }
-
-        }
-        return result;
-    }
-
-    /**
-     * @param query uri
-     * @return
-     */
-    private Map<String, String> parseQueryParams(final String query) {
-        Map<String, String> queryParams = new HashMap<>();
-        if (query != null) {
-            //TODO examinate header to change charset enconding
-            List<NameValuePair> paramsPair = URLEncodedUtils.parse(query, Charset.defaultCharset());
-            paramsPair.forEach(pair -> {
-                queryParams.put(pair.getName(), pair.getValue());
-            });
-        }
-        return queryParams;
-    }
 
 
 
-    public String parseFirstRequestBody(InputStream requestBody) throws IOException {
-
-        if (requestBody == null) {
-            return null;
-        }
-
-        InputStreamReader isr =  new InputStreamReader(requestBody,Charset.defaultCharset());
-        BufferedReader br = new BufferedReader(isr);
-        int b;
-        StringBuilder buf = new StringBuilder();
-        while ((b = br.read()) != -1) {
-            buf.append((char) b);
-        }
-
-        br.close();
-        isr.close();
-
-        if (buf.toString().isEmpty()) {
-            return null;
-        }
-
-        return buf.toString();
-
-    }
 
 
     /**
-     * @param authorizations
-     * @return auth ok
+     * @param headers
+     * @return List of roles with authentication
      */
-    private List<Role> getRoles(List<String> authorizations) {
+    private List<Role> getRoles(List<String> headers,Charset currentCharset) {
         List<Role> roles = new ArrayList<>();
-        if (authorizations == null) {
-            return roles;
-        }
-        for (String auth : authorizations) {
-            if (auth != null && auth.startsWith("Basic")) {
-                // Authorization: Basic base64credentials
-                String base64Credentials = auth.substring("Basic".length()).trim();
-                String credentials = new String(Base64.getDecoder().decode(base64Credentials),
-                        Charset.defaultCharset());
-                // credentials = username:password
-                final String[] values = credentials.split(":", 2);
-                if (values.length < 2) {
-                    continue;
-                }
-                User user = new User(values[0], values[1]);
-                roles.addAll(userService.getRoles(user));
-            }
-        }
+        String[] authorizations  = RequestUtils.getAuthorizationFromHeader(headers, currentCharset);
+        User user = new User(authorizations[0], authorizations[1]);
+        roles.addAll(userService.getRoles(user));
         return roles;
     }
 

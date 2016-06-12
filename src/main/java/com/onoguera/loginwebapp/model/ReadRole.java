@@ -7,9 +7,6 @@ public class ReadRole implements ReadDTO {
 
     private String role;
 
-    public ReadRole(){
-
-    }
     public ReadRole(String role) {
         this.role = role;
     }

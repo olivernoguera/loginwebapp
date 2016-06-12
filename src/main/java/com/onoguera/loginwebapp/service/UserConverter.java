@@ -31,11 +31,6 @@ public class UserConverter implements Converter<ReadUser,WriteUser,User> {
         return new WriteUser(entity.getId(), entity.getPassword(),writeRoleList);
     }
 
-    //@Override
-    //public User readDTOtoEntity(ReadUser dto) {
-    //    return new ReadUser(dto.getUsername(),entity.getRoles());
-    //}
-
     @Override
     public User writeDTOtoEntity(WriteUser dto) {
         List<Role> entityRoleList =

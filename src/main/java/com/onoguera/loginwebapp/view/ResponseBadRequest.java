@@ -10,4 +10,8 @@ public final class ResponseBadRequest extends Response {
     public ResponseBadRequest() {
         super(HttpURLConnection.HTTP_BAD_REQUEST, "Bad Request.");
     }
+
+    public ResponseBadRequest(String message) {
+        super(HttpURLConnection.HTTP_BAD_REQUEST, "Bad Request."+message);
+    }
 }

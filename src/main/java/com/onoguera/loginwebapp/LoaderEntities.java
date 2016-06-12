@@ -14,15 +14,12 @@ import java.util.List;
  */
 public class LoaderEntities {
 
-    private UserService userService;
 
     private static final String USER_PREFIX = "USER_";
     private static final String PASSWORD_PREFIX = "PASS_";
-
     private static final String ROLE_PREFIX = "PAGE_";
 
     public LoaderEntities() {
-        userService = UserService.getInstance();
     }
 
     public void loadEntities() {
