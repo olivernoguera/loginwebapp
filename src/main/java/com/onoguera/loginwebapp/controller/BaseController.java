@@ -11,25 +11,18 @@ import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
 import com.onoguera.loginwebapp.view.ResponseUnauthorized;
 import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 import com.sun.net.httpserver.Headers;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -42,10 +35,10 @@ public abstract class BaseController implements Controller {
 
     private UserService userService = UserService.getInstance();
 
-    private final static String METHOD_POST = "POST";
-    private final static String METHOD_GET = "GET";
-    private final static String METHOD_PUT = "PUT";
-    private final static String METHOD_DELETE = "DELETE";
+    public final static String METHOD_POST = "POST";
+    public final static String METHOD_GET = "GET";
+    public final static String METHOD_PUT = "PUT";
+    public final static String METHOD_DELETE = "DELETE";
 
 
     public abstract Pattern getURLPattern();
@@ -92,21 +85,20 @@ public abstract class BaseController implements Controller {
 
         Request request;
         try {
-            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody, headers,contentType);
+            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody,contentType);
         } catch (IOException io) {
             LOGGER.warn("Bad request.", io);
             return new ResponseBadRequest();
         }
 
 
-
         if (this instanceof AuthController) {
-            List<String> authorizations = headers.get("Authorization");
-            List<Role> roles = this.getRoles(authorizations,contentType.getCharset());
+
+            List<Role> roles = this.getRoles(headers,contentType.getCharset());
             if (roles.isEmpty()) {
                 return new ResponseUnauthorized();
             }
-            if (!validMediaType(request.getRawBody(), method, headers)) {
+            if (!RequestUtils.validMediaType(request.getRawBody(), method, contentType)) {
                 return new ResponseUnsupportedMediaType();
             }
             if (!method.equals(METHOD_GET)) {
@@ -147,32 +139,10 @@ public abstract class BaseController implements Controller {
         return false;
     }
 
-    private boolean validMediaType(String rawBody, String method, Headers headers) {
-        if (method.equals(METHOD_GET) || method.equals(METHOD_DELETE)) {
-            return true;
-        }
-        if (rawBody == null || rawBody.length() == 0) {
-            return true;
-        }
 
-        if (!this.isApplicationJson(headers)) {
-            return false;
-        }
-        return true;
-    }
-
-    protected boolean isApplicationJson(Headers headers) {
-        List<String> contentTypes = headers.get("Content-type");
-        if (contentTypes == null) {
-            return false;
-        }
-        Optional<String> exists =
-                contentTypes.stream().filter(ct -> ct.equals("application/json")).findFirst();
-        return exists.isPresent();
-    }
 
     private Request getRequest(final String query, final String path,
-                               InputStream requestBody, Headers headers,
+                               InputStream requestBody,
                                ContentType contentType) throws IOException {
 
 
@@ -180,26 +150,24 @@ public abstract class BaseController implements Controller {
         Map<String, String> pathParams =
                 RequestUtils.parsePathParams(path, this.getPathParams(), this.getURLPattern());
         String rawBody = RequestUtils.parseFirstRequestBody(requestBody, contentType.getCharset());
-        if (isApplicationJson(headers)) {
+        if (RequestUtils.isApplicationJson(contentType)) {
             return new JsonRequest(queryParams, pathParams, rawBody);
         }
         return new Request(queryParams, pathParams, rawBody);
     }
 
-
-
-
-
-
     /**
      * @param headers
      * @return List of roles with authentication
      */
-    private List<Role> getRoles(List<String> headers,Charset currentCharset) {
+    private List<Role> getRoles(Headers headers,Charset currentCharset) {
         List<Role> roles = new ArrayList<>();
-        String[] authorizations  = RequestUtils.getAuthorizationFromHeader(headers, currentCharset);
-        User user = new User(authorizations[0], authorizations[1]);
-        roles.addAll(userService.getRoles(user));
+        Authorization authorization = RequestUtils.getAuthorizationFromHeader(headers, currentCharset);
+        if( authorization != null){
+            User user = new User(authorization.getUsername(),authorization.getPassword());
+            roles.addAll(userService.getRoles(user));
+        }
+
         return roles;
     }
 

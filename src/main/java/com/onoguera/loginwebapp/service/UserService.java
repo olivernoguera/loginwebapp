@@ -96,6 +96,11 @@ public class UserService implements Service {
         this.createUsers(users);
     }
 
+    public void removeAllUsers(){
+        this.userDao.deleteAll();
+    }
+
+
 
     public WriteUser getWriteUser(final String userId) {
         User user = this.userDao.findOne(userId);

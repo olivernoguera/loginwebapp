@@ -16,6 +16,9 @@ public class WriteRole implements WriteDTO {
         this.writeAccess = writeAccess;
     }
 
+    public WriteRole() {
+    }
+
     public String getRole() {
         return role;
     }

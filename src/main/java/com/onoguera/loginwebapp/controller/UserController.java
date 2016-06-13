@@ -119,13 +119,13 @@ public class UserController extends BaseController implements AuthController {
             //Post must not be path variable of users
             //Not generate id's on this api
             //To create only one user use put
-            return new ResponseBadRequest();
+            return new ResponseNotImplemented();
         }
         if (userId != null && roleId != null) {
             //Post must not be path variable of users
             //Not generate id's on this api
             //To create only one role of user use put
-            return new ResponseBadRequest();
+            return new ResponseNotImplemented();
         }
 
         JsonRequest jsonRequest;
@@ -157,6 +157,7 @@ public class UserController extends BaseController implements AuthController {
 
                 try {
                     usersBody = (List<WriteUser>) jsonRequest.getBodyObject(new TypeReference<List<WriteUser>>() {});
+                    userService.removeAllUsers();
                     userService.createWriteUsers(usersBody);
                     return new JsonResponse(HttpURLConnection.HTTP_CREATED, usersBody);
                 } catch (IOException e) {

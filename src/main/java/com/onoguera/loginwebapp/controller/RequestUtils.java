@@ -38,8 +38,9 @@ public final  class RequestUtils {
 
     private static final String CREDENTIALS_SEPARATOR = ":";
 
-    private static final String CHARSET_HEADER = "charset:";
+    private static final String AUTH_HEADER = "Authorization";
 
+    private static final String CHARSET_HEADER = "charset:";
 
     private static final String CONTENT_TYPE_SEPARATOR = ";";
 
@@ -51,34 +52,50 @@ public final  class RequestUtils {
 
 
     public static ContentType getContentType(Headers headers){
-
-        ContentType contentType =
-                ContentType.create(ContentType.TEXT_HTML.getMimeType(), Charset.defaultCharset().defaultCharset());
+        ContentType defaultContenType =
+                ContentType.create(ContentType.TEXT_HTML.getMimeType(), Charset.forName("UTF-8"));
 
         if( headers == null){
 
-            return contentType;
+            return defaultContenType;
+        }
+        if( headers.isEmpty()){
+            return defaultContenType;
+        }
+
+        List<String> contentTypes = headers.get(CONTENT_TYPE_HEADER);
+        if(contentTypes == null || contentTypes.size() == 0){
+            return defaultContenType;
         }
 
         String contentTypeString = headers.getFirst(CONTENT_TYPE_HEADER);
+        if( contentTypeString == null){
+            return defaultContenType;
+        }
+
         return ContentType.parse(contentTypeString);
 
     }
 
+
     /**
      * This method search on headers user/pass of basic authentication
      * @param headers of request
-     * @return List of par user/password decrypt
+     * @return Authentication must be null if not exists
      */
-    public static String[] getAuthorizationFromHeader(List<String> headers,Charset charset){
+    public static Authorization getAuthorizationFromHeader(Headers headers,Charset charset){
 
-        String[] authorization = null;
-
+        Authorization authorization = null;
         if (headers == null) {
             return authorization;
         }
 
-        for (String header : headers) {
+        List<String> headersList = headers.get(AUTH_HEADER);
+        if (headersList == null) {
+            return authorization;
+        }
+
+        for (String header : headersList) {
             if (header != null && header.startsWith(BASIC_AUTH_HEADER)) {
                 // Authorization: Basic base64credentials
                 String base64Credentials = header.substring(BASIC_AUTH_HEADER.length()).trim();
@@ -94,8 +111,7 @@ public final  class RequestUtils {
                 if (userPassword != null && userPassword.length != 2) {
                     continue;
                 }
-                authorization = userPassword;
-
+                authorization = new Authorization(userPassword[0],userPassword[1]);
             }
         }
         return authorization;
@@ -142,6 +158,25 @@ public final  class RequestUtils {
 
         return buf.toString();
 
+    }
+
+
+    public static boolean validMediaType(String rawBody, String method, ContentType contentType) {
+        if (method.equals(BaseController.METHOD_GET) || method.equals(BaseController.METHOD_DELETE)) {
+            return true;
+        }
+        if (rawBody == null || rawBody.length() == 0) {
+            return true;
+        }
+
+        if (!isApplicationJson(contentType)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isApplicationJson(ContentType contentType) {
+        return contentType.getMimeType().equals(ContentType.APPLICATION_JSON.getMimeType());
     }
 
 

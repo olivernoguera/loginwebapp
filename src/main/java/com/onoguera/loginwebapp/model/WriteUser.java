@@ -19,6 +19,9 @@ public class WriteUser implements WriteDTO {
         this.roles = roles;
     }
 
+    public WriteUser() {
+    }
+
     public String getUsername() {
         return username;
     }

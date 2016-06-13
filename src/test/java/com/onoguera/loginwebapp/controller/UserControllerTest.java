@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
+import com.onoguera.loginwebapp.model.WriteUser;
 import com.onoguera.loginwebapp.service.UserConverter;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
@@ -13,11 +15,17 @@ import com.onoguera.loginwebapp.view.ResponseBadRequest;
 import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
+import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
+import com.sun.net.httpserver.Headers;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +45,12 @@ public class UserControllerTest {
     private final static String BASE_PATH_WITH_END_SLASH = "/users/";
     private final static String BASE_PATH_WITH_PATH_PARAM_NUMERIC = "/users/515151";
     private final static String BASE_PATH_WITH_PATH_PARAM_STRING = "/users/test";
+
+    private static final String USER_ID = "userId";
+
+    private static final String ROLE_ID = "roleId";
+
+    private static final String PATH_ROLES = "roles";
 
     private final static String BAD_PATH = "users";
     private final static String BAD_PATH_2 = "badpath";
@@ -177,14 +191,114 @@ public class UserControllerTest {
         userService.removeUser(user2.getId());
     }
 
-    //TODO
-    @Ignore
     @Test
-    public void doPost() {
+    public void doPostWithoutParams() {
         Request request = new Request(null, null, null);
+        Response response = userController.doPost(request);
+        Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
+    }
+
+    @Test
+    public void doPostOneUser() {
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID, "test");
+
+        Request request = new Request(null, pathParams, null);
         Response response = userController.doPost(request);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }
+
+    @Test
+    public void doPostOneRoleOfOneboxUser() {
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID, "userTest");
+        pathParams.put(ROLE_ID, "rolesTest");
+
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doPost(request);
+        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+    }
+
+    @Test
+    public void doPostUnsupportedMediaType() {
+        Map<String, String> pathParams = new HashMap<>();
+
+        Request request = new Request(null, pathParams, null);
+        Response response = userController.doPost(request);
+        Assert.assertThat(" Response must be ResponseUnsupportedMediaType", response, instanceOf(ResponseUnsupportedMediaType.class));
+    }
+
+
+    @Test
+    public void doPostUserCollection() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        UserService userService = UserService.getInstance();
+
+        User user = new User("test", "test");
+        user.addRole(new Role("test"));
+        userService.addUser(user);
+        Assert.assertThat("Service  must be only one user", userService.getUsers().size(), is(1));
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+
+        List<WriteUser> users = new ArrayList<>();
+        users.add(userConverter.entityToWriteDTO(userExpected));
+        String rawBody = MAPPER.writeValueAsString(users);
+
+        Map<String, String> pathParams = new HashMap<>();
+        Request request = new JsonRequest(null,pathParams,rawBody);
+        Response response = controller.doPost(request);
+
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be users", response.getOutput(), is(MAPPER.writeValueAsString(users)));
+        Assert.assertThat(" Service  must be only one user", userService.getUsers().size(), is(1));
+        Assert.assertThat(" User save successfull", userService.getUser(userExpected.getId()).getId(), is(userExpected.getId()));
+        Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_CREATED, HttpURLConnection.HTTP_CREATED, is(HttpURLConnection.HTTP_CREATED));
+
+        //Restore inital test state
+        userService.removeUser(userExpected.getId());
+        Assert.assertThat("Service  must be 0 users", userService.getUsers().size(), is(0));
+    }
+
+    @Test
+    public void doPostRoleCollection() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        UserService userService = UserService.getInstance();
+
+        User user = new User("test", "test");
+        user.addRole(new Role("test"));
+        userService.addUser(user);
+        Assert.assertThat("Service  must be only one user", userService.getUsers().size(), is(1));
+
+        List<WriteRole> roles = new ArrayList<>();
+        WriteRole role1 = new WriteRole("role1");
+        WriteRole role2 = new WriteRole("role2");
+        roles.add(role1);
+        roles.add(role2);
+        String rawBody = MAPPER.writeValueAsString(roles);
+
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,user.getId());
+        pathParams.put(PATH_ROLES,"roles");
+
+        Request request = new JsonRequest(null,pathParams,rawBody);
+        Response response = controller.doPost(request);
+
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be roles", response.getOutput(), is(MAPPER.writeValueAsString(roles)));
+        Assert.assertThat(" Service  must be only one user", userService.getUsers().size(), is(1));
+        Assert.assertThat(" Only are one user", userService.getUser(user.getId()).getId(), is(user.getId()));
+        Assert.assertThat(" User save 2 roles successfull", userService.getUser(user.getId()).getRoles().size(), is(2));
+        Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_CREATED, HttpURLConnection.HTTP_CREATED, is(HttpURLConnection.HTTP_CREATED));
+
+        //Restore inital test state
+        userService.removeUser(user.getId());
+        Assert.assertThat("Service  must be 0 users", userService.getUsers().size(), is(0));
+    }
+
 
     @Test
     public void doPut() {

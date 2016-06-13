@@ -1,11 +1,13 @@
 package com.onoguera.loginwebapp.controller;
 
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteUser;
 import com.onoguera.loginwebapp.service.UserConverter;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
@@ -21,11 +23,18 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -119,15 +128,50 @@ public class BaseControllerTest {
         userService.removeUser(user.getId());
     }
 
-    //TODO
-    @Ignore
+
     @Test
-    public void doPostDispatch() throws URISyntaxException {
+    public void doPostDispatch() throws URISyntaxException, IOException {
         Controller controller = new UserController();
-        URI uri = new URI("/users/test");
-        Response response = controller.dispatch(uri, null, "POST", adminHeaders);
-        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+        UserService userService = UserService.getInstance();
+
+        User user = new User("test", "test");
+        user.addRole(new Role("test"));
+        userService.addUser(user);
+
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+
+        List<WriteUser> users = new ArrayList<>();
+        users.add(userConverter.entityToWriteDTO(userExpected));
+        File tmpUsers = new File("users.json");
+        MAPPER.writeValue(tmpUsers,users);
+        InputStream body = new FileInputStream(tmpUsers);
+
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(CORRECT_PARAM, "test");
+
+        URI uri = new URI("/users");
+
+        Headers headers = new Headers();
+        headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
+        headers.put("Content-Type:", Arrays.asList("application/json; charset=utf-8"));
+        Response response = controller.dispatch(uri, body, "POST", headers);
+
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be users", response.getOutput(), is(MAPPER.writeValueAsString(users)));
+        Assert.assertThat("Service  must be only one user", userService.getUsers().size(), is(1));
+        Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_CREATED, HttpURLConnection.HTTP_CREATED, is(HttpURLConnection.HTTP_CREATED));
+
+        //Restore inital test state
+        userService.removeUser(userExpected.getId());
+        Assert.assertThat("Service  must be 0 users", userService.getUsers().size(), is(0));
+
     }
+
+
+
+
 
     @Test
     public void doPutDispatch() throws URISyntaxException {
