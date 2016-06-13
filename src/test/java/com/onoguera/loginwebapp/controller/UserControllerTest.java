@@ -90,8 +90,7 @@ public class UserControllerTest {
 
     @After
     public void after() {
-        UserService userService = UserService.getInstance();
-        userService.removeAllUsers();
+
 
     }
 
