@@ -7,6 +7,7 @@ import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
+import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserConverter;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
@@ -17,6 +18,7 @@ import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 import com.sun.net.httpserver.Headers;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -84,6 +86,13 @@ public class UserControllerTest {
                         BASE_PATH_WITH_PATH_PARAM_STRING,
                 userController.filter(BASE_PATH_WITH_PATH_PARAM_STRING),
                 is(Boolean.TRUE));
+    }
+
+    @After
+    public void after() {
+        UserService userService = UserService.getInstance();
+        userService.removeAllUsers();
+
     }
 
     @Test
@@ -228,6 +237,203 @@ public class UserControllerTest {
         Assert.assertThat(" Response must be ResponseUnsupportedMediaType", response, instanceOf(ResponseUnsupportedMediaType.class));
     }
 
+    @Test
+    public void doPutWithoutParams() {
+        Request request = new Request(null, null, null);
+        Response response = userController.doPut(request);
+        Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
+    }
+
+    @Test
+    public void doPutUnsupportedMediaType() {
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,"test1");
+        Request request = new Request(null, pathParams, null);
+
+        Response response = userController.doPut(request);
+        Assert.assertThat(" Response must be ResponseUnsupportedMediaType", response, instanceOf(ResponseUnsupportedMediaType.class));
+    }
+
+    @Test
+    public void doPutUserCollection() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+
+        List<WriteUser> users = new ArrayList<>();
+        users.add(userConverter.entityToWriteDTO(userExpected));
+        String rawBody = MAPPER.writeValueAsString(users);
+
+        Map<String, String> pathParams = new HashMap<>();
+        Request request = new JsonRequest(null,pathParams,rawBody);
+        Response response = controller.doPut(request);
+
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(ResponseNotImplemented.class));
+
+
+    }
+
+
+    @Test
+    public void doPutRoleCollection() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+
+        List<WriteUser> users = new ArrayList<>();
+        users.add(userConverter.entityToWriteDTO(userExpected));
+        String rawBody = MAPPER.writeValueAsString(users);
+
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,userExpected.getId());
+        pathParams.put(PATH_ROLES, "roles");
+
+        Request request = new JsonRequest(null,pathParams,rawBody);
+        Response response = controller.doPut(request);
+        Assert.assertThat(" Response must be jsonResponse", response, instanceOf(ResponseNotImplemented.class));
+
+    }
+
+
+    @Test
+    public void doPutOneRoleOfUserRoleNotExists() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+        UserService.getInstance().addUser(userExpected);
+
+        WriteRole writeRole = new WriteRole("roleTest1");
+
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,userExpected.getId());
+        pathParams.put(PATH_ROLES, "roles");
+        pathParams.put(ROLE_ID,writeRole.getRole());
+
+        Request request = new Request(null,pathParams,null);
+        Response response = controller.doPut(request);
+        Assert.assertThat(" Response must be ResponseNotFound", response, instanceOf(ResponseNotFound.class));
+
+        UserService.getInstance().removeUser(userExpected.getId());
+
+    }
+
+    @Test
+    public void doPutOneRoleOfUserUserNotExists() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+        WriteRole writeRole = new WriteRole("roleTest1");
+
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,userExpected.getId());
+        pathParams.put(PATH_ROLES, "roles");
+        pathParams.put(ROLE_ID,writeRole.getRole());
+
+        Request request = new Request(null,pathParams,null);
+        Response response = controller.doPut(request);
+        Assert.assertThat(" Response must be ResponseNotFound", response, instanceOf(ResponseNotFound.class));
+
+    }
+
+
+
+    @Test
+    public void doPutOneRoleOfUserRoleExists() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        RoleService.getInstance().addRole(new Role("roleTest1"));
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+        UserService.getInstance().addUser(userExpected);
+
+        WriteRole writeRole = new WriteRole("roleTest1");
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,userExpected.getId());
+        pathParams.put(PATH_ROLES, "roles");
+        pathParams.put(ROLE_ID, writeRole.getRole());
+
+        WriteUser writeUser = userConverter.entityToWriteDTO(userExpected);
+        writeUser.addRole(writeRole);
+        String rawResponse = MAPPER.writeValueAsString(writeUser);
+
+        Request request = new Request(null,pathParams,null);
+        Response response = controller.doPut(request);
+        Assert.assertThat(" Response must be jsonResponse ", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be user", response.getOutput(), is(rawResponse));
+
+        UserService.getInstance().removeUser(userExpected.getId());
+        RoleService.getInstance().removeRole("roleTest1");
+    }
+
+
+    @Test
+    public void doPutOneUsersExists() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        RoleService.getInstance().addRole(new Role("roleTest1"));
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+        UserService.getInstance().addUser(userExpected);
+
+        WriteRole writeRole = new WriteRole("roleTest1");
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,userExpected.getId());
+        pathParams.put(PATH_ROLES, "roles");
+        pathParams.put(ROLE_ID, writeRole.getRole());
+
+        WriteUser writeUser = userConverter.entityToWriteDTO(userExpected);
+        writeUser.addRole(writeRole);
+        String rawResponse = MAPPER.writeValueAsString(writeUser);
+
+        Request request = new Request(null,pathParams,null);
+        Response response = controller.doPut(request);
+        Assert.assertThat(" Response must be jsonResponse ", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be user", response.getOutput(), is(rawResponse));
+
+        UserService.getInstance().removeUser(userExpected.getId());
+    }
+
+
+    @Test
+    public void doPutUser() throws JsonProcessingException {
+
+        UserController controller = new UserController();
+        RoleService.getInstance().addRole(new Role("roleTest1"));
+
+        User userExpected = new User("test1", "test1");
+        userExpected.addRole(new Role("test1"));
+        UserService.getInstance().addUser(userExpected);
+
+        WriteRole writeRole = new WriteRole("roleTest1");
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID,userExpected.getId());
+        pathParams.put(PATH_ROLES, "roles");
+        pathParams.put(ROLE_ID, writeRole.getRole());
+
+        WriteUser writeUser = userConverter.entityToWriteDTO(userExpected);
+        writeUser.addRole(writeRole);
+        String rawResponse = MAPPER.writeValueAsString(writeUser);
+
+        Request request = new Request(null,pathParams,null);
+        Response response = controller.doPut(request);
+        Assert.assertThat(" Response must be jsonResponse ", response, instanceOf(JsonResponse.class));
+        Assert.assertThat(" Response must be user", response.getOutput(), is(rawResponse));
+
+        UserService.getInstance().removeUser(userExpected.getId());
+    }
+
+
+
+
+
 
     @Test
     public void doPostUserCollection() throws JsonProcessingException {
@@ -299,13 +505,6 @@ public class UserControllerTest {
         Assert.assertThat("Service  must be 0 users", userService.getUsers().size(), is(0));
     }
 
-
-    @Test
-    public void doPut() {
-        Request request = new Request(null, null, null);
-        Response response = userController.doPut(request);
-        Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
-    }
 
     @Test
     public void doDeleteEmptyParams() {

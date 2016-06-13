@@ -88,9 +88,6 @@ public class BaseControllerTest {
         Headers headers = new Headers();
         headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
         Response response = controller.dispatch(uri, null, "GET", headers);
-
-        ReadUser expectedUser = userConverter.entityToReadDTO(user);
-
         Assert.assertThat(" Response must be ResponseUnauthorized", response, instanceOf(ResponseUnauthorized.class));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_UNAUTHORIZED, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
 
@@ -176,7 +173,7 @@ public class BaseControllerTest {
     @Test
     public void doPutDispatch() throws URISyntaxException {
         Controller controller = new UserController();
-        URI uri = new URI("/users/test");
+        URI uri = new URI("/users");
         Response response = controller.dispatch(uri, null, "PUT", adminHeaders);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
     }

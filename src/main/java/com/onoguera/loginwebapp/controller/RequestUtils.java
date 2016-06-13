@@ -40,9 +40,6 @@ public final  class RequestUtils {
 
     private static final String AUTH_HEADER = "Authorization";
 
-    private static final String CHARSET_HEADER = "charset:";
-
-    private static final String CONTENT_TYPE_SEPARATOR = ";";
 
     /**
      * This method search on headers user/pass of basic authentication

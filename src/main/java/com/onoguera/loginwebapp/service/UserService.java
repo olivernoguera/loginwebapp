@@ -114,4 +114,5 @@ public class UserService implements Service {
         User user = userConverter.writeDTOtoEntity(writeUser);
         this.updateUser(user);
     }
+
 }

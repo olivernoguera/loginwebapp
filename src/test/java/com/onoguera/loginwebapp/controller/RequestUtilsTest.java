@@ -29,7 +29,7 @@ public class RequestUtilsTest {
 
     private static final String AUTH_HEADER = "Authorization";
 
-    private static final String CHARSET_HEADER = "charset:";
+    private static final String CHARSET_HEADER = "charset";
 
     private static final String CONTENT_TYPE_SEPARATOR = ";";
 
@@ -198,8 +198,28 @@ public class RequestUtilsTest {
         Assert.assertThat("testOnlyUserAuthHeader:contentType mimetype must be text/html", contentType.getMimeType(), is(DEFAULT_MIME_TYPE));
         Assert.assertThat("testOnlyUserAuthHeader:authorizations user must be", authorization.getUsername(), is("User"));
         Assert.assertThat("testOnlyUserAuthHeader:password must be Pass:word", authorization.getPassword(), is("Password"));
+    }
 
 
+    @Test
+    public void testHtmlContentTypeUTF16() {
+        String header = ContentType.TEXT_HTML.getMimeType()+ "; " +CHARSET_HEADER + " = "+ Charset.forName("utf-16").name();
+        Headers headers = new Headers();
+        headers.put(CONTENT_TYPE_HEADER, Arrays.asList(header));
+        ContentType contentType = RequestUtils.getContentType(headers);
+        Assert.assertThat("testOnlyUserAuthHeader:contentType charset must be UTF-16", Charset.forName("UTF-16").name(), is(contentType.getCharset().name()));
+        Assert.assertThat("testOnlyUserAuthHeader:contentType mimetype must be text/html", ContentType.TEXT_HTML.getMimeType(), is(contentType.getMimeType()));
+    }
+
+
+    @Test
+    public void testHtmlContentTypeUTF8() {
+        String header = ContentType.TEXT_HTML.getMimeType()+ "; " +CHARSET_HEADER + " = "+ Charset.forName("UTF-8").name();
+        Headers headers = new Headers();
+        headers.put(CONTENT_TYPE_HEADER,  Arrays.asList(header));
+        ContentType contentType = RequestUtils.getContentType(headers);
+        Assert.assertThat("testOnlyUserAuthHeader:contentType charset must be UTF-8", Charset.forName("utf-8").name(), is(contentType.getCharset().name()));
+        Assert.assertThat("testOnlyUserAuthHeader:contentType mimetype must be text/html", ContentType.TEXT_HTML.getMimeType(), is(contentType.getMimeType()));
     }
 
 

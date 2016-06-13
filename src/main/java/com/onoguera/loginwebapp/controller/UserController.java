@@ -1,11 +1,13 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
+import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.Response;
@@ -40,6 +42,8 @@ public class UserController extends BaseController implements AuthController {
     private static final String PATH_ROLES = "roles";
 
     private static final UserService userService = UserService.getInstance();
+
+    private static final RoleService roleService = RoleService.getInstance();
 
     private static final Pattern p =
             Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">roles)?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
@@ -172,7 +176,68 @@ public class UserController extends BaseController implements AuthController {
 
     @Override
     public Response doPut(Request request) {
-        return new ResponseNotImplemented();
+        Map<String, String> pathParams = request.getPathParams();
+        if (pathParams == null) {
+            return new ResponseBadRequest();
+        }
+        String userId = pathParams.get(USER_ID);
+        String roles = pathParams.get(PATH_ROLES);
+        String roleId = pathParams.get(ROLE_ID);
+
+        if (userId == null ) {
+            //Post must not be path variable of users
+            //Not generate id's on this api
+            //To create only one role of user use put
+            return new ResponseNotImplemented();
+        }
+
+        if (userId != null && roles != null && roleId == null) {
+            //Put not treatment collection
+            return new ResponseNotImplemented();
+        }
+
+
+        User user = userService.getUser(userId);
+        if( roles != null)
+        {
+            if( user == null){
+                return new ResponseNotFound();
+            }
+
+            Role role = roleService.getRole(roleId);
+            if( role == null){
+                return new ResponseNotFound();
+            }
+            user.addRole(role);
+            userService.updateUser(user);
+            WriteUser writeUser = userService.getWriteUser(user.getId());
+            return new JsonResponse(HttpURLConnection.HTTP_CREATED, writeUser);
+
+        }else{
+            //Add User
+            JsonRequest jsonRequest;
+            Object object;
+            if (request instanceof JsonRequest) {
+                WriteUser writeUser;
+                jsonRequest = (JsonRequest) request;
+                try {
+                    writeUser = (WriteUser) jsonRequest.getBodyObject(WriteUser.class);
+                } catch (IOException e) {
+                    return new ResponseBadRequest();
+                }
+                if( !writeUser.getUsername().equals(userId)){
+                    return new ResponseBadRequest();
+                }
+                userService.updateWriteUser(writeUser);
+                return  new JsonResponse(HttpURLConnection.HTTP_CREATED, writeUser);
+            }
+            else{
+                return new ResponseUnsupportedMediaType();
+            }
+        }
+
+
+
     }
 
     @Override
