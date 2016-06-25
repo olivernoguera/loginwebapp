@@ -34,7 +34,7 @@ public final  class RequestUtils {
 
     private static final String BASIC_AUTH_HEADER = "Basic";
 
-    private static final String CONTENT_TYPE_HEADER = "Content-Type:";
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     private static final String CREDENTIALS_SEPARATOR = ":";
 
@@ -42,12 +42,10 @@ public final  class RequestUtils {
 
 
     /**
-     * This method search on headers user/pass of basic authentication
+     * This method search contentypes on headers
      * @param headers of request
-     * @return List of par user/password decrypt
+     * @return  ContentType
      */
-
-
     public static ContentType getContentType(Headers headers){
         ContentType defaultContenType =
                 ContentType.create(ContentType.TEXT_HTML.getMimeType(), Charset.forName("UTF-8"));
@@ -70,7 +68,13 @@ public final  class RequestUtils {
             return defaultContenType;
         }
 
-        return ContentType.parse(contentTypeString);
+        ContentType aux = ContentType.parse(contentTypeString);
+        if( aux.getCharset() != null){
+            return aux;
+        }
+        defaultContenType =
+                ContentType.create(aux.getMimeType(), Charset.forName("UTF-8"));
+        return defaultContenType;
 
     }
 

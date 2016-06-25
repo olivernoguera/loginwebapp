@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 public class RequestUtilsTest {
 
 
-    private static final String CONTENT_TYPE_HEADER = "Content-Type:";
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
     private static final String CREDENTIALS_SEPARATOR = ":";
 

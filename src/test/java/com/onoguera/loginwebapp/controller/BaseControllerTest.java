@@ -152,7 +152,7 @@ public class BaseControllerTest {
 
         Headers headers = new Headers();
         headers.put("Authorization", Arrays.asList(ADMIN_AUTH));
-        headers.put("Content-Type:", Arrays.asList("application/json; charset=utf-8"));
+        headers.put("Content-Type", Arrays.asList("application/json; charset=utf-8"));
         Response response = controller.dispatch(uri, body, "POST", headers);
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
