@@ -54,66 +54,39 @@ java -jar target/login-web-application-0.2.4.jar
 All endpoints must be prefixed with `/users`. Thay all consume and produce the Json specified below.
 
 
+
 // **********************************************************************************
 
-=== Get Users
+=== Default Data Sets
 
-.Get Users
-Description:: Returns the users on the system.
-Endpoint:: `/users{userid}`
+By default application contains users  with username "USER_i" with password "PASS_i" 1 <= i <= 3.
 
-* userid: To get only one user with username `userid`
+Then there are USER_1, USER_2 and USER_3 with passwords PASS_1, PASS_2 and PASS_3.
 
-Method:: `GET`
-Headers:: `Authorization: Basic QURNSU46QURNSU4=`
-Produces:: `application/json`
+Each user have role with PAGE_i, so USER_1 have role to PAGE_1.
 
-[source,sell]
-.Get Users Request Sample
-----
-http://localhost:8080/users
-----
+Also exists one special user with adminitration role(ADMIN,ADMIN) with role ADMIN with writeAccess,
 
-.Get Users Response Payload Sample
-[source,json,linenums,options="nowrap"]
-[subs="verbatim,attributes"]
-----
-[
-  {
-    "username": "USER_2"
-  },
-  {
-    "username": "USER_3"
-  },
-  {
-    "username": "USER_1"
-  }
-]
+more detail of this bellow.
 
-----
-[source,sell]
-.Get User Request Sample
-----
-http://localhost:8080/users/USER_3
-----
+// **********************************************************************************
 
-.Get User Response Payload Sample
-[source,json,linenums,options="nowrap"]
-[subs="verbatim,attributes"]
-----
-[
-  {
-    "username": "USER_2"
-  },
-  {
-    "username": "USER_3"
-  },
-  {
-    "username": "USER_1"
-  }
-]
+=== Rest API
 
-----
+This api requires basic auth.User and of this auth there are users of collections.All users can use Get method.
+
+If authentication is not valid endpoints returns 401 status (Unathorired).
+
+Only user with role with writeAccess can use delete, put and post methods. By default ADMIN user.
+
+If you try use not read method with users has not role with writeAccess API returns 403 httpstatus.
+
+Also, default charset for body elements is application/json;charset=utf-8.If you not send header correctly you can
+
+receibe 415 http status( unsupported media type).
+
+In path /src/test/resource there is loginwebapp.postman_collection.json to
+import with postman sample request of this api.
 
 
 // **************************************************************************************
