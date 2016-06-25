@@ -29,8 +29,6 @@ public class JsonRequest extends Request {
 
     private static <T> T fromJSON(final TypeReference<T> type,
                                  final String jsonPacket) throws IOException {
-        T data = null;
-        data = new ObjectMapper().readValue(jsonPacket, type);
-        return data;
+        return OBJECT_MAPPER.readValue(jsonPacket, type);
     }
 }
