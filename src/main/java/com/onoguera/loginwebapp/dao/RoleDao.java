@@ -5,6 +5,7 @@ import com.onoguera.loginwebapp.entities.Role;
 
 /**
  * Created by olivernoguera on 05/06/2016.
+ *
  */
 public class RoleDao extends GenericDao<Role> {
 

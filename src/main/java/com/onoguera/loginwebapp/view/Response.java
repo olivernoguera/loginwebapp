@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 
 /**
  * Created by oliver on 3/06/16.
+ *
  */
 public abstract class Response {
 

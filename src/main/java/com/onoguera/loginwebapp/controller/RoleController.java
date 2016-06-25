@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by oliver on 1/06/16.
+ *
  */
 public class RoleController extends BaseController implements AuthController {
 

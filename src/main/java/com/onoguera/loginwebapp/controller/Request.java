@@ -4,6 +4,7 @@ import java.util.Map;
 
 /**
  * Created by oliver on 4/06/16.
+ *
  */
 public class Request {
 

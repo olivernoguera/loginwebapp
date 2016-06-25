@@ -5,6 +5,7 @@ import com.onoguera.loginwebapp.entities.User;
 
 /**
  * Created by olivernoguera on 04/06/2016.
+ *
  */
 public class UserDao extends GenericDao<User> {
 

@@ -2,6 +2,7 @@ package com.onoguera.loginwebapp.model;
 
 /**
  * Created by olivernoguera on 05/06/2016.
+ *
  */
 public class ReadRole implements ReadDTO {
 

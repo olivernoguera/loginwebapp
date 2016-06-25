@@ -2,6 +2,7 @@ package com.onoguera.loginwebapp.entities;
 
 /**
  * Created by olivernoguera on 04/06/2016.
+ *
  */
 public abstract class Entity<T> implements Cloneable {
 

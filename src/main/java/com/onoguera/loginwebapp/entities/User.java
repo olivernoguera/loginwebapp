@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by oliver on 1/06/16.
+ *
  */
 
 public class User extends Entity<User> {

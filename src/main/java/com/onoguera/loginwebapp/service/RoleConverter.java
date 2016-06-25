@@ -6,6 +6,7 @@ import com.onoguera.loginwebapp.model.WriteRole;
 
 /**
  * Created by olivernoguera on 07/06/2016.
+ *
  */
 public class RoleConverter implements Converter<ReadRole,WriteRole,Role> {
 

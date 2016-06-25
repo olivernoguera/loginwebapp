@@ -2,6 +2,7 @@ package com.onoguera.loginwebapp.controller;
 
 /**
  * Created by olivernoguera on 12/06/2016.
+ *
  */
 public class Authorization {
 

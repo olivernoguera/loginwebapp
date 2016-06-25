@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by olivernoguera on 07/06/2016.
+ *
  */
 public class UserConverter implements Converter<ReadUser,WriteUser,User> {
 

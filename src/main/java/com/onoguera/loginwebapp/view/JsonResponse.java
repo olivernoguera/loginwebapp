@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 
 /**
  * Created by oliver on 3/06/16.
+ *
  */
 public class JsonResponse extends Response {
 

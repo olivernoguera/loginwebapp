@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * Created by olivernoguera on 05/06/2016.
+ *
  */
 public class JsonRequest extends Request {
 

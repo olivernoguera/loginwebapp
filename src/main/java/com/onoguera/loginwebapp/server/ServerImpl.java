@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 
 /**
  * This class implements a httpserver
+ *
  */
 public class ServerImpl implements Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerImpl.class);

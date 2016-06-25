@@ -2,7 +2,6 @@ package com.onoguera.loginwebapp.server;
 
 import com.onoguera.loginwebapp.controller.Controller;
 import com.onoguera.loginwebapp.controller.ControllerContainer;
-import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseInternalServerError;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
@@ -17,16 +16,15 @@ import java.util.Optional;
 
 /**
  * Created by oliver on 3/06/16.
+ *
  */
 public class DispatchHandler implements HttpHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatchHandler.class);
     private final ControllerContainer controllerContainer;
-    private final UserService userService;
 
     public DispatchHandler() {
         controllerContainer = ControllerContainer.getInstance();
-        userService = UserService.getInstance();
     }
 
     @Override

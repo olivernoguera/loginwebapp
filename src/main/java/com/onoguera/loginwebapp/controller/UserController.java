@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by oliver on 1/06/16.
+ *
  */
 public class UserController extends BaseController implements AuthController {
 

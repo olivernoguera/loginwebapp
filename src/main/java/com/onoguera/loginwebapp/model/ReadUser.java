@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * Created by olivernoguera on 04/06/2016.
+ *
  */
 public class ReadUser implements ReadDTO {
 

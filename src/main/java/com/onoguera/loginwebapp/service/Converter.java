@@ -6,6 +6,7 @@ import com.onoguera.loginwebapp.model.WriteDTO;
 
 /**
  * Created by olivernoguera on 07/06/2016.
+ * 
  */
 public interface Converter <RD extends ReadDTO, WD extends WriteDTO,E extends Entity>  {
 
