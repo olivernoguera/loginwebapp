@@ -1,9 +1,6 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.sun.net.httpserver.Headers;
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.ParseException;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,8 +8,6 @@ import org.junit.Test;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;

@@ -17,17 +17,11 @@ import com.onoguera.loginwebapp.view.ResponseEmpty;
 import com.onoguera.loginwebapp.view.ResponseNotFound;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
-import com.sun.net.httpserver.Headers;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +30,6 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 
 /**
  * Created by olivernoguera on 04/06/2016.
