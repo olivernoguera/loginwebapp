@@ -37,6 +37,7 @@ public class LoaderEntities {
         roleService.addRole(adminRole);
 
         User adminUser = new User("ADMIN", "ADMIN");
+        adminUser.addRoles(roles);
         adminUser.addRole(adminRole);
         userService.addUser(adminUser);
 

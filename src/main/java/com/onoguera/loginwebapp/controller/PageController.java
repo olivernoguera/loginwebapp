@@ -52,7 +52,7 @@ public final class PageController extends BaseController {
         Session session = request.getSession();
         //TODO check expired session
         if( session != null ) {
-            response = this.getResponseFromUser(session.getUser(),session.getId(),pageId.toUpperCase());
+            response = this.getResponseFromUser(session.getUser(),session.getId(),pageId.toLowerCase());
 
             //has session must send to other page not login page
             //response = new ResponseForbidden();
@@ -78,7 +78,7 @@ public final class PageController extends BaseController {
         Map<String, String> values = new HashMap<>();
         List<Role> roles = user.getRoles();
         if( roles.isEmpty() ||
-                !roles.stream().filter(r->r.getId().equals(currentPage)).findFirst().isPresent()){
+                !roles.stream().filter(r->r.getId().equals(currentPage.toUpperCase())).findFirst().isPresent()){
             try {
                 response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, new HashMap<>(),"login");
             } catch (IOException e) {
@@ -88,11 +88,10 @@ public final class PageController extends BaseController {
         else{
             try {
                 //TODO multiple role
-                String rolePage = roles.stream().findFirst().get().getId();
-                values.put("page", rolePage);
+                values.put("page", currentPage);
                 values.put("user", user.getId());
 
-                response = new PageResponse(HttpURLConnection.HTTP_OK, values ,sessionID,rolePage.toLowerCase()) {};
+                response = new PageResponse(HttpURLConnection.HTTP_OK, values ,sessionID,currentPage) {};
             } catch (IOException io) {
                 response = new ResponseInternalServerError();
             }
