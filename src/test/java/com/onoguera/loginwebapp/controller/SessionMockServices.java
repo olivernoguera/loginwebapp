@@ -32,12 +32,12 @@ public final class SessionMockServices {
 
         @Override
         public Session findOne(String sessionId) {
-            return null;
+            return new Session(new User("test", "test"),sessionId);
         }
 
         @Override
         public Session createSession(User user) {
-            return null;
+            return new Session(new User("test", "test"),"1");
         }
     }
 

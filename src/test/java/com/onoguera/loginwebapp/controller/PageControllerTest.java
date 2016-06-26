@@ -26,8 +26,7 @@ public class PageControllerTest {
     private final static User USER_TEST = new User("test","test");
     private final static Role ROLE_TEST1 = new Role("PAGE_1");
     private final static Role ROLE_TEST2 = new Role("PAGE_2");
-    private final static Role ROLE_TEST3 = new Role("PAGE_3");
-    private static final String PAGE_ID = "pageId";
+    private final static String PAGE_ID = "pageId";
 
     @Test
     public void doGetWithoutSessionTest(){

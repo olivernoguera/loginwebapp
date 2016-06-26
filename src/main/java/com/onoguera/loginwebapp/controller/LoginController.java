@@ -6,6 +6,7 @@ import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.Response;
+import com.onoguera.loginwebapp.view.ResponseBadRequest;
 import com.onoguera.loginwebapp.view.ResponseInternalServerError;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.ResponseUnauthorized;
@@ -77,13 +78,17 @@ public final class LoginController extends BaseController {
 
     @Override
     public Response doPost(Request request) {
-
+        Response response = null;
         Map<String, String> queryParams = request.getQueryParams();
+
+        if( queryParams == null){
+            return new ResponseBadRequest();
+        }
         String username = queryParams.get("username");
         String password = queryParams.get("password");
         User user = new User(username, password);
         User validateUser = userService.validateUser(user);
-        Response response = null;
+
 
         if( validateUser == null){
             response = new ResponseUnauthorized();
