@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Created by olivernoguera on 25/06/2016.
  */
-public class SessionService implements  Service {
+public class SessionService implements  SessionServiceInterface {
 
     private final static SessionService INSTANCE = new SessionService();
     private final SessionDao sessionDao = SessionDao.getInstance();

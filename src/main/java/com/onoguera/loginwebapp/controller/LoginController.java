@@ -5,9 +5,9 @@ import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.service.UserService;
+import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.Response;
-import com.onoguera.loginwebapp.view.ResponseForbidden;
 import com.onoguera.loginwebapp.view.ResponseInternalServerError;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.ResponseUnauthorized;
@@ -34,8 +34,11 @@ public final class LoginController extends BaseController {
 
     private static final String PATH = "/login";
     private static final Pattern p = Pattern.compile(PATH + "\\S*");
-    private UserService userService = UserService.getInstance();
-    private SessionService sessionService = SessionService.getInstance();
+    private UserServiceInterface userService;
+
+    public void setUserService(UserServiceInterface userService){
+        this.userService = userService;
+    }
 
     @Override
     public Pattern getURLPattern() {
@@ -49,10 +52,9 @@ public final class LoginController extends BaseController {
 
     @Override
     public Response doGet(Request request) {
+
         Map<String, String> values = new HashMap<>();
         Response response = null;
-
-
 
         Session session = request.getSession();
         //TODO check expired session
@@ -85,8 +87,6 @@ public final class LoginController extends BaseController {
         User validateUser = userService.validateUser(user);
         Response response = null;
 
-
-        //TODO check correct role
         if( validateUser == null){
             response = new ResponseUnauthorized();
         }
@@ -104,11 +104,14 @@ public final class LoginController extends BaseController {
         Map<String, String> values = new HashMap<>();
         List<Role> roles = user.getRoles();
         if( roles.isEmpty()){
-            response = new ResponseForbidden();
+            try {
+                response = new LoginResponse(HttpURLConnection.HTTP_OK, values,"login");
+            } catch (IOException e) {
+               response = new ResponseInternalServerError();
+            }
         }
         else{
             try {
-                //TODO multiple role
                 String rolePage = roles.stream().findFirst().get().getId();
                 values.put("page", rolePage);
                 values.put("user", user.getId());

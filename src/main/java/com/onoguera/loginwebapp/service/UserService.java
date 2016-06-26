@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Created by oliver on 1/06/16.
  *
  */
-public class UserService implements Service {
+public class UserService implements UserServiceInterface {
 
     private final static UserService INSTANCE = new UserService();
     private final UserDao userDao = UserDao.getInstance();

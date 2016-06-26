@@ -3,6 +3,7 @@ package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.service.SessionService;
+import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
 import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
@@ -28,7 +29,7 @@ public abstract class BaseController implements Controller {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
-    private SessionService sessionService = SessionService.getInstance();
+    protected SessionServiceInterface sessionService;
 
     protected final static String METHOD_POST = "POST";
     protected final static String METHOD_GET = "GET";
@@ -150,4 +151,7 @@ public abstract class BaseController implements Controller {
     }
 
 
+    public void setSessionService(SessionServiceInterface sessionService) {
+        this.sessionService = sessionService;
+    }
 }

@@ -29,7 +29,6 @@ public final class LogoutController extends BaseController {
 
     private static final String PATH = "/logout";
     private static final Pattern p = Pattern.compile(PATH + "\\S*");
-    private SessionService sessionService = SessionService.getInstance();
 
     @Override
     public Pattern getURLPattern() {
