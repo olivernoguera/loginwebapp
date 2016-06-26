@@ -25,7 +25,7 @@ public class LoaderEntitiesTest {
         Collection<User> userCollection = UserService.getInstance().getUsers();
         Collection<Role> rolesCollection = RoleService.getInstance().getRoles();
         Assert.assertThat("Must load 4 Users", userCollection.size(), is(4));
-        Assert.assertThat("Must load 4 Roles", rolesCollection.size(), is(4));
+        Assert.assertThat("Must load 4 Roles"+ rolesCollection, rolesCollection.size(), is(4));
 
         //Restore state
         for (User user : userCollection) {

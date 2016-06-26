@@ -10,6 +10,6 @@ import java.net.HttpURLConnection;
 public final class ResponseForbidden extends Response {
 
     public ResponseForbidden() {
-        super(HttpURLConnection.HTTP_FORBIDDEN, "Not have permissions to this method.");
+        super(HttpURLConnection.HTTP_FORBIDDEN, "Forbidden");
     }
 }

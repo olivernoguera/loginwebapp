@@ -1,9 +1,12 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.onoguera.loginwebapp.entities.Session;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +28,9 @@ import java.util.regex.Pattern;
  */
 public final  class RequestUtils {
 
+    private static final String COOKIE = "Cookie";
     private static final String EMPTY_STRING = "";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestUtils.class);
     /**
      * Protect instance final for final utility class
      */
@@ -36,7 +41,7 @@ public final  class RequestUtils {
 
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
 
-    private static final String CREDENTIALS_SEPARATOR = ":";
+    private static final String HEADER_SEPARATOR = ":";
 
     private static final String AUTH_HEADER = "Authorization";
 
@@ -108,7 +113,7 @@ public final  class RequestUtils {
                 }
 
                 // credentials = username:password
-                final String[] userPassword = credentials.split(CREDENTIALS_SEPARATOR, 2);
+                final String[] userPassword = credentials.split(HEADER_SEPARATOR, 2);
                 if (userPassword != null && userPassword.length != 2) {
                     continue;
                 }
@@ -121,16 +126,21 @@ public final  class RequestUtils {
 
 
     /**
-     * @param query uri
+     * @param
      * @return
      */
-    public static Map<String, String>  parseQueryParams(final String query,final Charset charset) {
+    public static Map<String, String>  parseQueryParamsUrlEnconded(final InputStream body,final Charset charset) {
         Map<String, String> queryParams = new HashMap<>();
-        if (query != null) {
-            List<NameValuePair> paramsPair = URLEncodedUtils.parse(query, charset);
-            paramsPair.forEach(pair -> {
-                queryParams.put(pair.getName(), pair.getValue());
-            });
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(body))) {
+            String urlencoded = reader.readLine();
+            if(urlencoded != null && urlencoded.trim().length() > 0) {
+                List<NameValuePair> list = URLEncodedUtils.parse(urlencoded, charset);
+                list.forEach(pair -> {
+                    queryParams.put(pair.getName(), pair.getValue());
+                });
+            }
+        } catch(IOException e) {
+            LOGGER.error("parseQueryParams", e);
         }
         return queryParams;
     }
@@ -198,6 +208,28 @@ public final  class RequestUtils {
 
         }
         return result;
+    }
+
+
+    public static String getSessionId(Headers headers)
+    {
+        List<String> cookies = headers.get(COOKIE);
+        if(cookies != null) {
+            for(String cookie : cookies) {
+                StringTokenizer tokens = new StringTokenizer(cookie, ";");
+                while(tokens.hasMoreTokens()) {
+                    String[] pairNameValue = tokens.nextToken().split("=");
+                    if( pairNameValue == null || pairNameValue.length != 2 ){
+                        continue;
+                    }
+                    String name = pairNameValue[0].trim();
+                    if( name.equals(Session.class.getSimpleName())){
+                        return pairNameValue[1];
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

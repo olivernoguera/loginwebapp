@@ -49,6 +49,7 @@ public class DispatchHandler implements HttpHandler {
     private void sendResponse(HttpExchange httpExchange, Response response) throws IOException {
 
         httpExchange.getResponseHeaders().add("Content-Type", response.getContentType());
+        response.setHeadersResponse(httpExchange.getResponseHeaders());
         httpExchange.sendResponseHeaders(response.getHttpStatus(), response.getBytes().length);
         OutputStream outputStream = httpExchange.getResponseBody();
         outputStream.write(response.getBytes());

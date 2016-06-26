@@ -16,7 +16,7 @@ public class JsonRequest extends Request {
 
     public JsonRequest(final Map<String, String> queryParams, final Map<String, String> pathParams,
                        final String rawBody) {
-        super(queryParams, pathParams, rawBody);
+        super(queryParams, pathParams, rawBody, null);
     }
 
     public Object getBodyObject(Class clazz) throws  IOException {

@@ -1,15 +1,11 @@
 package com.onoguera.loginwebapp.controller;
 
 
-import com.onoguera.loginwebapp.entities.Role;
-import com.onoguera.loginwebapp.entities.User;
-import com.onoguera.loginwebapp.service.UserService;
+import com.onoguera.loginwebapp.entities.Session;
+import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;
-import com.onoguera.loginwebapp.view.ResponseForbidden;
 import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
-import com.onoguera.loginwebapp.view.ResponseUnauthorized;
-import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -18,11 +14,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 
@@ -32,14 +26,14 @@ import java.util.regex.Pattern;
  */
 public abstract class BaseController implements Controller {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
-    private UserService userService = UserService.getInstance();
+    private SessionService sessionService = SessionService.getInstance();
 
-    public final static String METHOD_POST = "POST";
-    public final static String METHOD_GET = "GET";
-    public final static String METHOD_PUT = "PUT";
-    public final static String METHOD_DELETE = "DELETE";
+    protected final static String METHOD_POST = "POST";
+    protected final static String METHOD_GET = "GET";
+    protected final static String METHOD_PUT = "PUT";
+    protected final static String METHOD_DELETE = "DELETE";
 
 
     public abstract Pattern getURLPattern();
@@ -54,6 +48,7 @@ public abstract class BaseController implements Controller {
 
     public abstract Response doDelete(final Request request);
 
+    public abstract Response checkAuthAndRestAPI(String method, Headers headers, ContentType contentType, Request request);
 
     @Override
     public boolean filter(String contextPath) {
@@ -82,37 +77,23 @@ public abstract class BaseController implements Controller {
             return new ResponseBadRequest();
         }
 
-
-
         Request request;
         try {
-            request = this.getRequest(requestURI.getQuery(), requestURI.getPath(), requestBody,contentType);
+            request = this.getRequest(requestURI.getPath(), requestBody,contentType,headers);
         } catch (IOException io) {
             LOGGER.warn("Bad request.", io);
             return new ResponseBadRequest();
         }
 
-
-        if (this instanceof AuthController) {
-
-            List<Role> roles = this.getRoles(headers,contentType.getCharset());
-            if (roles.isEmpty()) {
-                return new ResponseUnauthorized();
-            }
-            if (!RequestUtils.validMediaType(request.getRawBody(), method, contentType)) {
-                return new ResponseUnsupportedMediaType();
-            }
-            if (!method.equals(METHOD_GET)) {
-                //Modify and create and delete
-                Optional<Role> writRole = roles.stream().filter(r -> r.isWriteAccess()).findFirst();
-                if (!writRole.isPresent()) {
-                    return new ResponseForbidden();
-                }
-            }
+        Response auth = checkAuthAndRestAPI(method, headers, contentType, request);
+        if (auth != null){
+            return auth;
         }
 
         return dispatch(request, method);
     }
+
+
 
     private Response dispatch(final Request request, final String method) {
         if (METHOD_GET.equals(method)) {
@@ -140,36 +121,33 @@ public abstract class BaseController implements Controller {
         return false;
     }
 
-
-
-    private Request getRequest(final String query, final String path,
+    private Request getRequest(final String path,
                                InputStream requestBody,
-                               ContentType contentType) throws IOException {
+                               ContentType contentType,
+                               Headers headers) throws IOException {
 
-
-        Map<String, String> queryParams = RequestUtils.parseQueryParams(query, contentType.getCharset());
+        Map<String, String> queryParams = new HashMap<>();
         Map<String, String> pathParams =
                 RequestUtils.parsePathParams(path, this.getPathParams(), this.getURLPattern());
-        String rawBody = RequestUtils.parseFirstRequestBody(requestBody, contentType.getCharset());
-        if (RequestUtils.isApplicationJson(contentType)) {
-            return new JsonRequest(queryParams, pathParams, rawBody);
+        String rawBody = "";
+        if( contentType.getMimeType().equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType())){
+            queryParams =  RequestUtils.parseQueryParamsUrlEnconded(requestBody, contentType.getCharset());
         }
-        return new Request(queryParams, pathParams, rawBody);
-    }
-
-    /**
-     * @param headers
-     * @return List of roles with authentication
-     */
-    private List<Role> getRoles(Headers headers,Charset currentCharset) {
-        List<Role> roles = new ArrayList<>();
-        Authorization authorization = RequestUtils.getAuthorizationFromHeader(headers, currentCharset);
-        if( authorization != null){
-            User user = new User(authorization.getUsername(),authorization.getPassword());
-            roles.addAll(userService.getRoles(user));
+        else{
+            rawBody = RequestUtils.parseFirstRequestBody(requestBody, contentType.getCharset());
+            if (RequestUtils.isApplicationJson(contentType)) {
+                return new JsonRequest(queryParams, pathParams, rawBody);
+            }
         }
 
-        return roles;
+        String sessionId = RequestUtils.getSessionId(headers);
+        Session session = null;
+        if( sessionId != null){
+             session = sessionService.findOne(sessionId);
+        }
+        return new Request(queryParams, pathParams,rawBody,session);
+
     }
+
 
 }

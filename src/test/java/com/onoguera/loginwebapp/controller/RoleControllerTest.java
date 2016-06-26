@@ -41,7 +41,7 @@ public class RoleControllerTest {
     private static final String CORRECT_PARAM = "roleId";
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private RoleController roleController = new RoleController();
+    private RoleControllerRest roleController = new RoleControllerRest();
     private RoleConverter roleConverter = new RoleConverter();
 
     @Test
@@ -88,9 +88,10 @@ public class RoleControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("badparam", "badparam");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = roleController.doGet(request);
         Assert.assertThat(" ResponseroleController must be bad request", response, instanceOf(ResponseBadRequest.class));
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -100,13 +101,14 @@ public class RoleControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = roleController.doGet(request);
         Assert.assertThat(" Response must be not found", response, instanceOf(ResponseNotFound.class));
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
-    public void doGeWithResource() throws JsonProcessingException {
+    public void doGetWithResource() throws JsonProcessingException {
 
         RoleService roleService = RoleService.getInstance();
         Role role = new Role("test");
@@ -115,7 +117,7 @@ public class RoleControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, role.getId().toString());
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = roleController.doGet(request);
 
         ReadRole expectedRole = roleConverter.entityToReadDTO(role);
@@ -126,6 +128,7 @@ public class RoleControllerTest {
 
         //Restore inital test state
         roleService.removeRole(role.getId());
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -133,11 +136,12 @@ public class RoleControllerTest {
     @Test
     public void doGetEmptyCollection() {
 
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = roleController.doGet(request);
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be empty", response.getOutput(), is("[]"));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
@@ -155,8 +159,9 @@ public class RoleControllerTest {
         collectionRole.add(role2);
         collectionRole.add(role);
 
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = roleController.doGet(request);
+
 
 
         List<ReadRole> expectedRoles =
@@ -169,14 +174,16 @@ public class RoleControllerTest {
         //Restore inital test state
         roleService.removeRole(role.getId());
         roleService.removeRole(role2.getId());
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPost() {
 
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = roleController.doPost(request);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -189,7 +196,7 @@ public class RoleControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", role.getId());
 
-        Request request = new Request(null, pathParams, output);
+        Request request = new Request(null, pathParams, output,null);
         Response response = roleController.doPut(request);
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be:", response.getOutput(), is(output));
@@ -203,7 +210,7 @@ public class RoleControllerTest {
     public void doPutNullParam() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", null);
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = roleController.doPut(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
         Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
@@ -213,7 +220,7 @@ public class RoleControllerTest {
     public void doPutEmptyParam() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", "");
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = roleController.doPut(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
         Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
@@ -221,9 +228,10 @@ public class RoleControllerTest {
 
     @Test
     public void doPutEmptyParams() {
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = roleController.doPut(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
+        Assert.assertThat("Roles collections must be empty", RoleService.getInstance().getRoles().size(), is(0));
     }
 
 
@@ -236,7 +244,7 @@ public class RoleControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", role.getId());
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = roleController.doPut(request);
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
@@ -255,8 +263,9 @@ public class RoleControllerTest {
 
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("roleId", role.getId());
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = roleController.doDelete(request);
         Assert.assertThat(" Response must be Empty", response, instanceOf(ResponseEmpty.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 }

@@ -19,8 +19,7 @@ public class JsonResponse extends Response {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonResponse.class);
 
     public JsonResponse(int httpStatus, Object object)  {
-        super(httpStatus);
-        super.setContentType(CONTENT_TYPE);
+        super(httpStatus,CONTENT_TYPE);
         try {
             super.setOutput(mapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {

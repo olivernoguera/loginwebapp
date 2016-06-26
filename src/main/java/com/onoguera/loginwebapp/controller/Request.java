@@ -1,5 +1,7 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.onoguera.loginwebapp.entities.Session;
+
 import java.util.Map;
 
 /**
@@ -11,11 +13,13 @@ public class Request {
     private final Map<String, String> queryParams;
     private final Map<String, String> pathParams;
     private final String rawBody;
+    private Session session;
 
-    public Request(Map<String, String> queryParams, Map<String, String> pathParams, String rawBody) {
+    public Request(Map<String, String> queryParams, Map<String, String> pathParams, String rawBody,Session session) {
         this.queryParams = queryParams;
         this.pathParams = pathParams;
         this.rawBody = rawBody;
+        this.session = session;
     }
 
     public Map<String, String> getQueryParams() {
@@ -28,5 +32,9 @@ public class Request {
 
     public String getRawBody() {
         return rawBody;
+    }
+
+    public Session getSession() {
+        return session;
     }
 }

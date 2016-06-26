@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 /**
  * Created by olivernoguera on 04/06/2016.
@@ -55,7 +56,7 @@ public class UserControllerTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
 
-    private UserController userController = new UserController();
+    private UserControllerRest userController = new UserControllerRest();
 
     @Test
     public void correctFiltersTest() {
@@ -83,8 +84,7 @@ public class UserControllerTest {
 
     @After
     public void after() {
-
-
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
@@ -107,9 +107,10 @@ public class UserControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("badparam", "badparam");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doGet(request);
         Assert.assertThat(" Response must be bad request", response, instanceOf(ResponseBadRequest.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -119,9 +120,10 @@ public class UserControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doGet(request);
         Assert.assertThat(" Response must be not found", response, instanceOf(ResponseNotFound.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
@@ -138,7 +140,7 @@ public class UserControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(CORRECT_PARAM, "test");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doGet(request);
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
@@ -147,6 +149,7 @@ public class UserControllerTest {
 
         //Restore inital test state
         userService.removeUser(user.getId());
+        Assert.assertThat(" Must be Empty 0 roles", RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -154,11 +157,12 @@ public class UserControllerTest {
     @Test
     public void doGetEmptyCollection() {
 
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = userController.doGet(request);
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be empty", response.getOutput(), is("[]"));
         Assert.assertThat(" Response status must be " + HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_OK, is(HttpURLConnection.HTTP_OK));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
@@ -180,7 +184,7 @@ public class UserControllerTest {
 
         String output = MAPPER.writeValueAsString(expectedUsers);
 
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = userController.doGet(request);
 
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(JsonResponse.class));
@@ -190,13 +194,15 @@ public class UserControllerTest {
         //Restore inital test state
         userService.removeUser(user.getId());
         userService.removeUser(user2.getId());
+        Assert.assertThat(" Must be Empty 0 roles", RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPostWithoutParams() {
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = userController.doPost(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
@@ -204,52 +210,57 @@ public class UserControllerTest {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(USER_ID, "test");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doPost(request);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
-    public void doPostOneRoleOfOneboxUser() {
+    public void doPostOneRoleOfOneUser() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(USER_ID, "userTest");
         pathParams.put(ROLE_ID, "rolesTest");
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doPost(request);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPostUnsupportedMediaType() {
         Map<String, String> pathParams = new HashMap<>();
 
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doPost(request);
         Assert.assertThat(" Response must be ResponseUnsupportedMediaType", response, instanceOf(ResponseUnsupportedMediaType.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPutWithoutParams() {
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = userController.doPut(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPutUnsupportedMediaType() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(USER_ID,"test1");
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
 
         Response response = userController.doPut(request);
         Assert.assertThat(" Response must be ResponseUnsupportedMediaType", response, instanceOf(ResponseUnsupportedMediaType.class));
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPutUserCollection() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
 
@@ -261,8 +272,9 @@ public class UserControllerTest {
         Request request = new JsonRequest(null,pathParams,rawBody);
         Response response = controller.doPut(request);
 
+        UserService.getInstance().removeUser(userExpected.getId());
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(ResponseNotImplemented.class));
-
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -270,7 +282,7 @@ public class UserControllerTest {
     @Test
     public void doPutRoleCollection() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
 
@@ -284,15 +296,16 @@ public class UserControllerTest {
 
         Request request = new JsonRequest(null,pathParams,rawBody);
         Response response = controller.doPut(request);
+        UserService.getInstance().removeUser(userExpected.getId());
         Assert.assertThat(" Response must be jsonResponse", response, instanceOf(ResponseNotImplemented.class));
-
+        Assert.assertThat(" Must be Empty 0 roles",  RoleService.getInstance().getRoles().size(), is(0));
     }
 
 
     @Test
     public void doPutOneRoleOfUserRoleNotExists() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
 
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
@@ -305,18 +318,18 @@ public class UserControllerTest {
         pathParams.put(PATH_ROLES, "roles");
         pathParams.put(ROLE_ID,writeRole.getRole());
 
-        Request request = new Request(null,pathParams,null);
+        Request request = new Request(null,pathParams,null,null);
         Response response = controller.doPut(request);
         Assert.assertThat(" Response must be ResponseNotFound", response, instanceOf(ResponseNotFound.class));
 
         UserService.getInstance().removeUser(userExpected.getId());
-
+        Assert.assertThat(" Must be Empty 0 roles", RoleService.getInstance().getRoles().size(), is(0));
     }
 
     @Test
     public void doPutOneRoleOfUserUserNotExists() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
 
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
@@ -327,7 +340,7 @@ public class UserControllerTest {
         pathParams.put(PATH_ROLES, "roles");
         pathParams.put(ROLE_ID,writeRole.getRole());
 
-        Request request = new Request(null,pathParams,null);
+        Request request = new Request(null,pathParams,null,null);;
         Response response = controller.doPut(request);
         Assert.assertThat(" Response must be ResponseNotFound", response, instanceOf(ResponseNotFound.class));
 
@@ -338,7 +351,7 @@ public class UserControllerTest {
     @Test
     public void doPutOneRoleOfUserRoleExists() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         RoleService.getInstance().addRole(new Role("roleTest1"));
 
         User userExpected = new User("test1", "test1");
@@ -355,7 +368,7 @@ public class UserControllerTest {
         writeUser.addRole(writeRole);
         String rawResponse = MAPPER.writeValueAsString(writeUser);
 
-        Request request = new Request(null,pathParams,null);
+        Request request = new Request(null,pathParams,null,null);
         Response response = controller.doPut(request);
         Assert.assertThat(" Response must be jsonResponse ", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be user", response.getOutput(), is(rawResponse));
@@ -368,7 +381,7 @@ public class UserControllerTest {
     @Test
     public void doPutOneUsersExists() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         RoleService.getInstance().addRole(new Role("roleTest1"));
 
         User userExpected = new User("test1", "test1");
@@ -385,19 +398,20 @@ public class UserControllerTest {
         writeUser.addRole(writeRole);
         String rawResponse = MAPPER.writeValueAsString(writeUser);
 
-        Request request = new Request(null,pathParams,null);
+        Request request = new Request(null,pathParams,null,null);
         Response response = controller.doPut(request);
         Assert.assertThat(" Response must be jsonResponse ", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be user", response.getOutput(), is(rawResponse));
 
         UserService.getInstance().removeUser(userExpected.getId());
+        RoleService.getInstance().removeRole(writeRole.getRole());
     }
 
 
     @Test
     public void doPutUser() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         RoleService.getInstance().addRole(new Role("roleTest1"));
 
         User userExpected = new User("test1", "test1");
@@ -414,12 +428,13 @@ public class UserControllerTest {
         writeUser.addRole(writeRole);
         String rawResponse = MAPPER.writeValueAsString(writeUser);
 
-        Request request = new Request(null,pathParams,null);
+        Request request = new Request(null,pathParams,null,null);;
         Response response = controller.doPut(request);
         Assert.assertThat(" Response must be jsonResponse ", response, instanceOf(JsonResponse.class));
         Assert.assertThat(" Response must be user", response.getOutput(), is(rawResponse));
 
         UserService.getInstance().removeUser(userExpected.getId());
+        RoleService.getInstance().removeRole(writeRole.getRole());
     }
 
 
@@ -430,7 +445,7 @@ public class UserControllerTest {
     @Test
     public void doPostUserCollection() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -463,7 +478,7 @@ public class UserControllerTest {
     @Test
     public void doPostRoleCollection() throws JsonProcessingException {
 
-        UserController controller = new UserController();
+        UserControllerRest controller = new UserControllerRest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -500,7 +515,7 @@ public class UserControllerTest {
 
     @Test
     public void doDeleteEmptyParams() {
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
     }
@@ -509,7 +524,7 @@ public class UserControllerTest {
     public void doDeleteWithoutUserParams() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("badparam", "badparam");
-        Request request = new Request(null, null, null);
+        Request request = new Request(null, null, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseBadRequest", response, instanceOf(ResponseBadRequest.class));
     }
@@ -518,7 +533,7 @@ public class UserControllerTest {
     public void doDeleteUserNotExistParams() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("userId", "test");
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseNotFound", response, instanceOf(ResponseNotFound.class));
     }
@@ -534,13 +549,13 @@ public class UserControllerTest {
         userTest.addRoles(roles);
         userService.addUser(userTest);
 
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(2));
         pathParams.put("userId", "test");
         pathParams.put("roles", "");
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(0));
+        Assert.assertThat(" There are 0 roles", userService.validateUser(userTest), nullValue());
         Assert.assertThat("Not delete user", userService.getUsers().size(), is(0));
 
     }
@@ -557,13 +572,13 @@ public class UserControllerTest {
         userService.addUser(userTest);
 
 
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(2));
         pathParams.put("userId", "test");
         pathParams.put("roles", null);
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(0));
+        Assert.assertThat(" There are 0 roles", userService.validateUser(userTest), nullValue());
         Assert.assertThat("Not delete user", userService.getUsers().size(), is(0));
 
 
@@ -580,13 +595,13 @@ public class UserControllerTest {
         userTest.addRoles(roles);
         userService.addUser(userTest);
 
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(2));
         pathParams.put("userId", "test");
         pathParams.put("roles", "roles");
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(0));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(0));
         Assert.assertThat("Not delete user", userService.getUsers().size(), is(1));
         //Restore state test
         userService.removeUser(userTest.getId());
@@ -607,14 +622,14 @@ public class UserControllerTest {
         userService.addUser(userTest);
 
 
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(2));
         pathParams.put("userId", "test");
         pathParams.put("roles", "roles");
         pathParams.put("roleId", "role1");
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
-        Assert.assertThat(" There are 1 roles", userService.getRoles(userTest).size(), is(1));
+        Assert.assertThat(" There are 1 roles", userService.validateUser(userTest).getRoles().size(), is(1));
         Assert.assertThat("Not delete user", userService.getUsers().size(), is(1));
         //Restore state test
         userService.removeUser(userTest.getId());
@@ -634,14 +649,14 @@ public class UserControllerTest {
         userService.addUser(userTest);
 
 
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(2));
         pathParams.put("userId", "test");
         pathParams.put("roles", "roles");
         pathParams.put("roleId", "Fakerole");
-        Request request = new Request(null, pathParams, null);
+        Request request = new Request(null, pathParams, null,null);
         Response response = userController.doDelete(request);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseEmpty.class));
-        Assert.assertThat(" There are 2 roles", userService.getRoles(userTest).size(), is(2));
+        Assert.assertThat(" There are 2 roles", userService.validateUser(userTest).getRoles().size(), is(2));
         Assert.assertThat("Not delete user", userService.getUsers().size(), is(1));
         //Restore state test
         userService.removeUser(userTest.getId());

@@ -7,6 +7,7 @@ import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteUser;
+import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserConverter;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.JsonResponse;
@@ -69,7 +70,7 @@ public class BaseControllerTest {
     @Test
     public void doGetUnathorizedDispatch() throws URISyntaxException, JsonProcessingException {
 
-        Controller controller = new UserController();
+        Controller controller = new UserControllerRest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -96,7 +97,7 @@ public class BaseControllerTest {
     @Test
     public void doGetWithResourceDispatch() throws URISyntaxException, JsonProcessingException {
 
-        Controller controller = new UserController();
+        Controller controller = new UserControllerRest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -125,7 +126,7 @@ public class BaseControllerTest {
 
     @Test
     public void doPostDispatch() throws URISyntaxException, IOException {
-        Controller controller = new UserController();
+        Controller controller = new UserControllerRest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -160,6 +161,7 @@ public class BaseControllerTest {
         //Restore inital test state
         userService.removeUser(userExpected.getId());
         Assert.assertThat("Service  must be 0 users", userService.getUsers().size(), is(0));
+        Assert.assertThat("Service  must be 0 roles", RoleService.getInstance().getRoles().size(), is(0));
 
     }
 
@@ -169,7 +171,7 @@ public class BaseControllerTest {
 
     @Test
     public void doPutDispatch() throws URISyntaxException {
-        Controller controller = new UserController();
+        Controller controller = new UserControllerRest();
         URI uri = new URI("/users");
         Response response = controller.dispatch(uri, null, "PUT", adminHeaders);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
@@ -177,7 +179,7 @@ public class BaseControllerTest {
 
     @Test
     public void doDeleteDispatch() throws URISyntaxException {
-        Controller controller = new UserController();
+        Controller controller = new UserControllerRest();
         URI uri = new URI("/users/test");
         Response response = controller.dispatch(uri, null, "DELETE", adminHeaders);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseNotFound.class));
@@ -186,7 +188,7 @@ public class BaseControllerTest {
 
     @Test
     public void doPatchDispatch() throws URISyntaxException {
-        Controller controller = new UserController();
+        Controller controller = new UserControllerRest();
         URI uri = new URI("/users/test");
         Response response = controller.dispatch(uri, null, "PATCH", adminHeaders);
         Assert.assertThat(" Response must be mehod not allowed", response, instanceOf(ResponseMethodNotAllowed.class));

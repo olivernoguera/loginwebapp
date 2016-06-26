@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * Created by oliver on 1/06/16.
  *
  */
-public class RoleController extends BaseController implements AuthController {
+public final class RoleControllerRest extends RestAuthController {
 
     //private static final Logger LOGGER = LoggerFactory.getLogger(RolesController.class);
 

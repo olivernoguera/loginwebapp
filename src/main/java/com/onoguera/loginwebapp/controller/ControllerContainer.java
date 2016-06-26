@@ -17,10 +17,16 @@ public class ControllerContainer {
 
     private ControllerContainer() {
 
-        UserController userController = new UserController();
-        RoleController roleController = new RoleController();
+        UserControllerRest userController = new UserControllerRest();
+        RoleControllerRest roleController = new RoleControllerRest();
+        LoginController loginController = new LoginController();
+        PageController pageController= new PageController();
+        LogoutController logoutController= new LogoutController();
         controllers.add(userController);
         controllers.add(roleController);
+        controllers.add(loginController);
+        controllers.add(pageController);
+        controllers.add(logoutController);
     }
 
     public static ControllerContainer getInstance() {

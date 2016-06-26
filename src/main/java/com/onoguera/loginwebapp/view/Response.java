@@ -1,5 +1,8 @@
 package com.onoguera.loginwebapp.view;
 
+import com.sun.net.httpserver.Headers;
+import org.apache.http.entity.ContentType;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
@@ -11,16 +14,19 @@ public abstract class Response {
 
     protected int httpStatus;
     protected String output;
-    protected String contentType = "text/plain; charset=UTF-8";
+    protected ContentType contentType = ContentType.APPLICATION_JSON;
+
 
     public Response(int httpStatus, String output) {
-
         this.httpStatus = httpStatus;
         this.output = output;
+
     }
 
-    public Response(int httpStatus) {
+    public Response(int httpStatus, ContentType contentType) {
         this.httpStatus = httpStatus;
+        this.contentType = contentType;
+
     }
 
     public byte[] getBytes() throws UnsupportedEncodingException {
@@ -46,10 +52,9 @@ public abstract class Response {
 
 
     public String getContentType() {
-        return contentType;
+        return contentType.toString();
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+    public void setHeadersResponse(Headers headers){}
+
 }

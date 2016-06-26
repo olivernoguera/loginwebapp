@@ -1,12 +1,10 @@
 package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.dao.UserDao;
-import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteUser;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,26 +52,22 @@ public class UserService implements Service {
 
     /**
      * Validate user and returns Roles of this.
-     * If user not exist or not validate return null (whithout role)
+     * If user not exist or not validate return null
      *
      * @param user
-     * @return
+     * @return user with roles or null if not exist or not valid
      */
-    public List<Role> getRoles(User user) {
+    public User validateUser(User user) {
 
-        List<Role> roles = new ArrayList<Role>();
+        User userResult = null;
         if (user.getPassword() == null) {
-            return roles;
+            return userResult;
         }
         User userStore = this.getUser(user.getId());
-        if (userStore == null) {
-            return roles;
+        if (userStore != null && user.getPassword().equals(userStore.getPassword())) {
+            userResult = userStore;
         }
-
-        if (user.getPassword().equals(userStore.getPassword())) {
-            roles = new ArrayList<>(userStore.getRoles());
-        }
-        return roles;
+        return userResult;
     }
 
     public void createUsers(Collection<User> collection) {
