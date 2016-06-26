@@ -3,8 +3,6 @@ package com.onoguera.loginwebapp.controller;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
-import com.onoguera.loginwebapp.service.SessionService;
-import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.Response;

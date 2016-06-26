@@ -39,4 +39,12 @@ public abstract class  HtmlResponse extends Response {
         headers.add("Set-Cookie", session);
         headers.add("Location", location);
     }
+
+    public String getSession() {
+        return session;
+    }
+
+    public String getLocation() {
+        return location;
+    }
 }

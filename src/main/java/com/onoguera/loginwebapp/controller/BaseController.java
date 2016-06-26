@@ -2,7 +2,6 @@ package com.onoguera.loginwebapp.controller;
 
 
 import com.onoguera.loginwebapp.entities.Session;
-import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseBadRequest;

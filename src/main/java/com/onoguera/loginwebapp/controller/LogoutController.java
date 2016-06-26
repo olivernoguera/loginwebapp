@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.entities.Session;
-import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseInternalServerError;
@@ -42,20 +41,7 @@ public final class LogoutController extends BaseController {
 
     @Override
     public Response doGet(Request request) {
-        Map<String, String> values = new HashMap<>();
-        Response response = null;
-        Session session = request.getSession();
-        //TODO check expired session
-        if( session != null ) {
-            sessionService.delete(session.getId());
-        }
-        try {
-            response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, values,"login");
-        } catch (IOException e) {
-            response  = new ResponseInternalServerError();
-        }
-
-        return response;
+        return new ResponseNotImplemented();
     }
 
     @Override
