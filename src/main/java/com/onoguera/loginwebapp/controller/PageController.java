@@ -80,7 +80,7 @@ public final class PageController extends BaseController {
         if( roles.isEmpty() ||
                 !roles.stream().filter(r->r.getId().equals(currentPage.toUpperCase())).findFirst().isPresent()){
             try {
-                response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, new HashMap<>(),"login");
+                response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, new HashMap<>(),sessionID, "login");
             } catch (IOException e) {
                 response  = new ResponseInternalServerError();
             }
