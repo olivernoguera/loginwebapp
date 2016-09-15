@@ -20,7 +20,7 @@ public class SessionDao extends GenericDao<Session>  {
     /**
      * Get Singleton instance
      *
-     * @return
+     * @return SessionDao Instance
      */
     public static SessionDao getInstance() {
         return INSTANCE;

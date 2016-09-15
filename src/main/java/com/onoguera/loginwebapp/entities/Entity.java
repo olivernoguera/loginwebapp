@@ -3,6 +3,7 @@ package com.onoguera.loginwebapp.entities;
 /**
  * Created by olivernoguera on 04/06/2016.
  *
+ *
  */
 public abstract class Entity implements Cloneable {
 
@@ -19,12 +20,8 @@ public abstract class Entity implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof Entity) {
-            return this.getClass().isAssignableFrom(obj.getClass())
+        return obj != null && obj instanceof Entity && this.getClass().isAssignableFrom(obj.getClass())
                     && ((Entity) obj).getId().equals(this.getId());
-        } else {
-            return false;
-        }
     }
 
     @Override

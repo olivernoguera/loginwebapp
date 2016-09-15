@@ -15,8 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class GenericDao<T extends Entity> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericDao.class);
-
     private final Map<String, T> entitySet;
 
     public GenericDao() {

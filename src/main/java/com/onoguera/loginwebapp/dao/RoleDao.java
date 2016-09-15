@@ -21,7 +21,7 @@ public class RoleDao extends GenericDao<Role> {
     /**
      * Get Singleton instance
      *
-     * @return
+     * @return RoleDao instance
      */
     public static RoleDao getInstance() {
         return INSTANCE;

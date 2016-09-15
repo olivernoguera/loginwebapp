@@ -22,7 +22,7 @@ public class UserDao extends GenericDao<User> {
     /**
      * Get Singleton instance
      *
-     * @return
+     * @return User Dao instance
      */
     public static UserDao getInstance() {
         return INSTANCE;
