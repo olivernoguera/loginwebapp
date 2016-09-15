@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
  *
  */
 public class RoleDaoTest {
-    
+
     @Test
     public void createDefaultRole(){
         Role roleToTest = new Role("test1");

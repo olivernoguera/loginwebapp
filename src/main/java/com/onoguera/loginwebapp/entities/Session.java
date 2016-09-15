@@ -6,7 +6,7 @@ package com.onoguera.loginwebapp.entities;
  */
 public class Session extends Entity {
 
-    private User user;
+    private final User user;
 
     public Session(User user, String id) {
         super(id);
@@ -17,7 +17,4 @@ public class Session extends Entity {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
