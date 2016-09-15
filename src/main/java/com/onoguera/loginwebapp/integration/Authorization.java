@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.integration;
 
 /**
  * Created by olivernoguera on 12/06/2016.

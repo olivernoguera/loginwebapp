@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.integration;
 
 import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;

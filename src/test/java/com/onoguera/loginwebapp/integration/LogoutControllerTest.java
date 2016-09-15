@@ -1,7 +1,6 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.integration;
 
 import com.onoguera.loginwebapp.entities.Session;
-import com.onoguera.loginwebapp.view.JsonResponse;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.Response;
 import com.onoguera.loginwebapp.view.ResponseNotImplemented;

@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.integration;
 
 import com.onoguera.loginwebapp.view.Response;
 import com.sun.net.httpserver.Headers;

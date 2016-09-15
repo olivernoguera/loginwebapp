@@ -1,13 +1,8 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.integration;
 
-import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by olivernoguera on 26/06/2016.

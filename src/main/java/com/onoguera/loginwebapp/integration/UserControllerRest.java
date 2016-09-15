@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.integration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.onoguera.loginwebapp.entities.Role;

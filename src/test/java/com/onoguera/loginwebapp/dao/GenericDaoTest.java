@@ -21,7 +21,7 @@ public class GenericDaoTest {
 
     }
 
-    private static class EntityMock extends Entity<EntityMock> {
+    private static class EntityMock extends Entity {
 
         private final Integer value;
 

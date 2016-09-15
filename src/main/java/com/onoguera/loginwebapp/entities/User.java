@@ -8,7 +8,7 @@ import java.util.List;
  *
  */
 
-public class User extends Entity<User> {
+public class User extends Entity {
 
     private String password;
 
