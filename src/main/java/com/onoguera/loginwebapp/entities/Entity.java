@@ -5,9 +5,9 @@ package com.onoguera.loginwebapp.entities;
  *
  *
  */
-public abstract class Entity implements Cloneable {
+public abstract class Entity {
 
-    private String id;
+    private final String id;
 
     public Entity(String id) {
         this.id = id;
@@ -20,22 +20,8 @@ public abstract class Entity implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof Entity && this.getClass().isAssignableFrom(obj.getClass())
+        return obj != null && obj instanceof Entity
                     && ((Entity) obj).getId().equals(this.getId());
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " { id:" + getId() + " }";
-    }
-
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -43,7 +29,5 @@ public abstract class Entity implements Cloneable {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+
 }
