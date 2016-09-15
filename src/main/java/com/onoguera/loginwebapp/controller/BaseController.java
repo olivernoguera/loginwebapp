@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.integration;
+package com.onoguera.loginwebapp.controller;
 
 
 import com.onoguera.loginwebapp.entities.Session;

@@ -1,5 +1,7 @@
 package com.onoguera.loginwebapp.integration;
 
+import com.onoguera.loginwebapp.controller.LoginController;
+import com.onoguera.loginwebapp.controller.Request;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;

@@ -1,5 +1,7 @@
 package com.onoguera.loginwebapp.integration;
 
+import com.onoguera.loginwebapp.controller.Authorization;
+import com.onoguera.loginwebapp.controller.RequestUtils;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;

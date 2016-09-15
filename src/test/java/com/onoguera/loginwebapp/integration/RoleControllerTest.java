@@ -2,6 +2,8 @@ package com.onoguera.loginwebapp.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onoguera.loginwebapp.controller.Request;
+import com.onoguera.loginwebapp.controller.RoleControllerRest;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.service.RoleConverter;
