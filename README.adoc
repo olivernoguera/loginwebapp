@@ -44,7 +44,7 @@ To run application:
 
 [source,Shell]
 ----
-java -jar target/login-web-application-0.2.4.jar
+java -jar target/login-web-application-0.4.0.jar
 ----
 
 
