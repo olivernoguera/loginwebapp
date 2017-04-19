@@ -48,7 +48,7 @@ public abstract class BaseController implements Controller {
 
     public abstract Response doDelete(final Request request);
 
-    public abstract Response getBadAuth(String method, Headers headers, ContentType contentType, Request request);
+    public abstract Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request);
 
     @Override
     public boolean filter(String contextPath) {
@@ -85,7 +85,7 @@ public abstract class BaseController implements Controller {
             return new ResponseBadRequest();
         }
 
-        Response badAuth = getBadAuth(method, headers, contentType, request);
+        Response badAuth = getBadHeaders(method, headers, contentType, request);
         if (badAuth != null){
             return badAuth;
         }

@@ -193,6 +193,6 @@ public class PageControllerTest {
 
     @Test
     public void checkAuthAndRestAPITest(){
-        Assert.assertThat(" getBadAuth must be return null ", pageController.getBadAuth(null, null, null, null), nullValue());
+        Assert.assertThat(" getBadHeaders must be return null ", pageController.getBadHeaders(null, null, null, null), nullValue());
     }
 }
