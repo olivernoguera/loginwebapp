@@ -23,7 +23,7 @@ public abstract class RestAuthController extends BaseController{
 
     protected UserService userService = UserService.getInstance();
 
-    public  Response checkAuthAndRestAPI(String method, Headers headers, ContentType contentType, Request request) {
+    public  Response checkRestAPI(String method, Headers headers, ContentType contentType, Request request) {
         List<Role> roles = this.getRoles(headers,contentType.getCharset());
         if (roles.isEmpty()) {
             return new ResponseUnauthorized();

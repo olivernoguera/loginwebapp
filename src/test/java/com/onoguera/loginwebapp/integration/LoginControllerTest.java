@@ -145,7 +145,7 @@ public class LoginControllerTest {
 
     @Test
     public void checkAuthAndRestAPITest(){
-        Assert.assertThat(" checkAuthAndRestAPI must be return null ", loginController.checkAuthAndRestAPI(null, null, null, null), nullValue());
+        Assert.assertThat(" checkRestAPI must be return null ", loginController.checkRestAPI(null, null, null, null), nullValue());
     }
 
 }

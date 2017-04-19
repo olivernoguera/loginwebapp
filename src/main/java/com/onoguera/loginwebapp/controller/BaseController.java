@@ -28,7 +28,7 @@ public abstract class BaseController implements Controller {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
-    protected SessionServiceInterface sessionService;
+    protected SessionServiceInterface sessionService = null;
 
     protected final static String METHOD_POST = "POST";
     protected final static String METHOD_GET = "GET";
@@ -48,7 +48,7 @@ public abstract class BaseController implements Controller {
 
     public abstract Response doDelete(final Request request);
 
-    public abstract Response checkAuthAndRestAPI(String method, Headers headers, ContentType contentType, Request request);
+    public abstract Response checkRestAPI(String method, Headers headers, ContentType contentType, Request request);
 
     @Override
     public boolean filter(String contextPath) {
@@ -85,7 +85,7 @@ public abstract class BaseController implements Controller {
             return new ResponseBadRequest();
         }
 
-        Response auth = checkAuthAndRestAPI(method, headers, contentType, request);
+        Response auth = checkRestAPI(method, headers, contentType, request);
         if (auth != null){
             return auth;
         }
@@ -148,7 +148,6 @@ public abstract class BaseController implements Controller {
         return new Request(queryParams, pathParams,rawBody,session);
 
     }
-
 
     public void setSessionService(SessionServiceInterface sessionService) {
         this.sessionService = sessionService;

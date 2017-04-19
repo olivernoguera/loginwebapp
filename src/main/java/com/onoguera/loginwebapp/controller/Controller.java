@@ -1,5 +1,6 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.onoguera.loginwebapp.view.Response;
 import com.sun.net.httpserver.Headers;
 
@@ -14,5 +15,8 @@ public interface Controller {
 
     boolean filter(String contextPath);
 
-    Response dispatch(final URI requestURI, InputStream requestBody, final String requestMethod, final Headers requestHeaders);
+    Response dispatch(final URI requestURI, InputStream requestBody, final String requestMethod,
+                      final Headers requestHeaders);
+
+    void setSessionService(final SessionServiceInterface sessionService);
 }

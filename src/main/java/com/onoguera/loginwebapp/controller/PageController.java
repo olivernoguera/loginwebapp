@@ -111,7 +111,7 @@ public final class PageController extends BaseController {
     }
 
     @Override
-    public Response checkAuthAndRestAPI(String method, Headers headers, ContentType contentType, Request request) {
+    public Response checkRestAPI(String method, Headers headers, ContentType contentType, Request request) {
         return null;
     }
 

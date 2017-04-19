@@ -193,6 +193,6 @@ public class PageControllerTest {
 
     @Test
     public void checkAuthAndRestAPITest(){
-        Assert.assertThat(" checkAuthAndRestAPI must be return null ", pageController.checkAuthAndRestAPI(null, null, null, null), nullValue());
+        Assert.assertThat(" checkRestAPI must be return null ", pageController.checkRestAPI(null, null, null, null), nullValue());
     }
 }

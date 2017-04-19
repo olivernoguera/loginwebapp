@@ -29,19 +29,19 @@ public class ControllerContainer {
 
         LoginController loginController = new LoginController();
         loginController.setUserService(userService);
-        loginController.setSessionService(sessionServiceInterface);
 
         PageController pageController = new PageController();
-        pageController.setSessionService(sessionServiceInterface);
 
         LogoutController logoutController = new LogoutController();
-        logoutController.setSessionService(sessionServiceInterface);
 
         controllers.add(userController);
         controllers.add(roleController);
         controllers.add(loginController);
         controllers.add(pageController);
         controllers.add(logoutController);
+
+        controllers.stream().forEach(c-> c.setSessionService(sessionServiceInterface));
+
     }
 
     public static ControllerContainer getInstance() {
