@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.integration;
+package integration.integration;
 
 import com.onoguera.loginwebapp.controller.LoginController;
 import com.onoguera.loginwebapp.controller.Request;

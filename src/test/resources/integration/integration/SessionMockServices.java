@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.integration;
+package integration.integration;
 
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;

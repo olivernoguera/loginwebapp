@@ -23,10 +23,18 @@ public class GenericDaoTest {
 
     private static class EntityMock extends Entity {
 
-        private final Integer value;
+        private Integer value;
 
         public EntityMock(String id, Integer value) {
             super(id);
+            this.value = value;
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+
+        public void setValue(Integer value) {
             this.value = value;
         }
     }
@@ -45,6 +53,22 @@ public class GenericDaoTest {
         Assert.assertThat("GenericDaoTest::testInsert::Must be one element",
                 genericMockDao.elements().size(), is(Integer.valueOf(1)));
     }
+
+    @Test
+    public void testUpdate() throws Exception {
+
+        final String id = "test1";
+        EntityMock entityMock1 = new EntityMock(id, 1);
+        genericMockDao.insert(entityMock1);
+        Assert.assertThat("GenericDaoTest::testInsert::Must be value ",
+                genericMockDao.findOne(id).getValue(), is(Integer.valueOf(1)));
+
+        entityMock1.setValue(2);
+        genericMockDao.update(entityMock1);
+        Assert.assertThat("GenericDaoTest::testInsert::Must be value ",
+                genericMockDao.findOne(id).getValue(), is(Integer.valueOf(2)));
+    }
+
 
     @Test
     public void testFindOneIsEqual() throws Exception {
