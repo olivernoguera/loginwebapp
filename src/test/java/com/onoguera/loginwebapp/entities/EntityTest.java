@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
  * Created by olivernoguera on 15/09/2016.
  *
  */
-public class EntityDaoTest {
+public class EntityTest {
 
     private static class EntityMock extends  Entity{
 

@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
  * Created by olivernoguera on 15/09/2016.
  *
  */
-public class RoleDaoTest {
+public class RoleTest {
 
     @Test
     public void createDefaultRole(){
