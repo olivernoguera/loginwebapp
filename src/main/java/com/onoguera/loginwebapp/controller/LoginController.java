@@ -139,7 +139,7 @@ public final class LoginController extends BaseController {
     }
 
     @Override
-    public Response checkRestAPI(String method, Headers headers, ContentType contentType, Request request) {
+    public Response getBadAuth(String method, Headers headers, ContentType contentType, Request request) {
         return null;
     }
 

@@ -74,7 +74,7 @@ public final class LogoutController extends BaseController {
     }
 
     @Override
-    public Response checkRestAPI(String method, Headers headers, ContentType contentType, Request request) {
+    public Response getBadAuth(String method, Headers headers, ContentType contentType, Request request) {
         return null;
     }
 

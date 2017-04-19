@@ -69,7 +69,7 @@ public class LogoutControllerTest {
 
     @Test
     public void checkAuthAndRestAPITest(){
-        Assert.assertThat(" checkRestAPI must be return null ", logoutController.checkRestAPI(null, null, null, null), nullValue());
+        Assert.assertThat(" getBadAuth must be return null ", logoutController.getBadAuth(null, null, null, null), nullValue());
     }
 
 }
