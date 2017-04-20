@@ -3,9 +3,9 @@ package integration.integration;
 import com.onoguera.loginwebapp.controller.LogoutController;
 import com.onoguera.loginwebapp.controller.Request;
 import com.onoguera.loginwebapp.entities.Session;
+import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.LoginResponse;
-import com.onoguera.loginwebapp.view.Response;
-import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 import org.junit.Assert;
 import org.junit.Test;
 

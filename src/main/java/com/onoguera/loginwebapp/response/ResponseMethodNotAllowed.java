@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.view;
+package com.onoguera.loginwebapp.response;
 
 import java.net.HttpURLConnection;
 

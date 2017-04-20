@@ -1,7 +1,7 @@
 package com.onoguera.loginwebapp.controller;
 
+import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
-import com.onoguera.loginwebapp.view.Response;
 import com.sun.net.httpserver.Headers;
 
 import java.io.InputStream;

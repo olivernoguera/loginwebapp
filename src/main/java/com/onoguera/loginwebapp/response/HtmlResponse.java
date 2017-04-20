@@ -1,6 +1,7 @@
-package com.onoguera.loginwebapp.view;
+package com.onoguera.loginwebapp.response;
 
 import com.onoguera.loginwebapp.entities.Session;
+import com.onoguera.loginwebapp.view.HtmlView;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public abstract class  HtmlResponse extends Response {
                         String location) throws IOException {
 
         super(httpStatus, CONTENT_TYPE);
-        super.setOutput(htmlView.getOutput(values));
+        super.setOutput(htmlView.setOutput(values));
         this.location = location;
         this.session = String.format("%s=%s", Session.class.getSimpleName(),sessionId);
 
@@ -35,11 +36,7 @@ public abstract class  HtmlResponse extends Response {
 
     public HtmlResponse(int httpStatus, Map<String, String> values, HtmlView htmlView,String location)
             throws IOException {
-
-        super(httpStatus, CONTENT_TYPE);
-        super.setOutput(htmlView.getOutput(values));
-        this.location = location;
-        this.session = String.format("%s=0", Session.class.getSimpleName());
+        this(httpStatus,values,htmlView,"0",location);
     }
 
     public void setHeadersResponse(Headers headers){

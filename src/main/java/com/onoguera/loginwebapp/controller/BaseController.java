@@ -2,10 +2,10 @@ package com.onoguera.loginwebapp.controller;
 
 
 import com.onoguera.loginwebapp.entities.Session;
+import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.response.ResponseBadRequest;
+import com.onoguera.loginwebapp.response.ResponseMethodNotAllowed;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
-import com.onoguera.loginwebapp.view.Response;
-import com.onoguera.loginwebapp.view.ResponseBadRequest;
-import com.onoguera.loginwebapp.view.ResponseMethodNotAllowed;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -30,10 +30,10 @@ public abstract class BaseController implements Controller {
 
     protected SessionServiceInterface sessionService = null;
 
-    protected final static String METHOD_POST = "POST";
-    protected final static String METHOD_GET = "GET";
-    protected final static String METHOD_PUT = "PUT";
-    protected final static String METHOD_DELETE = "DELETE";
+    protected static final String METHOD_POST = "POST";
+    protected static final String METHOD_GET = "GET";
+    protected static final String METHOD_PUT = "PUT";
+    protected static final String METHOD_DELETE = "DELETE";
 
 
     public abstract Pattern getURLPattern();

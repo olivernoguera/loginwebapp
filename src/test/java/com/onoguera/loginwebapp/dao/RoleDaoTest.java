@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Created by olivernoguera on 15/09/2016.

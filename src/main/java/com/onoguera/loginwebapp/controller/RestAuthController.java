@@ -2,11 +2,11 @@ package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.response.ResponseForbidden;
+import com.onoguera.loginwebapp.response.ResponseUnauthorized;
+import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.UserService;
-import com.onoguera.loginwebapp.view.Response;
-import com.onoguera.loginwebapp.view.ResponseForbidden;
-import com.onoguera.loginwebapp.view.ResponseUnauthorized;
-import com.onoguera.loginwebapp.view.ResponseUnsupportedMediaType;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 

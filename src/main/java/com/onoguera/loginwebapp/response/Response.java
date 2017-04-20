@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.view;
+package com.onoguera.loginwebapp.response;
 
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;

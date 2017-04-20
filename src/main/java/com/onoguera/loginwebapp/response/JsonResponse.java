@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.view;
+package com.onoguera.loginwebapp.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
  * Created by oliver on 3/06/16.
  *
  */
-public class JsonResponse extends Response {
+public final class JsonResponse extends Response {
 
     protected final static String CONTENT_TYPE = "application/json; charset=UTF-8";
     private static final ObjectMapper mapper = new ObjectMapper();

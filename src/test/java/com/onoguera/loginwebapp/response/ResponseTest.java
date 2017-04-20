@@ -1,5 +1,6 @@
-package com.onoguera.loginwebapp.view;
+package com.onoguera.loginwebapp.response;
 
+import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class ResponseTest {
 
         Assert.assertThat("ResponseTest responseWithOutput getHttpStatus",
                 responseMock.getHttpStatus(), is(httpStatusMock));
-        Assert.assertThat("ResponseTest responseWithOutput getOutput",
+        Assert.assertThat("ResponseTest responseWithOutput setOutput",
                 responseMock.getOutput(), is(output));
         Assert.assertThat("ResponseTest responseWithOutput getContentType",
                 responseMock.getContentType(), is(ContentType.APPLICATION_JSON.toString()));
@@ -55,7 +56,7 @@ public class ResponseTest {
 
         Assert.assertThat("ResponseTest responseWithoutOutputWithoutValue getHttpStatus",
                 responseMock.getHttpStatus(), is(httpStatusMock));
-        Assert.assertThat("ResponseTest responseWithoutOutputWithoutValue getOutput",
+        Assert.assertThat("ResponseTest responseWithoutOutputWithoutValue setOutput",
                 responseMock.getOutput(), is(nullValue()));
         Assert.assertThat("ResponseTest responseWithoutOutputWithoutValue getContentType",
                 responseMock.getContentType(), is(ContentType.APPLICATION_XML.toString()));
@@ -78,12 +79,18 @@ public class ResponseTest {
         Assert.assertThat("ResponseTest responseWithoutOutputWithValue setHttpStatus",
                 responseMock.getHttpStatus(), is(500));
 
-        Assert.assertThat("ResponseTest responseWithoutOutputWithValue getOutput",
+        Assert.assertThat("ResponseTest responseWithoutOutputWithValue setOutput",
                 responseMock.getOutput(), is(output));
         Assert.assertThat("ResponseTest responseWithoutOutputWithValue getContentType",
                 responseMock.getContentType(), is(ContentType.APPLICATION_XML.toString()));
         Assert.assertThat("ResponseTest responseWithoutOutputWithValue getBytes", responseMock.getBytes(),
                 is(output.getBytes( StandardCharsets.UTF_8)));
+
+        Headers headersMock = new Headers();
+        responseMock.setHeadersResponse(headersMock);
+
+        Assert.assertThat("ResponseTest responseWithoutOutputWithValue setHeadersResponse", headersMock.size(),
+                is(0));
     }
 
 }

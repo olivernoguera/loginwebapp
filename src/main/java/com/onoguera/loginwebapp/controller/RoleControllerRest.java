@@ -2,13 +2,13 @@ package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
+import com.onoguera.loginwebapp.response.JsonResponse;
+import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.response.ResponseBadRequest;
+import com.onoguera.loginwebapp.response.ResponseEmpty;
+import com.onoguera.loginwebapp.response.ResponseNotFound;
+import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.service.RoleService;
-import com.onoguera.loginwebapp.view.JsonResponse;
-import com.onoguera.loginwebapp.view.Response;
-import com.onoguera.loginwebapp.view.ResponseBadRequest;
-import com.onoguera.loginwebapp.view.ResponseEmpty;
-import com.onoguera.loginwebapp.view.ResponseNotFound;
-import com.onoguera.loginwebapp.view.ResponseNotImplemented;
 
 import java.net.HttpURLConnection;
 import java.util.Arrays;

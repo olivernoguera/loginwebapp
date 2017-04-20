@@ -9,7 +9,7 @@ import com.onoguera.loginwebapp.entities.Role;
  */
 public class RoleDao extends GenericDao<Role> {
 
-    private final static RoleDao INSTANCE = new RoleDao();
+    private static final RoleDao INSTANCE = new RoleDao();
 
     /**
      * Protect singleton

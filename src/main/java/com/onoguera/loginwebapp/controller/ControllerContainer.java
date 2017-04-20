@@ -17,7 +17,7 @@ public class ControllerContainer {
 
     private List<Controller> controllers = new ArrayList<>();
 
-    private final static ControllerContainer INSTANCE = new ControllerContainer();
+    private static final ControllerContainer INSTANCE = new ControllerContainer();
 
 
     private ControllerContainer() {

@@ -8,7 +8,7 @@ import com.onoguera.loginwebapp.entities.Session;
  */
 public class SessionDao extends GenericDao<Session>  {
 
-    private final static SessionDao INSTANCE = new SessionDao();
+    private static final SessionDao INSTANCE = new SessionDao();
 
     /**
      * Protect singleton

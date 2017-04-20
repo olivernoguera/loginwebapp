@@ -2,6 +2,7 @@ package com.onoguera.loginwebapp.view;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -22,7 +23,11 @@ public abstract class HtmlView {
     private StringBuffer load(String templateName) throws IOException {
         StringBuffer buffer = new StringBuffer();
         String line;
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(templateName)))) {
+        InputStream is = ClassLoader.getSystemResourceAsStream(templateName);
+        if( is == null){
+            throw new IOException("Not exists view with path"+templateName);
+        }
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             do {
                 line = reader.readLine();
                 if(line != null) {
@@ -33,7 +38,7 @@ public abstract class HtmlView {
         return buffer;
     }
 
-    public String getOutput(Map<String,String> values) {
+    public String setOutput(Map<String,String> values) {
         StringBuffer html = new StringBuffer(template);
 
         while(true) {

@@ -2,9 +2,9 @@ package com.onoguera.loginwebapp.server;
 
 import com.onoguera.loginwebapp.controller.Controller;
 import com.onoguera.loginwebapp.controller.ControllerContainer;
-import com.onoguera.loginwebapp.view.Response;
-import com.onoguera.loginwebapp.view.ResponseInternalServerError;
-import com.onoguera.loginwebapp.view.ResponseNotFound;
+import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.response.ResponseInternalServerError;
+import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
