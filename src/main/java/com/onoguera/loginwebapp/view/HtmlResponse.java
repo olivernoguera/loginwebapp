@@ -20,7 +20,12 @@ public abstract class  HtmlResponse extends Response {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlResponse.class);
 
-    public HtmlResponse(int httpStatus, Map<String, String> values, HtmlView htmlView, String sessionId,String location) throws IOException {
+    public HtmlResponse(int httpStatus,
+                        Map<String, String> values,
+                        HtmlView htmlView,
+                        String sessionId,
+                        String location) throws IOException {
+
         super(httpStatus, CONTENT_TYPE);
         super.setOutput(htmlView.getOutput(values));
         this.location = location;
@@ -28,7 +33,9 @@ public abstract class  HtmlResponse extends Response {
 
     }
 
-    public HtmlResponse(int httpStatus, Map<String, String> values, HtmlView htmlView,String location) throws IOException {
+    public HtmlResponse(int httpStatus, Map<String, String> values, HtmlView htmlView,String location)
+            throws IOException {
+
         super(httpStatus, CONTENT_TYPE);
         super.setOutput(htmlView.getOutput(values));
         this.location = location;
@@ -36,6 +43,7 @@ public abstract class  HtmlResponse extends Response {
     }
 
     public void setHeadersResponse(Headers headers){
+
         headers.add("Set-Cookie", session);
         headers.add("Location", location);
     }
