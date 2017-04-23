@@ -45,7 +45,9 @@ public class User extends Entity {
     }
 
     public void addRoles(final List<Role> roles) {
-        this.roles.addAll(roles);
+        if( roles != null){
+            this.roles.addAll(roles);
+        }
     }
 
     public void addRole(final Role role) {

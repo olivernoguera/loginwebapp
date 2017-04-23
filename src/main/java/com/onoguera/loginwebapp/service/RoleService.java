@@ -18,7 +18,6 @@ public class RoleService implements Service {
 
     private final static RoleService INSTANCE = new RoleService();
     private final RoleDao roleDao = RoleDao.getInstance();
-    private final RoleConverter roleConverter = new RoleConverter();
 
     private RoleService() {
         super();
@@ -54,7 +53,7 @@ public class RoleService implements Service {
         if(roles == null){
             return null;
         }
-        return roles.stream().map(r -> roleConverter.entityToReadDTO(r)).collect(Collectors.toList());
+        return roles.stream().map(r -> RoleConverter.getInstance().entityToReadDTO(r)).collect(Collectors.toList());
     }
 
     public ReadRole getReadRole(String roleId) {
@@ -62,11 +61,11 @@ public class RoleService implements Service {
         if( roleEntity == null){
             return null;
         }
-        return  roleConverter.entityToReadDTO(roleEntity);
+        return  RoleConverter.getInstance().entityToReadDTO(roleEntity);
     }
 
     public void addWriteRole(WriteRole role) {
-        Role roleEntity = roleConverter.writeDTOtoEntity(role);
+        Role roleEntity = RoleConverter.getInstance().writeDTOtoEntity(role);
         this.addRole(roleEntity);
     }
 }

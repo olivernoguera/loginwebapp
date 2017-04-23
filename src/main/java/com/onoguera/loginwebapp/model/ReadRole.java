@@ -19,4 +19,20 @@ public class ReadRole implements ReadDTO {
     public void setRole(String role) {
         this.role = role;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ReadRole readRole = (ReadRole) o;
+
+        return role != null ? role.equals(readRole.role) : readRole.role == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return role != null ? role.hashCode() : 0;
+    }
 }

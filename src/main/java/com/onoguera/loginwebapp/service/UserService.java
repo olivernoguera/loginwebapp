@@ -17,7 +17,6 @@ public class UserService implements UserServiceInterface {
 
     private final static UserService INSTANCE = new UserService();
     private final UserDao userDao = UserDao.getInstance();
-    private final static UserConverter userConverter = new UserConverter();
 
     private UserService() {
         super();
@@ -79,15 +78,17 @@ public class UserService implements UserServiceInterface {
         if (user == null) {
             return null;
         }
-        return  userConverter.entityToReadDTO(user);
+        return  UserConverter.getInstance().entityToReadDTO(user);
     }
 
     public List<ReadUser> getReadUsers() {
-        return this.userDao.elements().stream().map(u -> userConverter.entityToReadDTO(u)).collect(Collectors.toList());
+        return this.userDao.elements().stream().map(u ->
+                UserConverter.getInstance().entityToReadDTO(u)).collect(Collectors.toList());
     }
 
     public void createWriteUsers(List<WriteUser> writeUsers) {
-        List<User> users = writeUsers.stream().map(wu -> userConverter.writeDTOtoEntity(wu)).collect(Collectors.toList());
+        List<User> users = writeUsers.stream().map(wu ->
+                UserConverter.getInstance().writeDTOtoEntity(wu)).collect(Collectors.toList());
         this.createUsers(users);
     }
 
@@ -102,11 +103,11 @@ public class UserService implements UserServiceInterface {
         if (user == null) {
             return null;
         }
-        return  userConverter.entityToWriteDTO(user);
+        return  UserConverter.getInstance().entityToWriteDTO(user);
     }
 
     public void updateWriteUser(WriteUser writeUser) {
-        User user = userConverter.writeDTOtoEntity(writeUser);
+        User user = UserConverter.getInstance().writeDTOtoEntity(writeUser);
         this.updateUser(user);
     }
 
