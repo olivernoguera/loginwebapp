@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +40,11 @@ public abstract class HtmlView {
     }
 
     public String setOutput(Map<String,String> values) {
+
         StringBuffer html = new StringBuffer(template);
+        if( values == null){
+            values = new HashMap<>();
+        }
 
         while(true) {
 
