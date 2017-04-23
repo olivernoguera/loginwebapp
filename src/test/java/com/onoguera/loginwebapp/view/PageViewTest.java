@@ -19,8 +19,6 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class PageViewTest {
 
-
-
     @Test
     public void pageViewWithoutSession() throws IOException {
 

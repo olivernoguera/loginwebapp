@@ -1,10 +1,12 @@
 package com.onoguera.loginwebapp.service;
 
+import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.dao.RoleDao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 public class RoleService implements Service {
 
     private final static RoleService INSTANCE = new RoleService();
-    private final RoleDao roleDao = RoleDao.getInstance();
+    private Dao roleDao;
 
     private RoleService() {
         super();
@@ -44,15 +46,12 @@ public class RoleService implements Service {
     }
 
     public Role getRole(final String roleId) {
-        return this.roleDao.findOne(roleId);
+        return (Role)this.roleDao.findOne(roleId);
     }
 
 
     public List<ReadRole> getReadRoles() {
         Collection<Role> roles = this.getRoles();
-        if(roles == null){
-            return null;
-        }
         return roles.stream().map(r -> RoleConverter.getInstance().entityToReadDTO(r)).collect(Collectors.toList());
     }
 
@@ -67,5 +66,10 @@ public class RoleService implements Service {
     public void addWriteRole(WriteRole role) {
         Role roleEntity = RoleConverter.getInstance().writeDTOtoEntity(role);
         this.addRole(roleEntity);
+    }
+
+
+    public void setRoleDao(Dao roleDao) {
+        this.roleDao = roleDao;
     }
 }

@@ -1,5 +1,6 @@
 package com.onoguera.loginwebapp.service;
 
+import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.dao.UserDao;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class UserService implements UserServiceInterface {
 
     private final static UserService INSTANCE = new UserService();
-    private final UserDao userDao = UserDao.getInstance();
+    private Dao userDao;
 
     private UserService() {
         super();
@@ -31,11 +32,11 @@ public class UserService implements UserServiceInterface {
     }
 
     public User getUser(final String id) {
-        return this.userDao.findOne(id);
+        return (User)this.userDao.findOne(id);
     }
 
     public void removeUser(final String id) {
-        User user = userDao.findOne(id);
+        User user = this.getUser(id);
         if (user != null) {
             this.userDao.delete(id);
         }
@@ -74,7 +75,7 @@ public class UserService implements UserServiceInterface {
     }
 
     public ReadUser getReadUser(final String id) {
-        User user = this.userDao.findOne(id);
+        User user = this.getUser(id);
         if (user == null) {
             return null;
         }
@@ -82,8 +83,8 @@ public class UserService implements UserServiceInterface {
     }
 
     public List<ReadUser> getReadUsers() {
-        return this.userDao.elements().stream().map(u ->
-                UserConverter.getInstance().entityToReadDTO(u)).collect(Collectors.toList());
+        List<User> users = ( List<User>)this.userDao.elements().stream().collect(Collectors.toList());
+        return users.stream().map(u -> UserConverter.getInstance().entityToReadDTO(u)).collect(Collectors.toList());
     }
 
     public void createWriteUsers(List<WriteUser> writeUsers) {
@@ -99,7 +100,7 @@ public class UserService implements UserServiceInterface {
 
 
     public WriteUser getWriteUser(final String userId) {
-        User user = this.userDao.findOne(userId);
+        User user = this.getUser(userId);
         if (user == null) {
             return null;
         }
@@ -111,4 +112,8 @@ public class UserService implements UserServiceInterface {
         this.updateUser(user);
     }
 
+
+    public void setUserDao(Dao userDao) {
+        this.userDao = userDao;
+    }
 }

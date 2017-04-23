@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp;
+package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
@@ -6,6 +6,8 @@ import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
+import com.onoguera.loginwebapp.startup.AppContext;
+import com.onoguera.loginwebapp.startup.LoaderEntities;
 
 import java.util.Collection;
 
@@ -16,12 +18,11 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class LoaderEntitiesTest {
 
-    private LoaderEntities loaderEntities = new LoaderEntities();
 
     @Test
     public void loadEntities() {
-
-        this.loaderEntities.loadEntities();
+        AppContext.startContext();
+        LoaderEntities.loadEntities();
         Collection<User> userCollection = UserService.getInstance().getUsers();
         Collection<Role> rolesCollection = RoleService.getInstance().getRoles();
         Assert.assertThat("Must load 4 Users", userCollection.size(), is(4));

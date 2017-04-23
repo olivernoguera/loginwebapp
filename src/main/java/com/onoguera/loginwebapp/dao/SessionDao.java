@@ -6,7 +6,7 @@ import com.onoguera.loginwebapp.entities.Session;
  * Created by olivernoguera on 25/06/2016.
  *
  */
-public class SessionDao extends GenericDao<Session>  {
+public class SessionDao extends GenericDao<Session>  implements Dao<Session>  {
 
     private static final SessionDao INSTANCE = new SessionDao();
 

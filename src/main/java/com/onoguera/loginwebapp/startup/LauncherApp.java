@@ -1,22 +1,22 @@
-package com.onoguera.loginwebapp;
+package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.server.Server;
 
 import java.io.IOException;
 
-public class LauncherApp {
+public final class LauncherApp {
 
 
     private final Server server;
-    private final LoaderEntities loaderEntities;
 
     public LauncherApp(Server server) throws IOException {
         this.server = server;
-        this.loaderEntities = new LoaderEntities();
+
     }
 
     public void start() throws IOException {
-        this.loaderEntities.loadEntities();
+        AppContext.startContext();
+        LoaderEntities.loadEntities();
         this.server.start();
     }
 

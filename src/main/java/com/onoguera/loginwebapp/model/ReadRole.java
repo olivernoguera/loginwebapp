@@ -31,8 +31,4 @@ public class ReadRole implements ReadDTO {
 
     }
 
-    @Override
-    public int hashCode() {
-        return role != null ? role.hashCode() : 0;
-    }
 }

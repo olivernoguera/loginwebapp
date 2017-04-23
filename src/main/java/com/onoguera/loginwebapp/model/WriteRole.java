@@ -48,10 +48,5 @@ public class WriteRole implements WriteDTO {
 
     }
 
-    @Override
-    public int hashCode() {
-        int result = role != null ? role.hashCode() : 0;
-        result = 31 * result + (writeAccess ? 1 : 0);
-        return result;
-    }
+
 }

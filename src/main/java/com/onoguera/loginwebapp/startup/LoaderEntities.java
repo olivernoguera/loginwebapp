@@ -1,6 +1,7 @@
-package com.onoguera.loginwebapp;
+package com.onoguera.loginwebapp.startup;
 
 
+import com.onoguera.loginwebapp.dao.UserDao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.service.RoleService;
@@ -13,18 +14,19 @@ import java.util.List;
  * Created by olivernoguera on 04/06/2016.
  *
  */
-public class LoaderEntities {
+public final class LoaderEntities {
 
 
     private static final String USER_PREFIX = "USER_";
     private static final String PASSWORD_PREFIX = "PASS_";
     private static final String ROLE_PREFIX = "PAGE_";
 
-    public LoaderEntities() {
-    }
 
-    public void loadEntities() {
+    public static void loadEntities() {
         UserService userService = UserService.getInstance();
+        UserDao userDao = UserDao.getInstance();
+        userService.setUserDao(userDao);
+
         RoleService roleService = RoleService.getInstance();
 
         List<User> users = LoaderEntities.createUsers(3);

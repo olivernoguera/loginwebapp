@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by olivernoguera on 04/06/2016.
  *
  */
-public abstract class GenericDao<T extends Entity> {
+public abstract class GenericDao<T extends Entity>  implements  Dao<T>{
 
     private final Map<String, T> entitySet;
 

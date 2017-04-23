@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp;
+package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.server.Server;
 import com.onoguera.loginwebapp.server.ServerImpl;
