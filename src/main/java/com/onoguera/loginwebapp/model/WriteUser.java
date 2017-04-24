@@ -55,5 +55,16 @@ public class WriteUser implements WriteDTO {
         this.roles.add(role);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WriteUser writeUser = (WriteUser) o;
+
+        if (username != null ? !username.equals(writeUser.username) : writeUser.username != null) return false;
+        if (password != null ? !password.equals(writeUser.password) : writeUser.password != null) return false;
+        return roles != null ? roles.equals(writeUser.roles) : writeUser.roles == null;
+    }
 
 }

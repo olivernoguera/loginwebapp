@@ -2,8 +2,11 @@ package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.dao.GenericDao;
+import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
+import com.onoguera.loginwebapp.model.WriteUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +29,6 @@ public class UserServiceTest {
 
     private static class MockUserDao extends GenericDao<User>
             implements Dao<User> {
-
 
     }
 
@@ -105,16 +107,82 @@ public class UserServiceTest {
         Assert.assertThat("UserServiceTest readWriteUsersTest getReadUsers",
                 convertReadCollectionToListOrdered(userService.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user)))));
+        userService.removeAllUsers();
+        Assert.assertThat("UserServiceTest readWriteUsersTest removeAllUsers",
+                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList())));
 
     }
 
     @Test
-    public void readBadUsers() {
+    public void readBadUsersTest() {
 
         Assert.assertThat("UserServiceTest readBadUsers getReadUser that not exists",
                 userService.getReadUser("15"), is(nullValue()));
+        Assert.assertThat("UserServiceTest readBadUsers getReadUser that not exists",
+                userService.getWriteUser("15"), is(nullValue()));
         Assert.assertThat("UserServiceTest readBadUsers getReadUsers null",
                 userService.getReadUsers(), is(new ArrayList<>()));
 
     }
+
+    @Test
+    public void createWriteUsersTest() {
+
+        Role role = new Role("role1");
+        Role role2 = new Role("role2");
+        User user1 = new User("test1","passw2",  Arrays.asList(role));
+        User user2 = new User("test1","passw3",  Arrays.asList(role,role2));
+
+        WriteRole writeRole = new WriteRole("role1");
+        WriteRole writeRole2 = new WriteRole("role2");
+        WriteUser writeUser = new WriteUser("test1","passw2", Arrays.asList(writeRole));
+        WriteUser writeUser2 = new WriteUser("test1","pass3", Arrays.asList(writeRole,writeRole2));
+
+
+        userService.createWriteUsers(Arrays.asList(writeUser));
+        Assert.assertThat("UserServiceTest createWriteUsersTest addUser",
+                userService.getUser(user1.getId()), is(user1));
+        Assert.assertThat("UserServiceTest createWriteUsersTest getUsers",
+                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user1))));
+        Assert.assertThat("UserServiceTest createWriteUsersTest getReadUser",
+                userService.getReadUser(user1.getId()), is(UserConverter.getInstance().entityToReadDTO(user1)));
+        Assert.assertThat("UserServiceTest createWriteUsersTest getReadUsers",
+                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user1)))));
+
+        userService.updateWriteUser(writeUser2);
+        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getUser",
+                userService.getUser(user2.getId()), is(user2));
+        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getUsers",
+                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user2))));
+        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser",
+                userService.getReadUser(user2.getId()), is(UserConverter.getInstance().entityToReadDTO(user2)));
+        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getReadUsers",
+                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user2)))));
+        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getWriteUser",
+                userService.getWriteUser(user2.getId()), is(writeUser2));
+
+    }
+
+    @Test
+    public void validateUserTest() {
+        User user = new User("mockUser","mockPassword");
+        userService.createUsers(Arrays.asList(user));
+        User userNotCreated = new User("mockUser1","mockPassword");
+        User userWithNullPassword = new User("mockUser1",null);
+        User userWithBadPassword = new User("mockUser","mockBadPassword");
+
+        Assert.assertThat("UserServiceTest validateUserTest validateUser exist user",
+                userService.validateUser(user), is(user));
+        Assert.assertThat("UserServiceTest validateUserTest validateUser that not exists",
+                userService.validateUser(userNotCreated), is(nullValue()));
+        Assert.assertThat("UserServiceTest validateUserTest validateUser user with null password",
+                userService.validateUser(userWithNullPassword), is(nullValue()));
+        Assert.assertThat("UserServiceTest validateUserTest validateUser user with bad password",
+                userService.validateUser(userWithBadPassword), is(nullValue()));
+    }
+
+
 }
