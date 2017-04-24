@@ -1,7 +1,7 @@
-package integration.integration;
+package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.controller.Controller;
-import com.onoguera.loginwebapp.controller.ControllerContainer;
+import com.onoguera.loginwebapp.startup.ControllerContainer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class ControllerContainerTest {
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
         Optional<Controller> controller = controllerContainer.findController(null);
 
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path null",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath  Not exist controller with pattern path null",
                 controller.isPresent(), is(Boolean.FALSE));
     }
 
@@ -30,7 +30,7 @@ public class ControllerContainerTest {
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
         Optional<Controller> controller = controllerContainer.findController("");
 
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path \"\"",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath Not exist controller with pattern path \"\"",
                 controller.isPresent(), is(Boolean.FALSE));
 
     }
@@ -41,7 +41,7 @@ public class ControllerContainerTest {
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
         Optional<Controller> controller = controllerContainer.findController("");
 
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path Test",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath Not exist controller with pattern path Test",
                 controller.isPresent(), is(Boolean.FALSE));
     }
 
@@ -51,19 +51,19 @@ public class ControllerContainerTest {
         ControllerContainer controllerContainer = ControllerContainer.getInstance();
 
         Optional<Controller> controller = controllerContainer.findController("/users");
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path /users",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath Not exist controller with pattern path /users",
                 controller.isPresent(), is(Boolean.TRUE));
 
         controller = controllerContainer.findController("/users/");
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path /users/",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath Not exist controller with pattern path /users/",
                 controller.isPresent(), is(Boolean.TRUE));
 
         controller = controllerContainer.findController("/users/51515");
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path /users/",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath Not exist controller with pattern path /users/",
                 controller.isPresent(), is(Boolean.TRUE));
 
         controller = controllerContainer.findController("/users/r22r2");
-        Assert.assertThat("getControllerByNullPath:: Not exist controller with pattern path /users/",
+        Assert.assertThat("ControllerContainerTest getControllerByNullPath Not exist controller with pattern path /users/",
                 controller.isPresent(), is(Boolean.TRUE));
 
 

@@ -1,5 +1,8 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.restcontroller;
 
+import com.onoguera.loginwebapp.controller.Authorization;
+import com.onoguera.loginwebapp.controller.BaseController;
+import com.onoguera.loginwebapp.controller.Request;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.response.Response;
@@ -7,6 +10,7 @@ import com.onoguera.loginwebapp.response.ResponseForbidden;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.UserService;
+import com.onoguera.loginwebapp.utils.RequestUtils;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 
@@ -19,7 +23,7 @@ import java.util.Optional;
  * Created by olivernoguera on 05/06/2016.
  *  Abstract class for api controllers required authentication
  */
-public abstract class RestAuthController extends BaseController{
+public abstract class RestAuthController extends BaseController {
 
     protected UserService userService = UserService.getInstance();
 

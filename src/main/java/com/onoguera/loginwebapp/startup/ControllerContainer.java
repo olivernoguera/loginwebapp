@@ -1,5 +1,11 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.startup;
 
+import com.onoguera.loginwebapp.controller.Controller;
+import com.onoguera.loginwebapp.controller.LoginController;
+import com.onoguera.loginwebapp.controller.LogoutController;
+import com.onoguera.loginwebapp.controller.PageController;
+import com.onoguera.loginwebapp.restcontroller.RoleControllerRest;
+import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
 import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.onoguera.loginwebapp.service.UserService;

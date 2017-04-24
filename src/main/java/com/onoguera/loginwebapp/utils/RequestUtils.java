@@ -1,5 +1,7 @@
-package com.onoguera.loginwebapp.controller;
+package com.onoguera.loginwebapp.utils;
 
+import com.onoguera.loginwebapp.controller.Authorization;
+import com.onoguera.loginwebapp.controller.BaseController;
 import com.onoguera.loginwebapp.entities.Session;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.NameValuePair;
@@ -26,7 +28,7 @@ import java.util.regex.Pattern;
  *
  * Created by oliver on 7/06/16.
  */
-public final  class RequestUtils {
+public final class RequestUtils {
 
     private static final String COOKIE = "Cookie";
     private static final String EMPTY_STRING = "";
@@ -89,7 +91,7 @@ public final  class RequestUtils {
      * @param headers of request
      * @return Authentication must be null if not exists
      */
-    public static Authorization getAuthorizationFromHeader(Headers headers,Charset charset){
+    public static Authorization getAuthorizationFromHeader(Headers headers, Charset charset){
 
         Authorization authorization = null;
         if (headers == null) {

@@ -14,15 +14,16 @@ public abstract class Entity {
     }
 
     @Override
-    public int hashCode() {
-        return getId().hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Entity entity = (Entity) o;
+
+        return id != null ? id.equals(entity.id) : entity.id == null;
+
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj != null && obj instanceof Entity
-                    && ((Entity) obj).getId().equals(this.getId());
-    }
 
 
     public String getId() {

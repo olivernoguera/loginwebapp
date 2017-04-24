@@ -1,7 +1,7 @@
 package com.onoguera.loginwebapp.server;
 
 import com.onoguera.loginwebapp.controller.Controller;
-import com.onoguera.loginwebapp.controller.ControllerContainer;
+import com.onoguera.loginwebapp.startup.ControllerContainer;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
