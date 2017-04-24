@@ -10,7 +10,7 @@ public interface SessionServiceInterface {
 
     void delete(String id);
 
-    Session findOne(String sessionId);
+    Session getSession(String sessionId);
 
     Session createSession(final User user);
 }

@@ -143,7 +143,7 @@ public abstract class BaseController implements Controller {
         String sessionId = RequestUtils.getSessionId(headers);
         Session session = null;
         if( sessionId != null){
-             session = sessionService.findOne(sessionId);
+             session = sessionService.getSession(sessionId);
         }
         return new Request(queryParams, pathParams,rawBody,session);
 

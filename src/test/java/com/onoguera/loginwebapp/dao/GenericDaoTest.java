@@ -77,7 +77,7 @@ public class GenericDaoTest {
         Assert.assertThat("GenericDaoTest::testFindOneIsEqual::Must be one element",
                 genericMockDao.elements().size(), is(Integer.valueOf(1)));
         EntityMock entityMock2 = genericMockDao.findOne(entityMock1.getId());
-        Assert.assertThat("GenericDaoTest::testFindOneIsEqual::findOne entity must be equals than insert",
+        Assert.assertThat("GenericDaoTest::testFindOneIsEqual::getSession entity must be equals than insert",
                 entityMock1, is(entityMock2));
     }
 

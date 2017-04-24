@@ -1,8 +1,10 @@
 package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.dao.RoleDao;
+import com.onoguera.loginwebapp.dao.SessionDao;
 import com.onoguera.loginwebapp.dao.UserDao;
 import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.service.UserService;
 
 /**
@@ -23,6 +25,9 @@ public final class AppContext {
 
         UserService userService = UserService.getInstance();
         userService.setUserDao(UserDao.getInstance());
+
+        SessionService sessionService = SessionService.getInstance();
+        sessionService.setSessionDao(SessionDao.getInstance().getInstance());
     }
 
 }
