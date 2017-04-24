@@ -24,7 +24,10 @@ public abstract class Entity {
 
     }
 
-
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 
     public String getId() {
         return id;
