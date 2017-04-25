@@ -1,14 +1,25 @@
 package com.onoguera.loginwebapp.utils;
 
 import com.onoguera.loginwebapp.controller.Authorization;
+import com.onoguera.loginwebapp.controller.BaseController;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -34,6 +45,8 @@ public class RequestUtilsTest {
     private static final String DEFAULT_MIME_TYPE = ContentType.TEXT_HTML.getMimeType();
 
     private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
+
+    private static final String COOKIE = "Cookie";
 
 
     @Test
@@ -92,6 +105,38 @@ public class RequestUtilsTest {
         Assert.assertThat("RequestUtilsTest testNullHeader2 contentType mimetype must be text/html",
                 contentType.getMimeType(), is(DEFAULT_MIME_TYPE));
         Assert.assertThat("RequestUtilsTest testNullHeader2 authorizations must be null", authorization, nullValue());
+    }
+
+    @Test
+    public void nullContentTypeHeader() {
+
+        Headers headers = new Headers();
+        headers.put(CONTENT_TYPE_HEADER, Arrays.asList(null,"test"));
+        ContentType contentType = RequestUtils.getContentType(headers);
+        Authorization authorization  = RequestUtils.getAuthorizationFromHeader(headers, contentType.getCharset());
+
+        Assert.assertThat("RequestUtilsTest nullContentTypeHeader contentType charset must be UTF-8",
+                contentType.getCharset(), is(DEFAULT_CHARSET));
+        Assert.assertThat("RequestUtilsTest nullContentTypeHeader contentType mimetype must be text/html",
+                contentType.getMimeType(), is(DEFAULT_MIME_TYPE));
+        Assert.assertThat("RequestUtilsTest nullContentTypeHeader authorizations must be null", authorization, nullValue());
+    }
+
+
+
+    @Test
+    public void nullCharsetTypeHeader() {
+
+        Headers headers = new Headers();
+        headers.put(CONTENT_TYPE_HEADER, Arrays.asList(DEFAULT_MIME_TYPE));
+        ContentType contentType = RequestUtils.getContentType(headers);
+        Authorization authorization  = RequestUtils.getAuthorizationFromHeader(headers, contentType.getCharset());
+
+        Assert.assertThat("RequestUtilsTest nullCharsetTypeHeader contentType charset must be UTF-8",
+                contentType.getCharset(), is(DEFAULT_CHARSET));
+        Assert.assertThat("RequestUtilsTest nullCharsetTypeHeader contentType mimetype must be text/html",
+                contentType.getMimeType(), is(DEFAULT_MIME_TYPE));
+        Assert.assertThat("RequestUtilsTest nullCharsetTypeHeader authorizations must be null", authorization, nullValue());
     }
 
     @Test
@@ -273,6 +318,178 @@ public class RequestUtilsTest {
         Assert.assertThat("RequestUtilsTest testHtmlContentTypeUTF8 getMimeType",
                 ContentType.TEXT_HTML.getMimeType(), is(contentType.getMimeType()));
     }
+
+
+    @Test
+    public void getBadCookie(){
+
+        Headers headers = new Headers();
+        String expectedSessionId = "14";
+        headers.put(COOKIE,Arrays.asList("Session",expectedSessionId));
+
+        String sessionId = RequestUtils.getSessionId(headers);
+        Assert.assertThat("RequestUtilsTest getBadCookie getSessionId",
+                sessionId, is(nullValue()));
+    }
+
+
+    @Test
+    public void getGoodCookie(){
+
+        Headers headers = new Headers();
+        String expectedSessionId = "14";
+        headers.put(COOKIE,Arrays.asList("Session="+expectedSessionId));
+
+        String sessionId = RequestUtils.getSessionId(headers);
+        Assert.assertThat("RequestUtilsTest getGoodCookie getSessionId",
+                sessionId, is(expectedSessionId));
+
+    }
+
+    @Test
+    public void getBadCookieKey(){
+
+        Headers headers = new Headers();
+        String expectedSessionId = "14";
+        headers.put(COOKIE,Arrays.asList("test="+expectedSessionId));
+
+        String sessionId = RequestUtils.getSessionId(headers);
+        Assert.assertThat("RequestUtilsTest getBadCookieKey getSessionId",
+                sessionId, is(nullValue()));
+
+    }
+
+
+    @Test
+    public void getPathvariableOneLevel(){
+
+        String basePath = "/basepath";
+        String entityId = "entityid";
+        Pattern p = Pattern.compile(basePath + "/*(?<" + entityId + ">\\S*)");
+
+        String id1 = "14";
+        String path = basePath + "/" +id1 ;
+
+        List<String> params = new ArrayList<>();
+        params.add(entityId);
+
+        Map<String,String> result = RequestUtils.parsePathParams(path,params,p);
+        Assert.assertThat("RequestUtilsTest getPathvariableOneLevel key is entityId",
+                result.keySet().iterator().next(), is(entityId));
+        Assert.assertThat("RequestUtilsTest getPathvariableOneLevel value is ",
+                result.values().iterator().next(), is(id1));
+    }
+
+    @Test
+    public void getPathvariableTwoLevels(){
+
+        String collectionOne = "/collectionOne";
+        String entityId1 = "entityid";
+        String entityId2 = "entityid2";
+        String collectionTwo = "collectionTwo";
+        Pattern p =   Pattern.compile(collectionOne + "/*(?<" + entityId1 + ">[^:\\/\\s]+)?\\/?(?<" + collectionTwo +
+                ">"+collectionTwo+")?\\/?(?<" + entityId2 + ">[^:\\/\\s]+)?");
+
+        String id1 = "14";
+        String id2 = "15";
+        String path = collectionOne + "/" +id1 + "/" + collectionTwo + "/" + id2;
+
+        List<String> params = new ArrayList<>();
+        params.add(entityId1);
+        params.add(collectionTwo);
+        params.add(entityId2);
+
+        Map<String,String> result = RequestUtils.parsePathParams(path,params,p);
+
+        Assert.assertThat("RequestUtilsTest getPathvariableTwoLevels value of entity1 is ",
+                result.get(entityId1), is(id1));
+        Assert.assertThat("RequestUtilsTest getPathvariableTwoLevels value of entity2 is  ",
+                result.get(entityId2), is(id2));
+    }
+
+
+    @Test
+    public void putAndPostSupportJson(){
+
+        Assert.assertThat("RequestUtilsTest putAndPostSupportJson put is  supported  ",
+                RequestUtils.validMediaType( BaseController.METHOD_PUT, ContentType.APPLICATION_JSON),
+                is(Boolean.valueOf(true)));
+
+        Assert.assertThat("RequestUtilsTest putAndPostSupportJson post is  supported  ",
+                RequestUtils.validMediaType(BaseController.METHOD_POST, ContentType.APPLICATION_JSON),
+                is(Boolean.valueOf(true)));
+
+    }
+
+    @Test
+    public void notJsonMediaType(){
+
+        Assert.assertThat("RequestUtilsTest notJsonMediaType put with not json  ",
+                RequestUtils.validMediaType( BaseController.METHOD_PUT, ContentType.APPLICATION_XML),
+                is(Boolean.valueOf(false)));
+
+        Assert.assertThat("RequestUtilsTest notJsonMediaType put with not json ",
+                RequestUtils.validMediaType(BaseController.METHOD_POST, ContentType.APPLICATION_XML),
+                is(Boolean.valueOf(false)));
+
+        Assert.assertThat("RequestUtilsTest notJsonMediaType delete  with not json   ",
+                RequestUtils.validMediaType( BaseController.METHOD_DELETE, ContentType.APPLICATION_XML),
+                is(Boolean.valueOf(true)));
+
+        Assert.assertThat("RequestUtilsTest notJsonMediaType get  with not json  ",
+                RequestUtils.validMediaType( BaseController.METHOD_GET, ContentType.APPLICATION_XML),
+                is(Boolean.valueOf(true)));
+
+    }
+
+
+    @Test
+    public void parseQueryParamsUrlEncondedBadInputStream() throws FileNotFoundException {
+
+        String badString = "";
+        InputStream is = new ByteArrayInputStream(badString.getBytes(StandardCharsets.UTF_8));
+        Assert.assertThat("RequestUtilsTest parseQueryParamsUrlEncondedBadInputStream empty body ",
+                RequestUtils.parseQueryParamsUrlEnconded(is,Charset.defaultCharset()).isEmpty(),
+                is(Boolean.valueOf(true)));
+
+    }
+
+    @Test
+    public void parseQueryParamsUrlEncondedGoodBody() throws FileNotFoundException {
+
+        String goodBody = "id1=14&id2=20";
+
+        InputStream is = new ByteArrayInputStream(goodBody.getBytes(StandardCharsets.UTF_8));
+        Map params = RequestUtils.parseQueryParamsUrlEnconded(is,Charset.defaultCharset());
+        Assert.assertThat("RequestUtilsTest parseQueryParamsUrlEncondedGoodBody id1y ",
+                params.get("id1"),
+                is("14"));
+        Assert.assertThat("RequestUtilsTest parseQueryParamsUrlEncondedGoodBody id2 ",
+                params.get("id2"),
+                is("20"));
+
+    }
+
+
+    @Test
+    public void parseFirstRequestBodyTest() throws IOException {
+
+        String goodBody = "id1=14&id2=20";
+        InputStream is = new ByteArrayInputStream(goodBody.getBytes(StandardCharsets.UTF_8));
+
+        Assert.assertThat("RequestUtilsTest parseFirstRequestBodyTest string params ",
+                RequestUtils.parseFirstRequestBody(is,Charset.defaultCharset()), is(goodBody));
+        Assert.assertThat("RequestUtilsTest parseFirstRequestBodyTest null inputstream",
+                RequestUtils.parseFirstRequestBody(null,Charset.defaultCharset()), is(nullValue()));
+
+        goodBody = "";
+        is = new ByteArrayInputStream(goodBody.getBytes(StandardCharsets.UTF_8));
+        Assert.assertThat("RequestUtilsTest parseFirstRequestBodyTest empty string",
+                RequestUtils.parseFirstRequestBody(is,Charset.defaultCharset()), is(nullValue()));
+
+    }
+
+
 
 
 }

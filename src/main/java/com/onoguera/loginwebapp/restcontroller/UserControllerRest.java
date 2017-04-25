@@ -48,7 +48,7 @@ public class UserControllerRest extends RestAuthController {
     private static final RoleService roleService = RoleService.getInstance();
 
     private static final Pattern p =
-            Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">roles)?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
+            Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
 
     @Override
     public Pattern getURLPattern() {

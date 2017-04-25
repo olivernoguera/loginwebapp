@@ -142,7 +142,7 @@ public final class RequestUtils {
                 });
             }
         } catch(IOException e) {
-            LOGGER.error("parseQueryParams", e);
+            LOGGER.error("parseQueryParamsUrlEnconded", e);
         }
         return queryParams;
     }
@@ -174,17 +174,15 @@ public final class RequestUtils {
     }
 
 
-    public static boolean validMediaType(String rawBody, String method, ContentType contentType) {
+    public static boolean validMediaType( String method, ContentType contentType) {
+
         if (method.equals(BaseController.METHOD_GET) || method.equals(BaseController.METHOD_DELETE)) {
             return true;
         }
-        if (rawBody == null || rawBody.length() == 0) {
-            return true;
-        }
-
         if (!isApplicationJson(contentType)) {
             return false;
         }
+
         return true;
     }
 

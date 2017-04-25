@@ -32,7 +32,7 @@ public abstract class RestAuthController extends BaseController {
         if (roles.isEmpty()) {
             return new ResponseUnauthorized();
         }
-        if (!RequestUtils.validMediaType(request.getRawBody(), method, contentType)) {
+        if (!RequestUtils.validMediaType( method, contentType)) {
             return new ResponseUnsupportedMediaType();
         }
         if (!method.equals(METHOD_GET)) {
