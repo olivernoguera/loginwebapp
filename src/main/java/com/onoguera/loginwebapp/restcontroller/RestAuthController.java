@@ -10,6 +10,7 @@ import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseForbidden;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
+import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Created by olivernoguera on 05/06/2016.
@@ -39,8 +39,10 @@ public abstract class RestAuthController extends BaseController {
     }
 
     public  Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request) {
+
         List<Role> roles = this.getRoles(headers,contentType.getCharset());
-        if (roles.isEmpty()) {
+
+        if (roles.isEmpty()  && !roles.contains(RoleService.API_ROLE)) {
             return new ResponseUnauthorized();
         }
         if (!RequestUtils.validMediaType( method, contentType)) {
@@ -48,8 +50,7 @@ public abstract class RestAuthController extends BaseController {
         }
         if (!method.equals(METHOD_GET)) {
             //Modify and create and delete
-            Optional<Role> writRole = roles.stream().filter(r -> r.isWriteAccess()).findFirst();
-            if (!writRole.isPresent()) {
+            if (!roles.contains(RoleService.WRITER_API_ROLE)) {
                 return new ResponseForbidden();
             }
         }

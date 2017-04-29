@@ -4,7 +4,7 @@ package integration.integration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onoguera.loginwebapp.controller.Controller;
-import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
+import com.onoguera.loginwebapp.restcontroller.UserControllerRestTest;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
@@ -72,7 +72,7 @@ public class BaseControllerTest {
     @Test
     public void doGetUnathorizedDispatch() throws URISyntaxException, JsonProcessingException {
 
-        Controller controller = new UserControllerRest();
+        Controller controller = new UserControllerRestTest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -99,7 +99,7 @@ public class BaseControllerTest {
     @Test
     public void doGetWithResourceDispatch() throws URISyntaxException, JsonProcessingException {
 
-        Controller controller = new UserControllerRest();
+        Controller controller = new UserControllerRestTest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -128,7 +128,7 @@ public class BaseControllerTest {
 
     @Test
     public void doPostDispatch() throws URISyntaxException, IOException {
-        Controller controller = new UserControllerRest();
+        Controller controller = new UserControllerRestTest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -173,7 +173,7 @@ public class BaseControllerTest {
 
     @Test
     public void doPutDispatch() throws URISyntaxException {
-        Controller controller = new UserControllerRest();
+        Controller controller = new UserControllerRestTest();
         URI uri = new URI("/users");
         Response response = controller.dispatch(uri, null, "PUT", adminHeaders);
         Assert.assertThat(" Response must be ResponseNotImplemented", response, instanceOf(ResponseNotImplemented.class));
@@ -181,7 +181,7 @@ public class BaseControllerTest {
 
     @Test
     public void doDeleteDispatch() throws URISyntaxException {
-        Controller controller = new UserControllerRest();
+        Controller controller = new UserControllerRestTest();
         URI uri = new URI("/users/test");
         Response response = controller.dispatch(uri, null, "DELETE", adminHeaders);
         Assert.assertThat(" Response must be ResponseEmpty", response, instanceOf(ResponseNotFound.class));
@@ -190,7 +190,7 @@ public class BaseControllerTest {
 
     @Test
     public void doPatchDispatch() throws URISyntaxException {
-        Controller controller = new UserControllerRest();
+        Controller controller = new UserControllerRestTest();
         URI uri = new URI("/users/test");
         Response response = controller.dispatch(uri, null, "PATCH", adminHeaders);
         Assert.assertThat(" Response must be mehod not allowed", response, instanceOf(ResponseMethodNotAllowed.class));

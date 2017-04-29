@@ -27,8 +27,6 @@ public class RoleServiceTest {
 
     private static class MockRoleDao extends GenericDao<Role>
             implements Dao<Role> {
-
-
     }
 
     @Before
@@ -59,7 +57,7 @@ public class RoleServiceTest {
 
 
         Role role = new Role("test1");
-        Role role2 = new Role("test2", true);
+        Role role2 = new Role("test2");
 
 
         roleService.addRole(role);
@@ -94,7 +92,7 @@ public class RoleServiceTest {
     public void readWriteRolesTest() {
 
         Role role = new Role("test1");
-        WriteRole writeRole = new WriteRole("test2", true);
+        WriteRole writeRole = new WriteRole("test2");
 
         roleService.addRole(role);
         Assert.assertThat("RoleServiceTest readWriteRolesTest addRole",

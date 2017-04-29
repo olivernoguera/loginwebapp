@@ -1,7 +1,9 @@
 package com.onoguera.loginwebapp.entities;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by oliver on 1/06/16.
@@ -18,7 +20,7 @@ public class User extends Entity {
     public User(String username, String password) {
         super(username);
         this.password = password;
-        this.roles = new ArrayList<>();
+        this.roles = new LinkedList<>();
 
     }
 
@@ -55,8 +57,8 @@ public class User extends Entity {
     }
 
     public void removeRole(String roleId) {
-        Role role = new Role(roleId);
-        this.roles.remove(role);
+        this.roles = this.roles.stream().filter(r-> !r.getId().equals(roleId)).collect(Collectors.toList());
+
     }
 
     public void removeRoles() {

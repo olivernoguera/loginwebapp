@@ -6,6 +6,7 @@ import com.onoguera.loginwebapp.controller.LogoutController;
 import com.onoguera.loginwebapp.controller.PageController;
 import com.onoguera.loginwebapp.restcontroller.RoleControllerRest;
 import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
+import com.onoguera.loginwebapp.restcontroller.UserControllerRestTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -142,7 +143,7 @@ public class ControllerContainerTest {
 
         Assert.assertThat("ControllerContainerTest userControllerServicesTest Controller with path /users is ",
                 controller.get(), is(instanceOf(UserControllerRest.class)));
-        UserControllerRest  userControllerRest = (UserControllerRest) controller.get();
+        UserControllerRest userControllerRest = (UserControllerRest) controller.get();
         Assert.assertThat("ControllerContainerTest userControllerServicesTest UserControllerRest  has UserService ",
                 userControllerRest.getUserService(), is(not(nullValue())));
 

@@ -28,11 +28,11 @@ public final class RoleConverter implements Converter<ReadRole,WriteRole,Role> {
 
     @Override
     public WriteRole entityToWriteDTO(Role entity) {
-        return new WriteRole(entity.getId(),entity.isWriteAccess());
+        return new WriteRole(entity.getId());
     }
 
     @Override
     public Role writeDTOtoEntity(WriteRole dto) {
-        return new Role(dto.getRole(), dto.isWriteAccess());
+        return new Role(dto.getRole());
     }
 }

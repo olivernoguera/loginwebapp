@@ -10,6 +10,7 @@ import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.ResponseForbidden;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
+import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
@@ -39,13 +40,14 @@ import static org.hamcrest.CoreMatchers.nullValue;
  */
 public class RestControllerTest {
 
-    private static final User mockUserSession = new User("User","Pass:word", Arrays.asList(new Role("ROLE1")));
+    private static final User mockUserSession =
+            new User("User","Pass:word", Arrays.asList(new Role("ROLE1")));
     private static final User mockUserSessionWriteAccess = new User("User","Pass:word",
-            Arrays.asList(new Role("ROLE1",true)));
+            Arrays.asList(RoleService.WRITER_API_ROLE));
     private static final String COOKIE = "Cookie";
     private static final String AUTH_HEADER = "Authorization";
 
-    private class MockRestAuthController extends RestAuthController {
+    protected class MockRestAuthController extends RestAuthController {
 
 
         public MockRestAuthController(UserServiceInterface userService) {
@@ -139,11 +141,11 @@ public class RestControllerTest {
 
     }
 
-    private static Request emptyRequest(){
+    protected static Request emptyRequest(){
         return new Request(null,new HashMap<>(),null,null);
     }
 
-    private static Headers goodAuthHeaders(){
+    protected static Headers goodAuthHeaders(){
 
         String header = "Basic VXNlcjpQYXNzOndvcmQ=";
         Headers headers = new Headers();

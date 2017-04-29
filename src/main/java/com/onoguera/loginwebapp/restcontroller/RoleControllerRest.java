@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
  */
 public final class RoleControllerRest extends RestAuthController {
 
-    //private static final Logger LOGGER = LoggerFactory.getLogger(RolesController.class);
-
     private static final String PATH = "/roles";
 
     private static final String ROLE_ID = "roleId";

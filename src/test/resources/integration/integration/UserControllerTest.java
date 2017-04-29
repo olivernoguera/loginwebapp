@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onoguera.loginwebapp.restcontroller.JsonRequest;
 import com.onoguera.loginwebapp.request.Request;
-import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
+import com.onoguera.loginwebapp.restcontroller.UserControllerRestTest;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
@@ -59,7 +59,7 @@ public class UserControllerTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
 
-    private UserControllerRest userController = new UserControllerRest();
+    private UserControllerRestTest userController = new UserControllerRestTest();
 
     @Test
     public void correctFiltersTest() {
@@ -263,7 +263,7 @@ public class UserControllerTest {
     @Test
     public void doPutUserCollection() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
 
@@ -285,7 +285,7 @@ public class UserControllerTest {
     @Test
     public void doPutRoleCollection() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
 
@@ -308,7 +308,7 @@ public class UserControllerTest {
     @Test
     public void doPutOneRoleOfUserRoleNotExists() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
 
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
@@ -332,7 +332,7 @@ public class UserControllerTest {
     @Test
     public void doPutOneRoleOfUserUserNotExists() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
 
         User userExpected = new User("test1", "test1");
         userExpected.addRole(new Role("test1"));
@@ -354,7 +354,7 @@ public class UserControllerTest {
     @Test
     public void doPutOneRoleOfUserRoleExists() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         RoleService.getInstance().addRole(new Role("roleTest1"));
 
         User userExpected = new User("test1", "test1");
@@ -384,7 +384,7 @@ public class UserControllerTest {
     @Test
     public void doPutOneUsersExists() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         RoleService.getInstance().addRole(new Role("roleTest1"));
 
         User userExpected = new User("test1", "test1");
@@ -414,7 +414,7 @@ public class UserControllerTest {
     @Test
     public void doPutUser() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         RoleService.getInstance().addRole(new Role("roleTest1"));
 
         User userExpected = new User("test1", "test1");
@@ -448,7 +448,7 @@ public class UserControllerTest {
     @Test
     public void doPostUserCollection() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");
@@ -481,7 +481,7 @@ public class UserControllerTest {
     @Test
     public void doPostRoleCollection() throws JsonProcessingException {
 
-        UserControllerRest controller = new UserControllerRest();
+        UserControllerRestTest controller = new UserControllerRestTest();
         UserService userService = UserService.getInstance();
 
         User user = new User("test", "test");

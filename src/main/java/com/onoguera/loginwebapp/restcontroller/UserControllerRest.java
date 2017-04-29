@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -72,8 +73,7 @@ public class UserControllerRest extends RestAuthController {
 
         if (pathParams == null || pathParams.isEmpty()) {
 
-            Collection<ReadUser> users = userService.getReadUsers();
-            response = new JsonResponse(HttpURLConnection.HTTP_OK, users);
+           return this.getUsers();
 
         } else {
             String userId = pathParams.get(USER_ID);
@@ -93,6 +93,13 @@ public class UserControllerRest extends RestAuthController {
             response = new JsonResponse(HttpURLConnection.HTTP_OK, user);
         }
         return response;
+    }
+
+
+    private Response getUsers(){
+
+        Collection<ReadUser> users = userService.getReadUsers();
+        return new JsonResponse(HttpURLConnection.HTTP_OK, users);
     }
 
     private Response getRoles(Request request, ReadUser user) {
@@ -248,37 +255,50 @@ public class UserControllerRest extends RestAuthController {
 
     @Override
     public Response doDelete(Request request) {
+
         Map<String, String> pathParams = request.getPathParams();
-        if (pathParams == null || pathParams.get(USER_ID) == null) {
-            //Delete all users, but not specify by security badrequest
-            return new ResponseBadRequest();
-        }
-
-        String userId = pathParams.get(USER_ID);
-        User user = userService.getUser(userId);
-
-        if (user == null) {
-            return new ResponseNotFound();
-        }
-
-        String roles = pathParams.get(PATH_ROLES);
-
-        if (roles != null && !roles.isEmpty()) {
-
-            String roleId = pathParams.get(ROLE_ID);
-
-            if (roleId == null || roleId.isEmpty()) {
-                user.removeRoles();
-            } else {
-                user.removeRole(roleId);
-            }
-            userService.updateUser(user);
-        } else {
-            userService.removeUser(userId);
-        }
-
         Response response = new ResponseEmpty();
+
+        if (pathParams == null || pathParams.isEmpty()) {
+            userService.removeAllUsers();
+        }else {
+
+            if (pathParams.get(USER_ID) == null) {
+                return new ResponseBadRequest();
+            }
+
+            String userId = pathParams.get(USER_ID);
+            User user = userService.getUser(userId);
+
+            if (user == null) {
+                return new ResponseNotFound();
+            }
+
+            String roles = pathParams.get(PATH_ROLES);
+
+            if (roles != null && !roles.isEmpty()) {
+
+                String roleId = pathParams.get(ROLE_ID);
+                this.deleteRoles(user, roleId);
+            } else {
+                userService.removeUser(userId);
+            }
+        }
+
         return response;
+    }
+
+    private void deleteRoles(User user, String roleId) {
+
+        if (roleId == null || roleId.isEmpty() ) {
+            //Delete all roles
+            user.removeRoles();
+        } else {
+
+            //Delete role
+            user.removeRole(roleId);
+        }
+        userService.updateUser(user);
     }
 
     public RoleService getRoleService() {

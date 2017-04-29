@@ -19,6 +19,9 @@ public class RoleService implements Service {
     private final static RoleService INSTANCE = new RoleService();
     private Dao roleDao;
 
+    public final static Role API_ROLE = new Role("API");
+    public final static Role WRITER_API_ROLE = new Role("WRITER_API");
+
     private RoleService() {
         super();
     }

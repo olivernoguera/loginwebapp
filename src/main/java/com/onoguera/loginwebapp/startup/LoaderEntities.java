@@ -8,6 +8,7 @@ import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,12 +36,13 @@ public final class LoaderEntities {
         List<Role> roles = LoaderEntities.createRoles(3);
         roleService.createRoles(roles);
 
-        Role adminRole = new Role("ADMIN", true);
-        roleService.addRole(adminRole);
-
         User adminUser = new User("ADMIN", "ADMIN");
         adminUser.addRoles(roles);
-        adminUser.addRole(adminRole);
+        adminUser.addRole(RoleService.API_ROLE);
+        adminUser.addRole(RoleService.WRITER_API_ROLE);
+
+        roleService.createRoles(Arrays.asList(RoleService.API_ROLE, RoleService.WRITER_API_ROLE));
+
         userService.addUser(adminUser);
 
 
@@ -53,6 +55,7 @@ public final class LoaderEntities {
             User user = new User(USER_PREFIX + i, PASSWORD_PREFIX + i);
             Role role = new Role(ROLE_PREFIX + i);
             user.addRole(role);
+            user.addRole(RoleService.API_ROLE);
             users.add(user);
         }
         return users;
