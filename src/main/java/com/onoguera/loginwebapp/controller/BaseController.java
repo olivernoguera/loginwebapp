@@ -1,13 +1,13 @@
 package com.onoguera.loginwebapp.controller;
 
 
-import com.onoguera.loginwebapp.entities.Session;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseMethodNotAllowed;
-import com.onoguera.loginwebapp.restcontroller.JsonRequest;
+import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
-import com.onoguera.loginwebapp.utils.RequestUtils;
+import com.onoguera.loginwebapp.request.RequestUtils;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -42,17 +41,21 @@ public abstract class BaseController implements Controller {
 
     public abstract List<String> getPathParams();
 
-    public abstract Response doGet(final Request request);
+    protected abstract Response doGet(final Request request);
 
-    public abstract Response doPost(final Request request);
+    protected abstract Response doPost(final Request request);
 
-    public abstract Response doPut(final Request request);
+    protected abstract Response doPut(final Request request);
 
-    public abstract Response doDelete(final Request request);
+    protected abstract Response doDelete(final Request request);
 
-    public abstract Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request);
+    protected abstract boolean checkMethodAllowed(final String method) ;
 
-    @Override
+    protected abstract Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request);
+
+    protected abstract Request getRequest(Map<String, String> pathParams, String path, InputStream requestBody,
+                                          ContentType contentType, Headers headers)  throws IOException;
+
     public boolean filter(String contextPath) {
         if (contextPath == null) {
             return false;
@@ -65,6 +68,7 @@ public abstract class BaseController implements Controller {
                              final InputStream requestBody,
                              final String method,
                              final Headers headers) {
+
         if (!checkMethodAllowed(method)) {
             LOGGER.warn(String.format("Method %s not allowed", method));
             return new ResponseMethodNotAllowed();
@@ -76,7 +80,7 @@ public abstract class BaseController implements Controller {
             contentType = RequestUtils.getContentType(headers);
         }  catch (IllegalArgumentException i) {
             LOGGER.warn("Bad request.", i);
-            return new ResponseBadRequest();
+            return new ResponseUnsupportedMediaType();
         }
 
         Request request;
@@ -85,6 +89,10 @@ public abstract class BaseController implements Controller {
         } catch (IOException io) {
             LOGGER.warn("Bad request.", io);
             return new ResponseBadRequest();
+        }
+        catch (IllegalArgumentException ilegal) {
+            LOGGER.warn("Bad content type", ilegal);
+            return new ResponseUnsupportedMediaType();
         }
 
         Response badAuth = getBadHeaders(method, headers, contentType, request);
@@ -95,7 +103,16 @@ public abstract class BaseController implements Controller {
         return dispatch(request, method);
     }
 
+    private Request getRequest(final String path,
+                               InputStream requestBody,
+                               ContentType contentType,
+                               Headers headers) throws IOException {
 
+        Map<String, String> pathParams =
+                RequestUtils.parsePathParams(path, this.getPathParams(), this.getURLPattern());
+        return this.getRequest(pathParams, path, requestBody,contentType,headers);
+
+    }
 
     private Response dispatch(final Request request, final String method) {
         if (METHOD_GET.equals(method)) {
@@ -110,46 +127,6 @@ public abstract class BaseController implements Controller {
         }
     }
 
-    protected boolean checkMethodAllowed(final String method) {
-        if (METHOD_GET.equals(method)) {
-            return true;
-        } else if (METHOD_POST.equals(method)) {
-            return true;
-        } else if (METHOD_PUT.equals(method)) {
-            return true;
-        } else if (METHOD_DELETE.equals(method)) {
-            return true;
-        }
-        return false;
-    }
-
-    private Request getRequest(final String path,
-                               InputStream requestBody,
-                               ContentType contentType,
-                               Headers headers) throws IOException {
-
-        Map<String, String> queryParams = new HashMap<>();
-        Map<String, String> pathParams =
-                RequestUtils.parsePathParams(path, this.getPathParams(), this.getURLPattern());
-        String rawBody = "";
-        if( contentType.getMimeType().equals(ContentType.APPLICATION_FORM_URLENCODED.getMimeType())){
-            queryParams =  RequestUtils.parseQueryParamsUrlEnconded(requestBody, contentType.getCharset());
-        }
-        else{
-            rawBody = RequestUtils.parseFirstRequestBody(requestBody, contentType.getCharset());
-            if (RequestUtils.isApplicationJson(contentType)) {
-                return new JsonRequest(queryParams, pathParams, rawBody);
-            }
-        }
-
-        String sessionId = RequestUtils.getSessionId(headers);
-        Session session = null;
-        if( sessionId != null){
-             session = sessionService.getSession(sessionId);
-        }
-        return new Request(queryParams, pathParams,rawBody,session);
-
-    }
 
     public void setSessionService(SessionServiceInterface sessionService) {
         this.sessionService = sessionService;

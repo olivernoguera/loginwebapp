@@ -2,7 +2,7 @@ package com.onoguera.loginwebapp.restcontroller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onoguera.loginwebapp.controller.Request;
+import com.onoguera.loginwebapp.request.Request;
 
 import java.io.IOException;
 import java.util.Map;

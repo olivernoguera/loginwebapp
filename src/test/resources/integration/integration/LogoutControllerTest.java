@@ -1,7 +1,7 @@
 package integration.integration;
 
 import com.onoguera.loginwebapp.controller.LogoutController;
-import com.onoguera.loginwebapp.controller.Request;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;

@@ -1,6 +1,6 @@
 package com.onoguera.loginwebapp.restcontroller;
 
-import com.onoguera.loginwebapp.controller.Request;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.response.JsonResponse;

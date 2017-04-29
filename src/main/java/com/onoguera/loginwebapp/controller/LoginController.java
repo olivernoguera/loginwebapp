@@ -3,15 +3,13 @@ package com.onoguera.loginwebapp.controller;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
-import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.onoguera.loginwebapp.view.LoginResponse;
-import com.sun.net.httpserver.Headers;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +25,7 @@ import java.util.regex.Pattern;
  * Created by olivernoguera on 25/06/2016.
  *
  */
-public final class LoginController extends BaseController {
+public final class LoginController extends HtmlController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
@@ -128,20 +126,7 @@ public final class LoginController extends BaseController {
 
     }
 
-    @Override
-    public Response doPut(Request request) {
-        return new ResponseNotImplemented();
-    }
 
-    @Override
-    public Response doDelete(Request request) {
-        return new ResponseNotImplemented();
-    }
-
-    @Override
-    public Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request) {
-        return null;
-    }
 
 
 }

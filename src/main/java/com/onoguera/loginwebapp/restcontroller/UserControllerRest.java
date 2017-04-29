@@ -1,7 +1,7 @@
 package com.onoguera.loginwebapp.restcontroller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.onoguera.loginwebapp.controller.Request;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadRole;

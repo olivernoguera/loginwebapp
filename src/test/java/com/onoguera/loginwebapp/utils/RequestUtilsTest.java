@@ -2,13 +2,13 @@ package com.onoguera.loginwebapp.utils;
 
 import com.onoguera.loginwebapp.controller.Authorization;
 import com.onoguera.loginwebapp.controller.BaseController;
+import com.onoguera.loginwebapp.request.RequestUtils;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;

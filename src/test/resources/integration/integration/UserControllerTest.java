@@ -3,7 +3,7 @@ package integration.integration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onoguera.loginwebapp.restcontroller.JsonRequest;
-import com.onoguera.loginwebapp.controller.Request;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;

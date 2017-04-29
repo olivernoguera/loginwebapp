@@ -1,4 +1,4 @@
-package com.onoguera.loginwebapp.utils;
+package com.onoguera.loginwebapp.request;
 
 import com.onoguera.loginwebapp.controller.Authorization;
 import com.onoguera.loginwebapp.controller.BaseController;
