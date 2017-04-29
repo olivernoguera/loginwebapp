@@ -280,4 +280,8 @@ public class UserControllerRest extends RestAuthController {
         Response response = new ResponseEmpty();
         return response;
     }
+
+    public RoleService getRoleService() {
+        return roleService;
+    }
 }

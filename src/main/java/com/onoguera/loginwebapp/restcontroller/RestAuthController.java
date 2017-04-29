@@ -107,5 +107,7 @@ public abstract class RestAuthController extends BaseController {
 
     }
 
-
+    public UserServiceInterface getUserService() {
+        return userService;
+    }
 }
