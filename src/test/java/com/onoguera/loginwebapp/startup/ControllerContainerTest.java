@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.controller.Controller;
-import com.onoguera.loginwebapp.startup.ControllerContainer;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -5,11 +5,8 @@ import com.onoguera.loginwebapp.dao.GenericDao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;

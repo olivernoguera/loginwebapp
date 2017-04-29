@@ -38,6 +38,10 @@ public class HtmlControllerTest {
 
     private class MockHtmlController extends  HtmlController{
 
+        public MockHtmlController(SessionServiceInterface sessionService) {
+            super(sessionService);
+        }
+
         @Override
         public Pattern getURLPattern() {
             return Pattern.compile("");
@@ -94,8 +98,7 @@ public class HtmlControllerTest {
     @Test
     public void getBadHeadersTest(){
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         Assert.assertThat("HtmlControllerTest getBadHeadersTest isnull",
                 mockHtmlController.getBadHeaders(MockHtmlController.METHOD_GET,new Headers(),
                         ContentType.APPLICATION_JSON,emptyRequest()), is(nullValue()));
@@ -105,8 +108,7 @@ public class HtmlControllerTest {
     @Test
     public void getBadMethods(){
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         Assert.assertThat("HtmlControllerTest getBadMethods method get",
                 mockHtmlController.checkMethodAllowed(MockHtmlController.METHOD_GET), is(Boolean.TRUE));
         Assert.assertThat("HtmlControllerTest getBadMethods method post",
@@ -131,8 +133,7 @@ public class HtmlControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void getReponseNullPathParams() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         mockHtmlController.getRequest(null, null,  ClassLoader.getSystemResourceAsStream(("test.html"))
                 , ContentType.APPLICATION_JSON, new Headers());
     }
@@ -140,8 +141,7 @@ public class HtmlControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void getReponseNullHeaders() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         mockHtmlController.getRequest(new HashMap<>(), null,   ClassLoader.getSystemResourceAsStream(("test.html")),
                 ContentType.APPLICATION_JSON, null);
     }
@@ -149,16 +149,14 @@ public class HtmlControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void getReponseNullRequestBody() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         mockHtmlController.getRequest(new HashMap<>(), null,  null, ContentType.APPLICATION_JSON, new Headers());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getReponseNullContentType() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         mockHtmlController.getRequest(new HashMap<>(), null,   ClassLoader.getSystemResourceAsStream(("test.html")),
                 null, new Headers());
 
@@ -169,8 +167,7 @@ public class HtmlControllerTest {
     @Test(expected = IOException.class)
     public void getReponsBadRequestBody() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
         mockHtmlController.getRequest(new HashMap<>(), null,  new FileInputStream(""),ContentType.APPLICATION_JSON,
                 new Headers());
     }
@@ -178,8 +175,7 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithoutSession() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithoutSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithoutSession());
 
         Headers headers = new Headers();
         String expectedSessionId = "14";
@@ -206,8 +202,7 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithSession() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession());
 
         Headers headers = new Headers();
         String expectedSessionId = "14";
@@ -231,8 +226,8 @@ public class HtmlControllerTest {
 
     @Test
     public void getReponsWithSessionAndQueryParamsWithoutUrlEnconded() throws IOException {
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithSession());
+
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession());
 
         Headers headers = new Headers();
         String expectedSessionId = "14";
@@ -259,8 +254,7 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithSessionAndQueryParamsWithUrlEnconded() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController();
-        mockHtmlController.setSessionService(new SessionServiceWithSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession());
 
         Headers headers = new Headers();
         String expectedSessionId = "14";

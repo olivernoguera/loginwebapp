@@ -49,7 +49,7 @@ public class UserControllerRest extends RestAuthController {
             Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+
                     PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
 
-    public UserControllerRest(UserServiceInterface userService , final RoleService roleService) {
+    public UserControllerRest(UserServiceInterface userService, RoleService roleService) {
         super(userService);
         this.roleService = roleService;
     }

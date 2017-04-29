@@ -8,7 +8,6 @@ import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseMethodNotAllowed;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public abstract class BaseController implements Controller {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
-    protected SessionServiceInterface sessionService = null;
+
 
     public static final String METHOD_POST = "POST";
     public static final String METHOD_GET = "GET";
@@ -137,7 +136,4 @@ public abstract class BaseController implements Controller {
     }
 
 
-    public void setSessionService(SessionServiceInterface sessionService) {
-        this.sessionService = sessionService;
-    }
 }

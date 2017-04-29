@@ -4,6 +4,7 @@ import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 
@@ -18,6 +19,13 @@ import java.util.Objects;
  * Created by olivernoguera on 29/04/2017.
  */
 public abstract class HtmlController extends BaseController {
+
+    protected final SessionServiceInterface sessionService;
+
+    public HtmlController(SessionServiceInterface sessionService) {
+
+        this.sessionService = sessionService;
+    }
 
     @Override
     public Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request) {
@@ -43,7 +51,8 @@ public abstract class HtmlController extends BaseController {
                                ContentType contentType,
                                Headers headers) throws IOException {
 
-        if(Objects.isNull(pathParams) ||  Objects.isNull(requestBody) || Objects.isNull(contentType) ||  Objects.isNull(headers)){
+        if(Objects.isNull(pathParams) ||  Objects.isNull(requestBody) || Objects.isNull(contentType) ||
+                Objects.isNull(headers)){
             throw new IllegalArgumentException(
                     MessageFormat.format("Elements getRequest {0}, requestBody {1}, contentType {2} , " +
                                     "headers {3} must not be null ",
@@ -64,4 +73,7 @@ public abstract class HtmlController extends BaseController {
 
     }
 
+    public SessionServiceInterface getSessionService() {
+        return sessionService;
+    }
 }

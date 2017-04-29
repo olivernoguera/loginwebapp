@@ -17,10 +17,12 @@ import org.apache.http.entity.ContentType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -30,6 +32,7 @@ import java.util.Optional;
 public abstract class RestAuthController extends BaseController {
 
     protected final UserServiceInterface userService;
+
 
     public RestAuthController(UserServiceInterface userService) {
         this.userService = userService;
@@ -90,9 +93,16 @@ public abstract class RestAuthController extends BaseController {
                                InputStream requestBody,
                                ContentType contentType,
                                Headers headers) throws IOException {
-
+        if(Objects.isNull(pathParams) ||  Objects.isNull(requestBody) || Objects.isNull(contentType) ||
+                Objects.isNull(headers)){
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Elements getRequest {0}, requestBody {1}, contentType {2} , " +
+                                    "headers {3} must not be null ",
+                            pathParams,requestBody, contentType, headers));
+        }
         Map<String, String> queryParams = new HashMap<>();
         String rawBody = RequestUtils.parseFirstRequestBody(requestBody, contentType.getCharset());
+
         return new JsonRequest(queryParams, pathParams, rawBody);
 
     }

@@ -34,7 +34,7 @@ public final class RoleControllerRest extends RestAuthController {
 
     private static final Pattern p = Pattern.compile(PATH + "/*(?<" + ROLE_ID + ">\\S*)");
 
-    public RoleControllerRest(UserServiceInterface userService,RoleService roleService) {
+    public RoleControllerRest(UserServiceInterface userService, RoleService roleService) {
         super(userService);
         this.roleService = roleService;
     }

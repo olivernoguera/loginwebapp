@@ -6,8 +6,6 @@ import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
-import com.onoguera.loginwebapp.startup.AppContext;
-import com.onoguera.loginwebapp.startup.LoaderEntities;
 
 import java.util.Collection;
 

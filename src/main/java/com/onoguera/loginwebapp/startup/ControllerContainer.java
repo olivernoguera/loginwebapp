@@ -30,26 +30,21 @@ public class ControllerContainer {
     private ControllerContainer() {
 
         UserServiceInterface userService = UserService.getInstance();
-        SessionServiceInterface sessionServiceInterface = SessionService.getInstance();
+        SessionServiceInterface sessionService = SessionService.getInstance();
         RoleService roleService = RoleService.getInstance();
 
         UserControllerRest userController = new UserControllerRest(userService,roleService);
         RoleControllerRest roleController = new RoleControllerRest(userService,roleService);
 
-        LoginController loginController = new LoginController();
-        loginController.setUserService(userService);
-
-        PageController pageController = new PageController();
-
-        LogoutController logoutController = new LogoutController();
+        LoginController loginController = new LoginController(sessionService,userService);
+        PageController pageController = new PageController(sessionService);
+        LogoutController logoutController = new LogoutController(sessionService);
 
         controllers.add(userController);
         controllers.add(roleController);
         controllers.add(loginController);
         controllers.add(pageController);
         controllers.add(logoutController);
-
-        controllers.stream().forEach(c-> c.setSessionService(sessionServiceInterface));
 
     }
 

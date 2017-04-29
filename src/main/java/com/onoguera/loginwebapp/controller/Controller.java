@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.response.Response;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.sun.net.httpserver.Headers;
 
 import java.io.InputStream;
@@ -17,6 +16,4 @@ public interface Controller {
 
     Response dispatch(final URI requestURI, InputStream requestBody, final String requestMethod,
                       final Headers requestHeaders);
-
-    void setSessionService(final SessionServiceInterface sessionService);
 }
