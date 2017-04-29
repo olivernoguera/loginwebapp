@@ -11,6 +11,7 @@ import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.request.RequestUtils;
+import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 
@@ -29,7 +30,11 @@ import java.util.Optional;
  */
 public abstract class RestAuthController extends BaseController {
 
-    protected UserService userService = UserService.getInstance();
+    protected final UserServiceInterface userService;
+
+    public RestAuthController(UserServiceInterface userService) {
+        this.userService = userService;
+    }
 
     public  Response getBadHeaders(String method, Headers headers, ContentType contentType, Request request) {
         List<Role> roles = this.getRoles(headers,contentType.getCharset());

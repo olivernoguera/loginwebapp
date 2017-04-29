@@ -10,6 +10,7 @@ import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.UserServiceInterface;
 
 import java.net.HttpURLConnection;
 import java.util.Arrays;
@@ -30,9 +31,14 @@ public final class RoleControllerRest extends RestAuthController {
 
     private static final String ROLE_ID = "roleId";
 
-    private static final RoleService roleService = RoleService.getInstance();
+    private final RoleService roleService;
 
     private static final Pattern p = Pattern.compile(PATH + "/*(?<" + ROLE_ID + ">\\S*)");
+
+    public RoleControllerRest(UserServiceInterface userService,RoleService roleService) {
+        super(userService);
+        this.roleService = roleService;
+    }
 
     @Override
     public Pattern getURLPattern() {

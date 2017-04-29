@@ -17,6 +17,7 @@ import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;
+import com.onoguera.loginwebapp.service.UserServiceInterface;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,12 +44,16 @@ public class UserControllerRest extends RestAuthController {
 
     private static final String PATH_ROLES = "roles";
 
-    private static final UserService userService = UserService.getInstance();
-
-    private static final RoleService roleService = RoleService.getInstance();
+    private final RoleService roleService;
 
     private static final Pattern p =
-            Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
+            Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+
+                    PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
+
+    public UserControllerRest(UserServiceInterface userService , final RoleService roleService) {
+        super(userService);
+        this.roleService = roleService;
+    }
 
     @Override
     public Pattern getURLPattern() {
