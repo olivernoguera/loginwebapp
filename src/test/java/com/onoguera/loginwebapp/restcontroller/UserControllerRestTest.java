@@ -316,9 +316,6 @@ public class UserControllerRestTest {
                 userServiceMock.getReadUser(MOCK_USER_2.getId()),
                 is(UserConverter.getInstance().entityToReadDTO(MOCK_USER_2)));
 
-
-
-
         pathParams = new HashMap<>();
         MOCK_USER_2.setRoles(Arrays.asList(MOCK_ROLE1,MOCK_ROLE2));
         userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
