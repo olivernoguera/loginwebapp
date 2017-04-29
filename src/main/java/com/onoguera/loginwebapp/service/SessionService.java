@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.dao.Dao;
-import com.onoguera.loginwebapp.dao.SessionDao;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
 

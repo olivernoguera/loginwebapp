@@ -2,15 +2,14 @@ package com.onoguera.loginwebapp.restcontroller;
 
 import com.onoguera.loginwebapp.controller.Authorization;
 import com.onoguera.loginwebapp.controller.BaseController;
-import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.request.Request;
+import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseForbidden;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.UserService;
-import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
@@ -20,8 +19,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**

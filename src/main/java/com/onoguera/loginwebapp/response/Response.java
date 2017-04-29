@@ -60,4 +60,28 @@ public abstract class Response {
 
     public void setHeadersResponse(Headers headers){}
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Response response = (Response) o;
+
+        if (httpStatus != response.httpStatus) return false;
+        if (output != null ? !output.equals(response.output) : response.output != null) return false;
+        if (contentType != null ? !contentType.equals(response.contentType) : response.contentType != null)
+            return false;
+        return defaultCharset != null ? defaultCharset.equals(response.defaultCharset) : response.defaultCharset == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = httpStatus;
+        result = 31 * result + (output != null ? output.hashCode() : 0);
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        result = 31 * result + (defaultCharset != null ? defaultCharset.hashCode() : 0);
+        return result;
+    }
 }

@@ -6,7 +6,6 @@ import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
-import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.PageResponse;
 import org.slf4j.Logger;
@@ -65,12 +64,6 @@ public final class PageController extends HtmlController {
 
         return response;
     }
-
-    @Override
-    public Response doPost(Request request) {
-        return new ResponseNotImplemented();
-    }
-
 
     private Response getResponseFromUser(User user,String sessionID, String currentPage){
         Response response = null;

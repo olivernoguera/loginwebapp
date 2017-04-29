@@ -4,7 +4,6 @@ import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
-import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +35,6 @@ public final class LogoutController  extends HtmlController {
     @Override
     public List<String> getPathParams() {
         return new ArrayList<>();
-    }
-
-    @Override
-    public Response doGet(Request request) {
-        return new ResponseNotImplemented();
     }
 
     @Override

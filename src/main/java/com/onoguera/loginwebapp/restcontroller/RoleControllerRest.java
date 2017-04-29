@@ -1,14 +1,13 @@
 package com.onoguera.loginwebapp.restcontroller;
 
-import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.JsonResponse;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
-import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 
@@ -76,10 +75,6 @@ public final class RoleControllerRest extends RestAuthController {
         return response;
     }
 
-    @Override
-    public Response doPost(Request request) {
-        return new ResponseNotImplemented();
-    }
 
     @Override
     public Response doPut(Request request) {

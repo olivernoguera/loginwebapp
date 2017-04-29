@@ -1,12 +1,10 @@
 package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.dao.Dao;
-import com.onoguera.loginwebapp.dao.RoleDao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -2,12 +2,13 @@ package com.onoguera.loginwebapp.controller;
 
 
 import com.onoguera.loginwebapp.request.Request;
+import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseMethodNotAllowed;
+import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
-import com.onoguera.loginwebapp.request.RequestUtils;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -41,13 +42,21 @@ public abstract class BaseController implements Controller {
 
     public abstract List<String> getPathParams();
 
-    protected abstract Response doGet(final Request request);
+    protected Response doGet(final Request request)  {
+        return new ResponseNotImplemented();
+    }
 
-    protected abstract Response doPost(final Request request);
+    protected Response doPost(final Request request)  {
+        return new ResponseNotImplemented();
+    }
 
-    protected abstract Response doPut(final Request request);
+    protected Response doPut(final Request request) {
+        return new ResponseNotImplemented();
+    }
 
-    protected abstract Response doDelete(final Request request);
+    protected Response doDelete(final Request request) {
+        return new ResponseNotImplemented();
+    }
 
     protected abstract boolean checkMethodAllowed(final String method) ;
 

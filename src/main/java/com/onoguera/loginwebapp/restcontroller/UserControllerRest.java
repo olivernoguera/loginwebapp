@@ -1,13 +1,13 @@
 package com.onoguera.loginwebapp.restcontroller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
+import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.JsonResponse;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
@@ -16,7 +16,6 @@ import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.RoleService;
-import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 
 import java.io.IOException;
