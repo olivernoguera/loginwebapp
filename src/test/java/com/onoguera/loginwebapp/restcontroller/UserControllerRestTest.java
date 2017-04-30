@@ -495,7 +495,7 @@ public class UserControllerRestTest {
         userServiceMock.removeAllUsers();
         Assert.assertThat("UserControllerRestTest doPost userservice empty users previuous to create",
                 userServiceMock.getReadUsers().size(), is(Integer.valueOf(0)));
-
+        MOCK_USER_2.setRoles(Arrays.asList(MOCK_ROLE1,MOCK_ROLE2));
         expectedResponse = new JsonResponse(HttpURLConnection.HTTP_CREATED,
                 Arrays.asList(userConverter.entityToWriteDTO(MOCK_USER_1),userConverter.entityToWriteDTO(MOCK_USER_2)));
         String users = "[\n" +
@@ -523,10 +523,11 @@ public class UserControllerRestTest {
                 "]";
         request = new JsonRequest(queryParams,pathParams,users);
         response = userControllerRest.doPost(request);
-        Assert.assertThat("UserControllerRestTest doPost httpstatus for collection roles of users",
+        Assert.assertThat("UserControllerRestTest doPost httpstatus for collection of users",
                 response.getHttpStatus(), is(HttpURLConnection.HTTP_CREATED));
 
-
+        Assert.assertThat("UserControllerRestTest doPost response for collection  of users",
+                response.getOutput(), is(expectedResponse.getOutput()));
     }
 
     @Test
