@@ -7,6 +7,7 @@ import com.onoguera.loginwebapp.controller.PageController;
 import com.onoguera.loginwebapp.restcontroller.RoleControllerRest;
 import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
 import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.RoleServiceInterface;
 import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.onoguera.loginwebapp.service.UserService;
@@ -31,7 +32,7 @@ public class ControllerContainer {
 
         UserServiceInterface userService = UserService.getInstance();
         SessionServiceInterface sessionService = SessionService.getInstance();
-        RoleService roleService = RoleService.getInstance();
+        RoleServiceInterface roleService = RoleService.getInstance();
 
         UserControllerRest userController = new UserControllerRest(userService,roleService);
         RoleControllerRest roleController = new RoleControllerRest(userService,roleService);

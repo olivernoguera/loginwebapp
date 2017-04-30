@@ -53,7 +53,9 @@ public class User extends Entity {
     }
 
     public void addRole(final Role role) {
-        this.roles.add(role);
+        if( !this.roles.contains(role)) {
+            this.roles.add(role);
+        }
     }
 
     public void removeRole(String roleId) {

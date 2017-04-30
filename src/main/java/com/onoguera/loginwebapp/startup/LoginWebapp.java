@@ -11,6 +11,7 @@ public class LoginWebapp {
     private static final int PORT_PROPERTY_DEFAULT = 8080;
 
     public static void main(String[] args) throws IOException {
+
         Server server = new ServerImpl(PORT_PROPERTY_DEFAULT, THREAD_POOL_SIZE_DEFAULT);
         LauncherApp launcherApp = new LauncherApp(server);
         shutDown(launcherApp);

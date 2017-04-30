@@ -16,6 +16,7 @@ import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.RoleServiceInterface;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 
 import java.io.IOException;
@@ -24,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -44,13 +44,13 @@ public class UserControllerRest extends RestAuthController {
 
     private static final String PATH_ROLES = "roles";
 
-    private final RoleService roleService;
+    private final RoleServiceInterface roleService;
 
     private static final Pattern p =
             Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+
                     PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
 
-    public UserControllerRest(UserServiceInterface userService, RoleService roleService) {
+    public UserControllerRest(UserServiceInterface userService, RoleServiceInterface roleService) {
         super(userService);
         this.roleService = roleService;
     }
@@ -125,61 +125,28 @@ public class UserControllerRest extends RestAuthController {
 
     @Override
     public Response doPost(Request request) {
+
         Map<String, String> pathParams = request.getPathParams();
-        if (pathParams == null) {
-            return new ResponseBadRequest();
+        String userId = null;
+        String roles = null;
+        String roleId = null;
+
+        if (pathParams != null) {
+            userId = pathParams.get(USER_ID);
+            roles = pathParams.get(PATH_ROLES);
+            roleId = pathParams.get(ROLE_ID);
         }
-        String userId = pathParams.get(USER_ID);
-        String roles = pathParams.get(PATH_ROLES);
-        String roleId = pathParams.get(ROLE_ID);
-        if (userId != null && roles == null) {
-            //Post must not be path variable of users
-            //Not generate id's on this api
-            //To create only one user use put
-            return new ResponseNotImplemented();
-        }
-        if (userId != null && roleId != null) {
-            //Post must not be path variable of users
-            //Not generate id's on this api
-            //To create only one role of user use put
+
+        if (checkNotImplementedPost(userId, roles, roleId)) {
             return new ResponseNotImplemented();
         }
 
-        JsonRequest jsonRequest;
-        Object object;
         if (request instanceof JsonRequest) {
-            jsonRequest = (JsonRequest) request;
+            JsonRequest jsonRequest = (JsonRequest) request;
             if (userId != null) {
-                WriteUser writeUser = userService.getWriteUser(userId);
-                if( writeUser == null){
-                    return new ResponseNotFound();
-                }
-                if (roles != null) {
-                    //only update roles
-                    List<WriteRole> rolesBody;
-                    try {
-                        rolesBody = (List<WriteRole>) jsonRequest.getBodyObject(new TypeReference<List<WriteRole>>() {});
-                        writeUser.setRoles(rolesBody);
-                        userService.updateWriteUser(writeUser);
-                        return  new JsonResponse(HttpURLConnection.HTTP_CREATED, rolesBody);
-                    } catch (IOException io) {
-                        return new ResponseBadRequest();
-                    }
-
-                } else {
-                    return new ResponseNotFound();
-                }
+                return createRoles(userId, roles, jsonRequest);
             } else {
-                List<WriteUser> usersBody;
-
-                try {
-                    usersBody = (List<WriteUser>) jsonRequest.getBodyObject(new TypeReference<List<WriteUser>>() {});
-                    userService.removeAllUsers();
-                    userService.createWriteUsers(usersBody);
-                    return new JsonResponse(HttpURLConnection.HTTP_CREATED, usersBody);
-                } catch (IOException e) {
-                    return new ResponseBadRequest();
-                }
+                return createUsers(jsonRequest);
             }
         } else {
             return new ResponseUnsupportedMediaType();
@@ -187,70 +154,147 @@ public class UserControllerRest extends RestAuthController {
 
     }
 
-    @Override
-    public Response doPut(Request request) {
-        Map<String, String> pathParams = request.getPathParams();
-        if (pathParams == null) {
+    private Response createUsers(JsonRequest jsonRequest) {
+        try {
+            List<WriteUser> usersBody = (List<WriteUser>)
+                    jsonRequest.getBodyObject(new TypeReference<List<WriteUser>>() {});
+            userService.removeAllUsers();
+            userService.createWriteUsers(usersBody);
+            return new JsonResponse(HttpURLConnection.HTTP_CREATED, usersBody);
+        } catch (IOException e) {
             return new ResponseBadRequest();
         }
-        String userId = pathParams.get(USER_ID);
-        String roles = pathParams.get(PATH_ROLES);
-        String roleId = pathParams.get(ROLE_ID);
+    }
 
-        if (userId == null ) {
+    private Response createRoles(String userId, String roles, JsonRequest jsonRequest) {
+        WriteUser writeUser = userService.getWriteUser(userId);
+        if( writeUser == null){
+            return new ResponseNotFound();
+        }
+
+        //only update roles
+        try {
+            List<WriteRole> rolesBody =
+                    (List<WriteRole>) jsonRequest.getBodyObject(new TypeReference<List<WriteRole>>() {});
+            writeUser.setRoles(rolesBody);
+            userService.updateWriteUser(writeUser);
+            return  new JsonResponse(HttpURLConnection.HTTP_CREATED, rolesBody);
+        } catch (IOException io) {
+            return new ResponseBadRequest();
+        }
+
+
+    }
+
+    private boolean checkNotImplementedPost(String userId, String roles, String roleId) {
+
+        //Post only implemented for collections
+        /**
+         *  /users/{user_id} only user resource not implemented
+         */
+        if (roles == null && userId != null) {
+
+            return true;
+        }
+
+        /**
+         *  Only role resource not implemented
+         *  /users/{user_id}/roles/{roleid}
+         */
+        if (userId != null && roles != null && roleId != null) {
+            return true;
+        }
+
+
+        return false;
+    }
+
+    @Override
+    public Response doPut(Request request) {
+
+        Map<String, String> pathParams = request.getPathParams();
+        String userId = null;
+        String roles = null;
+        String roleId = null;
+
+        if (pathParams != null) {
+            userId = pathParams.get(USER_ID);
+            roles = pathParams.get(PATH_ROLES);
+            roleId = pathParams.get(ROLE_ID);
+        }
+
+        if (checkNotImplementedPut(userId,roles,roleId) ) {
             //Post must not be path variable of users
             //Not generate id's on this api
             //To create only one role of user use put
             return new ResponseNotImplemented();
         }
 
-        if (userId != null && roles != null && roleId == null) {
-            //Put not treatment collection
-            return new ResponseNotImplemented();
-        }
-
-
-        User user = userService.getUser(userId);
-        if( roles != null)
-        {
-            if( user == null){
-                return new ResponseNotFound();
-            }
-
-            Role role = roleService.getRole(roleId);
-            if( role == null){
-                return new ResponseNotFound();
-            }
-            user.addRole(role);
-            userService.updateUser(user);
-            WriteUser writeUser = userService.getWriteUser(user.getId());
-            return new JsonResponse(HttpURLConnection.HTTP_CREATED, writeUser);
+        if( roles != null) {
+            //Update roles
+            return upsertRoleOfUser(userId,roleId);
 
         }else{
-            //Add User
-            JsonRequest jsonRequest;
-            Object object;
+
             if (request instanceof JsonRequest) {
-                WriteUser writeUser;
-                jsonRequest = (JsonRequest) request;
-                try {
-                    writeUser = (WriteUser) jsonRequest.getBodyObject(WriteUser.class);
-                } catch (IOException e) {
-                    return new ResponseBadRequest();
-                }
-                if( !writeUser.getUsername().equals(userId)){
-                    return new ResponseBadRequest();
-                }
-                userService.updateWriteUser(writeUser);
-                return  new JsonResponse(HttpURLConnection.HTTP_CREATED, writeUser);
-            }
-            else{
+                return upsertUser(userId, (JsonRequest)request);
+            }else {
                 return new ResponseUnsupportedMediaType();
             }
         }
 
 
+    }
 
+    private Response upsertUser(String userId, JsonRequest jsonRequest) {
+        try {
+            WriteUser writeUser = (WriteUser) jsonRequest.getBodyObject(WriteUser.class);
+            if( writeUser.getUsername() == null || !writeUser.getUsername().equals(userId)){
+                return new ResponseBadRequest();
+            }
+            userService.updateWriteUser(writeUser);
+            return  new JsonResponse(HttpURLConnection.HTTP_CREATED, writeUser);
+        } catch (IOException e) {
+            return new ResponseBadRequest();
+        }
+    }
+
+    private Response upsertRoleOfUser(String userId, String roleId) {
+        WriteUser writeUser = userService.getWriteUser(userId);
+        Role role = roleService.getRole(roleId);
+        User user = null;
+        if( role == null || writeUser == null){
+            return new ResponseNotFound();
+        }
+
+        user = userService.getUser(writeUser.getUsername());
+        user.addRole(role);
+        userService.updateUser(user);
+        return new JsonResponse(HttpURLConnection.HTTP_CREATED,  userService.getWriteUser(user.getId()));
+    }
+
+
+    private boolean checkNotImplementedPut(String userId, String roles, String roleId) {
+
+        //Post only implemented for single resources
+        /**
+         *  /users only user resource not implemented
+         */
+        if (userId == null) {
+
+            return true;
+        }
+
+        /**
+         *  Only role resource not implemented
+         *  /users/{user_id}/roles/{roleid}
+         */
+        if (userId != null && roles != null && roleId == null) {
+            return true;
+        }
+
+
+        return false;
     }
 
     @Override
@@ -301,7 +345,7 @@ public class UserControllerRest extends RestAuthController {
         userService.updateUser(user);
     }
 
-    public RoleService getRoleService() {
+    public RoleServiceInterface getRoleService() {
         return roleService;
     }
 }

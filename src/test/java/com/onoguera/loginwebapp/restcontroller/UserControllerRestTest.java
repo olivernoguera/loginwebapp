@@ -2,7 +2,9 @@ package com.onoguera.loginwebapp.restcontroller;
 
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.JsonResponse;
@@ -10,8 +12,11 @@ import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
+import com.onoguera.loginwebapp.response.ResponseNotImplemented;
+import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.RoleConverter;
 import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.RoleServiceInterface;
 import com.onoguera.loginwebapp.service.UserConverter;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import org.junit.Assert;
@@ -50,10 +55,12 @@ public class UserControllerRestTest {
 
     private static final String PATH_ROLES = "roles";
 
+    private static final RoleConverter roleConverter =  RoleConverter.getInstance();
+    private static final UserConverter userConverter = UserConverter.getInstance();
+
     private class UserServiceMock implements UserServiceInterface{
 
         protected  Set<User> users ;
-        protected  UserConverter userConverter;
         protected  Set<String> usersIds;
         protected  Set<ReadUser> readUsers;
         protected  Set<WriteUser> writeUsers;
@@ -68,7 +75,6 @@ public class UserControllerRestTest {
         public UserServiceMock(User ... users){
 
             this.users = new HashSet(Arrays.asList(users));
-            userConverter = UserConverter.getInstance();
             this.recalc();
         }
 
@@ -98,7 +104,9 @@ public class UserControllerRestTest {
 
         @Override
         public void updateWriteUser(WriteUser writeUser) {
-            users.add(userConverter.writeDTOtoEntity(writeUser));
+            User user = userConverter.writeDTOtoEntity(writeUser);
+            this.removeUser(writeUser.getUsername());
+            users.add(user);
             this.recalc();
         }
 
@@ -110,7 +118,8 @@ public class UserControllerRestTest {
 
         @Override
         public void createWriteUsers(List<WriteUser> usersBody) {
-            users = usersBody.stream().map(u->userConverter.writeDTOtoEntity(u)).collect(Collectors.toSet());
+            List<User> newUsers = usersBody.stream().map(u->userConverter.writeDTOtoEntity(u)).collect(Collectors.toList());
+            users.addAll(newUsers);
             this.recalc();
         }
 
@@ -137,11 +146,63 @@ public class UserControllerRestTest {
         }
     }
 
+    private class RoleServiceMock implements RoleServiceInterface{
+
+        protected  Set<Role> roles ;
+        protected  Set<String> rolesIDs;
+        protected  Set<ReadRole> readRoles;
+        protected  Set<WriteRole> writeRoles;
+
+
+        private void recalc(){
+
+            rolesIDs = roles.stream().map(u->u.getId()).collect(Collectors.toSet());
+            readRoles = roles.stream().map(u->roleConverter.entityToReadDTO(u)).collect(Collectors.toSet());
+            writeRoles = roles.stream().map(u->roleConverter.entityToWriteDTO(u)).collect(Collectors.toSet());
+        }
+        public RoleServiceMock(Role ... roles){
+            this.roles = new HashSet(Arrays.asList(roles));
+            this.recalc();
+        }
+
+        @Override
+        public Role getRole(String roleId) {
+            return roles.stream().filter(r->r.getId().equals(roleId)).findFirst().orElse(null);
+        }
+
+        @Override
+        public Collection<ReadRole> getReadRoles() {
+            return readRoles;
+        }
+
+        @Override
+        public ReadRole getReadRole(String roleId) {
+            return readRoles.stream().filter(r->r.getRole().equals(roleId)).findFirst().orElse(null);
+        }
+
+        @Override
+        public void addWriteRole(WriteRole writeRole) {
+            Role role = roleConverter.writeDTOtoEntity(writeRole);
+            this.removeRole(role.getId());
+            this.roles.add(role);
+            this.recalc();
+
+        }
+
+        @Override
+        public void removeRole(String roleId) {
+            Role user =  this.getRole(roleId);
+            roles.remove(user);
+            this.recalc();
+
+        }
+    }
+
     @Test
     public void doGetCollectionUsers(){
 
         UserControllerRest userControllerRest = new UserControllerRest(new UserServiceMock(),
-                RoleService.getInstance());
+                new RoleServiceMock(MOCK_ROLE1,MOCK_ROLE2));
 
         Map<String, String> queryParams = null;
         Map<String, String> pathParams = null;
@@ -159,7 +220,7 @@ public class UserControllerRestTest {
                 response, is(expectedResponse));
 
         UserServiceMock userServiceMock = new UserServiceMock(MOCK_USER_1);
-        userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        userControllerRest = new UserControllerRest(userServiceMock,  new RoleServiceMock(MOCK_ROLE1,MOCK_ROLE2));
         expectedResponse = new JsonResponse(HttpURLConnection.HTTP_OK,userServiceMock.getReadUsers());
         response = userControllerRest.doGet(request);
         Assert.assertThat("UserControllerRestTest doGetCollectionUsers  user 1",
@@ -167,14 +228,14 @@ public class UserControllerRestTest {
 
 
         userServiceMock = new UserServiceMock(MOCK_USER_2);
-        userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        userControllerRest = new UserControllerRest(userServiceMock,  new RoleServiceMock(MOCK_ROLE1,MOCK_ROLE2));
         expectedResponse = new JsonResponse(HttpURLConnection.HTTP_OK,userServiceMock.getReadUsers());
         response = userControllerRest.doGet(request);
         Assert.assertThat("UserControllerRestTest doGetCollectionUsers  user 2",
                 response, is(expectedResponse));
 
         userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
-        userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        userControllerRest = new UserControllerRest(userServiceMock,  new RoleServiceMock(MOCK_ROLE1,MOCK_ROLE2));
         expectedResponse = new JsonResponse(HttpURLConnection.HTTP_OK,userServiceMock.getReadUsers());
         response = userControllerRest.doGet(request);
         Assert.assertThat("UserControllerRestTest doGetCollectionUsers two users",
@@ -256,7 +317,8 @@ public class UserControllerRestTest {
     public void doDeleteUsers(){
 
         UserServiceMock userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
-        UserControllerRest userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        UserControllerRest userControllerRest = new UserControllerRest(userServiceMock,
+                new RoleServiceMock(MOCK_ROLE2,MOCK_ROLE1));
 
         Map<String, String> queryParams = null;
         Map<String, String> pathParams = new HashMap<>();
@@ -284,11 +346,9 @@ public class UserControllerRestTest {
         Assert.assertThat("UserControllerRestTest doDelete username 2 not exists",
                 userServiceMock.getReadUser(MOCK_USER_2.getId()), is(nullValue()));
 
-
-
         pathParams = new HashMap<>();
         userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
-        userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        userControllerRest = new UserControllerRest(userServiceMock, new RoleServiceMock(MOCK_ROLE2,MOCK_ROLE1));
         pathParams.put(USER_ID, MOCK_USER_1.getId());
         expectedResponse = new ResponseEmpty();
         request = new Request(queryParams,pathParams,null,null);
@@ -303,7 +363,7 @@ public class UserControllerRestTest {
 
         pathParams = new HashMap<>();
         userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
-        userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        userControllerRest = new UserControllerRest(userServiceMock, new RoleServiceMock(MOCK_ROLE2,MOCK_ROLE1));
         pathParams.put(USER_ID, MOCK_USER_2.getId());
         pathParams.put(PATH_ROLES, PATH_ROLES);
         expectedResponse = new ResponseEmpty();
@@ -319,7 +379,7 @@ public class UserControllerRestTest {
         pathParams = new HashMap<>();
         MOCK_USER_2.setRoles(Arrays.asList(MOCK_ROLE1,MOCK_ROLE2));
         userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
-        userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+        userControllerRest = new UserControllerRest(userServiceMock, new RoleServiceMock(MOCK_ROLE2,MOCK_ROLE1));
         pathParams.put(USER_ID, MOCK_USER_2.getId());
         pathParams.put(PATH_ROLES, PATH_ROLES);
         pathParams.put(ROLE_ID, MOCK_ROLE1.getId());
@@ -336,9 +396,277 @@ public class UserControllerRestTest {
         Assert.assertThat("UserControllerRestTest doDelete  roles of user 2 username 2  exists",
                 userServiceMock.getReadUser(MOCK_USER_2.getId()),
                 is(UserConverter.getInstance().entityToReadDTO(MOCK_USER_2)));
+    }
 
+    @Test
+    public void doPostUsers(){
+
+
+        UserServiceMock userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
+        UserControllerRest userControllerRest = new UserControllerRest(userServiceMock, RoleService.getInstance());
+
+        Map<String, String> queryParams = null;
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        Response expectedResponse = new ResponseNotImplemented();
+        Request request = new Request(queryParams,pathParams,null,null);
+        Response response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost /users/{user_id} not implemented , post only for collections",
+                response, is(expectedResponse));
+
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        pathParams.put(ROLE_ID, MOCK_ROLE1.getId());
+        expectedResponse = new ResponseNotImplemented();
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost /users/{user_id}/roles/{roleid} not implemented ," +
+                        " post only for collections", response, is(expectedResponse));
+
+
+        pathParams = new HashMap<>();
+        expectedResponse = new ResponseUnsupportedMediaType();
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost Not JsonRequest for collection users",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        expectedResponse = new ResponseUnsupportedMediaType();
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost Not JsonRequest for collection roles of users",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, "badUserId");
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        expectedResponse = new ResponseNotFound();
+        request = new JsonRequest(queryParams,pathParams,"{}");
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost Not exists users for collection roles of users",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_1.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        expectedResponse = new ResponseBadRequest();
+        request = new JsonRequest(queryParams,pathParams,"{badjson}");
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost bad json por for collection roles of users",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_1.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        expectedResponse = new JsonResponse(HttpURLConnection.HTTP_CREATED, Arrays.asList(
+                roleConverter.entityToReadDTO(MOCK_ROLE1),roleConverter.entityToReadDTO(MOCK_ROLE2)));
+        String roles = "  [\n" +
+                "      {\n" +
+                "        \"role\": \"ROLE1\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"role\": \"ROLE2\"\n" +
+                "      }\n" +
+                "    ]";
+        request = new JsonRequest(queryParams,pathParams,roles);
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost httpstatus for collection roles of users",
+                response.getHttpStatus(), is(HttpURLConnection.HTTP_CREATED));
+        Assert.assertThat("UserControllerRestTest doPost httpstatus for collection roles of users",
+                response, is(expectedResponse));
+        Assert.assertThat("UserControllerRestTest doPost userservice two roles on user one",
+                userServiceMock.getUser(MOCK_USER_1.getId()).getRoles(), is(Arrays.asList(MOCK_ROLE1,MOCK_ROLE2)));
+
+
+        pathParams = new HashMap<>();
+        expectedResponse = new ResponseBadRequest();
+        request = new JsonRequest(queryParams,pathParams,"{}");
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost create users bad json",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+
+        userServiceMock.removeAllUsers();
+        Assert.assertThat("UserControllerRestTest doPost userservice empty users previuous to create",
+                userServiceMock.getReadUsers().size(), is(Integer.valueOf(0)));
+
+        expectedResponse = new JsonResponse(HttpURLConnection.HTTP_CREATED,
+                Arrays.asList(userConverter.entityToWriteDTO(MOCK_USER_1),userConverter.entityToWriteDTO(MOCK_USER_2)));
+        String users = "[\n" +
+                "  {\n" +
+                "    \"username\": \"mockUser1\",\n" +
+                "    \"password\": \"mockpassword1\",\n" +
+                "    \"roles\": [\n" +
+                "      {\n" +
+                "        \"role\": \"ROLE1\"\n" +
+                "      } "+
+                "    ]\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"username\": \"mockUser2\",\n" +
+                "    \"password\": \"mockpassword2\",\n" +
+                "    \"roles\": [\n" +
+                "      {\n" +
+                "        \"role\": \"ROLE1\"\n" +
+                "      } ,"+
+                "      {\n" +
+                "        \"role\": \"ROLE2\"\n" +
+                "      } "+
+                "    ]\n" +
+                "  }\n" +
+                "]";
+        request = new JsonRequest(queryParams,pathParams,users);
+        response = userControllerRest.doPost(request);
+        Assert.assertThat("UserControllerRestTest doPost httpstatus for collection roles of users",
+                response.getHttpStatus(), is(HttpURLConnection.HTTP_CREATED));
 
 
     }
+
+    @Test
+    public void doPutUsers(){
+
+
+        UserServiceMock userServiceMock = new UserServiceMock(MOCK_USER_1,MOCK_USER_2);
+        RoleServiceMock roleServiceMock =  new RoleServiceMock(MOCK_ROLE1,MOCK_ROLE2);
+        UserControllerRest userControllerRest = new UserControllerRest(userServiceMock,roleServiceMock);
+
+
+        Map<String, String> queryParams = null;
+        Map<String, String> pathParams = new HashMap<>();
+        Response expectedResponse = new ResponseNotImplemented();
+        Request request = new Request(queryParams,pathParams,null,null);
+        Response response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPost /users/ not implemented , post only for single resource",
+                response, is(expectedResponse));
+
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        expectedResponse = new ResponseNotImplemented();
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut /users/{user_id}/roles  not implemented ," +
+                " post only for collections", response, is(expectedResponse));
+
+
+        pathParams = new HashMap<>();
+        expectedResponse = new ResponseUnsupportedMediaType();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut Not JsonRequest for user ",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_1.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        pathParams.put(ROLE_ID, MOCK_ROLE2.getId());
+
+        WriteUser expectedWriteUser = new WriteUser(MOCK_USER_1.getId(),MOCK_USER_1.getPassword(),
+                Arrays.asList(new WriteRole(MOCK_ROLE1.getId()),new WriteRole(MOCK_ROLE2.getId())));
+        expectedResponse = new JsonResponse(HttpURLConnection.HTTP_CREATED,expectedWriteUser);
+
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut add Role 2 for user 1",
+                response, is(expectedResponse));
+        Assert.assertThat("UserControllerRestTest doPut add Role 2 for user 1 writer user",
+                userServiceMock.getWriteUser(MOCK_USER_1.getId()), is(expectedWriteUser));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_1.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        pathParams.put(ROLE_ID, MOCK_ROLE2.getId());
+
+        expectedWriteUser = new WriteUser(MOCK_USER_1.getId(),MOCK_USER_1.getPassword(),
+                Arrays.asList(new WriteRole(MOCK_ROLE1.getId()),new WriteRole(MOCK_ROLE2.getId())));
+        expectedResponse = new JsonResponse(HttpURLConnection.HTTP_CREATED,expectedWriteUser);
+
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut add Role 2 for user 1 Idempotency",
+                response, is(expectedResponse));
+        Assert.assertThat("UserControllerRestTest doPut add Role 2 for user 1 writer user Idempotency",
+                userServiceMock.getWriteUser(MOCK_USER_1.getId()), is(expectedWriteUser));
+
+        pathParams = new HashMap<>();
+        userControllerRest.getUserService().removeUser( MOCK_USER_1.getId());
+        pathParams.put(USER_ID, MOCK_USER_1.getId());
+        pathParams.put(PATH_ROLES, PATH_ROLES);
+        pathParams.put(ROLE_ID, MOCK_ROLE2.getId());
+
+        expectedResponse = new ResponseNotFound();
+        request = new Request(queryParams,pathParams,null,null);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut add Role 2 create user1 not found no body",
+                response, is(expectedResponse));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        String users = "  {\n" +
+                "    \"username\": \"mockUser1\",\n" +
+                "    \"password\": \"mockpassword1\",\n" +
+                "    \"roles\": [\n" +
+                "      {\n" +
+                "        \"role\": \"ROLE1\"\n" +
+                "      }, " +
+                "      {\n" +
+                "        \"role\": \"ROLE2\"\n" +
+                "      } " +
+                "    ]\n" +
+                "  }";
+        request = new JsonRequest(queryParams,pathParams,users);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut bad request because username is not path id",
+                response, is(new ResponseBadRequest()));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        request = new JsonRequest(queryParams,pathParams,"{}");
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut bad request null user",
+                response, is(new ResponseBadRequest()));
+
+        pathParams = new HashMap<>();
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        MOCK_USER_2.setRoles(Arrays.asList(MOCK_ROLE1,MOCK_ROLE2));
+        request = new JsonRequest(queryParams,pathParams,"[]");
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut bad json",
+                response, is(new ResponseBadRequest()));
+
+
+        pathParams = new HashMap<>();
+        users = "  {\n" +
+                "    \"username\": \"mockUser2\",\n" +
+                "    \"password\": \"mockpassword2\",\n" +
+                "    \"roles\": [\n" +
+                "      {\n" +
+                "        \"role\": \"ROLE1\"\n" +
+                "      }, " +
+                "      {\n" +
+                "        \"role\": \"ROLE2\"\n" +
+                "      } " +
+                "    ]\n" +
+                "  }";
+        pathParams.put(USER_ID, MOCK_USER_2.getId());
+        expectedResponse = new JsonResponse(HttpURLConnection.HTTP_CREATED, userConverter.entityToWriteDTO(MOCK_USER_2));
+        request = new JsonRequest(queryParams,pathParams,users);
+        response = userControllerRest.doPut(request);
+        Assert.assertThat("UserControllerRestTest doPut httpstatus for user 2",
+                response.getHttpStatus(), is(HttpURLConnection.HTTP_CREATED));
+        Assert.assertThat("UserControllerRestTest doPut response  for create user 2",
+                response.getOutput(), is(expectedResponse.getOutput()));
+
+    }
+
 
 }

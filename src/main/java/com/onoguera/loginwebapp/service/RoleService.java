@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * Created by oliver on 1/06/16.
  *
  */
-public class RoleService implements Service {
+public class RoleService implements RoleServiceInterface {
 
     private final static RoleService INSTANCE = new RoleService();
     private Dao roleDao;
