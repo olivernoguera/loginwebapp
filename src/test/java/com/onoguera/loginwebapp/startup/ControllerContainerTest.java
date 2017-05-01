@@ -147,8 +147,7 @@ public class ControllerContainerTest {
         Assert.assertThat("ControllerContainerTest userControllerServicesTest UserControllerRest  has UserService ",
                 userControllerRest.getUserService(), is(not(nullValue())));
 
-        Assert.assertThat("ControllerContainerTest userControllerServicesTest UserControllerRest  has RoleService ",
-                userControllerRest.getRoleService(), is(not(nullValue())));
+
     }
 
     @Test

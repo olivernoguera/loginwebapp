@@ -1,12 +1,17 @@
 package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.dao.Dao;
+import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +22,9 @@ public class UserService implements UserServiceInterface {
 
     private final static UserService INSTANCE = new UserService();
     private Dao userDao;
+    private RoleServiceInterface roleService;
+    private final static UserConverter userConverter = UserConverter.getInstance();
+    private final static RoleConverter roleConverter = RoleConverter.getInstance();
 
     private UserService() {
         super();
@@ -26,12 +34,35 @@ public class UserService implements UserServiceInterface {
         return INSTANCE;
     }
 
-    public void addUser(final User user) {
-        this.userDao.insert(user);
+
+    public void setUserDao(Dao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void setRoleService(RoleServiceInterface roleService) {
+        this.roleService = roleService;
     }
 
     public User getUser(final String id) {
         return (User)this.userDao.findOne(id);
+    }
+
+    @Override
+    public List<ReadUser> getReadUsers() {
+        return this.getUsers().stream().map(u -> UserConverter.getInstance().entityToReadDTO(u)).collect(Collectors.toList());
+
+    }
+    private List<User> getUsers(){
+        List<User> users = ( List<User>)this.userDao.elements().stream().collect(Collectors.toList());
+        return users;
+    }
+
+    public ReadUser getReadUser(final String id) {
+        User user = this.getUser(id);
+        if (user == null) {
+            return null;
+        }
+        return  UserConverter.getInstance().entityToReadDTO(user);
     }
 
     public void removeUser(final String id) {
@@ -39,14 +70,6 @@ public class UserService implements UserServiceInterface {
         if (user != null) {
             this.userDao.delete(id);
         }
-    }
-
-    public Collection<User> getUsers(){
-        return this.userDao.elements();
-    }
-
-    public void updateUser(final User user) {
-        this.userDao.update(user);
     }
 
     /**
@@ -69,50 +92,102 @@ public class UserService implements UserServiceInterface {
         return userResult;
     }
 
-    public void createUsers(Collection<User> collection) {
-        collection.forEach(user -> this.userDao.insert(user));
+    @Override
+    public void removeUsers() {
+        deleteUsers(this.getUsers());
     }
 
-    public ReadUser getReadUser(final String id) {
-        User user = this.getUser(id);
-        if (user == null) {
-            return null;
+    @Override
+    public boolean setUsers(List<WriteUser> writeUsers) {
+
+        List<User> users = userConverter.writeDTOsToEntityList(writeUsers);
+        if(this.checkUsers(users)){
+            this.removeUsers();
+            this.upsertUsersDTO(users);
+            return true;
+        }else{
+            return false;
         }
-        return  UserConverter.getInstance().entityToReadDTO(user);
     }
 
-    public List<ReadUser> getReadUsers() {
-        List<User> users = ( List<User>)this.userDao.elements().stream().collect(Collectors.toList());
-        return users.stream().map(u -> UserConverter.getInstance().entityToReadDTO(u)).collect(Collectors.toList());
+    private void deleteUsers(List<User> users) {
+        for( User user: users){
+            this.userDao.delete(user.getId());
+        }
     }
 
-    public void createWriteUsers(List<WriteUser> writeUsers) {
-        List<User> users = writeUsers.stream().map(wu ->
-                UserConverter.getInstance().writeDTOtoEntity(wu)).collect(Collectors.toList());
-        this.createUsers(users);
+    private boolean upsertUsersDTO(List<User> users) {
+
+        if(this.checkUsers(users)){
+            this.deleteUsers(users);
+            for(User user: users){
+                this.upsertUser(user);
+            }
+            return true;
+        }else{
+            return false;
+        }
     }
 
-    public void removeAllUsers(){
-        this.userDao.deleteAll();
-    }
+    @Override
+    public boolean upsertRolesOfUser(String userId, List<WriteRole> roles) {
 
-
-
-    public WriteUser getWriteUser(final String userId) {
         User user = this.getUser(userId);
-        if (user == null) {
-            return null;
+        if( user == null){
+            return false;
         }
-        return  UserConverter.getInstance().entityToWriteDTO(user);
+
+        Set<Role> userRoles = new HashSet(user.getRoles());
+        userRoles.addAll(roleConverter.writeDTOsToEntityList(roles));
+        List<Role> updatedRoles = new ArrayList(userRoles);
+        user.setRoles(updatedRoles);
+
+        if( checkUsers(Arrays.asList(user))){
+            this.userDao.update(user);
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
-    public void updateWriteUser(WriteUser writeUser) {
-        User user = UserConverter.getInstance().writeDTOtoEntity(writeUser);
-        this.updateUser(user);
+    private boolean checkUsers(List<User> users) {
+
+        for (User user : users) {
+            User userStore = this.getUser(user.getId());
+            if (validUser(user)) {
+                if (!roleService.existsRoles(user.getRoles())) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+    @Override
+    public boolean upsertUser(WriteUser writeUser) {
+        User user = userConverter.writeDTOtoEntity(writeUser);
+        return upsertUser(user);
     }
 
-
-    public void setUserDao(Dao userDao) {
-        this.userDao = userDao;
+    public boolean upsertUser(User user) {
+        
+        if(this.checkUsers(Arrays.asList(user))){
+            this.deleteUsers(Arrays.asList(user));
+            this.userDao.insert(user);
+            return true;
+        }else{
+            return false;
+        }
     }
+    private static boolean validUser(User user) {
+        if( user == null || user.getId() == null || user.getId().isEmpty() ||
+                user.getPassword() == null || user.getPassword().isEmpty() ) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+
 }

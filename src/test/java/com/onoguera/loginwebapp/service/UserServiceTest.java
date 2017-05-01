@@ -4,6 +4,7 @@ import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.dao.GenericDao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
@@ -14,7 +15,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -25,16 +28,63 @@ import static org.hamcrest.CoreMatchers.nullValue;
  */
 public class UserServiceTest {
 
-    private static UserService userService = UserService.getInstance();
+
+
+    private static final UserService userService = UserService.getInstance();
+
+    private static final UserConverter userConverter = UserConverter.getInstance();
 
     private static class MockUserDao extends GenericDao<User>
             implements Dao<User> {
 
     }
 
+    private static class RoleServiceMock implements RoleServiceInterface {
+
+        private static final Role role = new Role("role1");
+        private static final Role role2 = new Role("role2");
+        private static final Map<String,Role> roles = new HashMap();
+
+        public RoleServiceMock(){
+            roles.put(role.getId(),role);
+            roles.put(role2.getId(),role2);
+        }
+
+        @Override
+        public Role getRole(String roleId) {
+            return roles.get(roleId);
+        }
+
+        @Override
+        public Collection<ReadRole> getReadRoles() {
+            return roles.values().stream().map(r-> new ReadRole(r.getId())).collect(Collectors.toList());
+        }
+
+        @Override
+        public ReadRole getReadRole(String roleId) {
+            return new ReadRole(this.getRole(roleId).getId());
+        }
+
+        @Override
+        public void addWriteRole(WriteRole role) {
+
+        }
+
+        @Override
+        public void removeRole(String roleId) {
+
+        }
+
+        @Override
+        public boolean existsRoles(List<Role> roles) {
+            return roles.containsAll(roles);
+        }
+    }
+
     @Before
     public void beforeTest() throws Exception {
         userService.setUserDao(new MockUserDao());
+        userService.setRoleService(new RoleServiceMock());
     }
 
     private static List<ReadUser> convertReadCollectionToListOrdered(Collection<ReadUser> UsersList) {
@@ -43,7 +93,8 @@ public class UserServiceTest {
     }
 
     private static List<ReadUser> orderedReadUserList(List<ReadUser> Users) {
-        return Users.stream().sorted((l1, l2) -> (l1.getUsername().compareTo(l2.getUsername()))).collect(Collectors.toList());
+        return Users.stream().sorted((l1, l2) ->
+                (l1.getUsername().compareTo(l2.getUsername()))).collect(Collectors.toList());
     }
 
     private static List<User> convertCollectionToListOrdered(Collection<User> UsersList) {
@@ -62,32 +113,39 @@ public class UserServiceTest {
         User user = new User("test1","pass1");
         User user2 = new User("test2", "pass2");
 
-
-        userService.addUser(user);
+        userService.upsertUser(user);
         Assert.assertThat("UserServiceTest createUsersTest addUser",
                 userService.getUser(user.getId()), is(user));
         Assert.assertThat("UserServiceTest createUsersTest getUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user))));
+                convertReadCollectionToListOrdered(userService.getReadUsers())
+                , is(convertReadCollectionToListOrdered(Arrays.asList(userConverter.entityToReadDTO(user)))));
 
-        userService.addUser(user2);
+        userService.upsertUser(user2);
         Assert.assertThat("UserServiceTest createUsersTest addUser2",
                 userService.getUser(user2.getId()), is(user2));
         Assert.assertThat("UserServiceTest createUsersTest getUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user, user2))));
+                orderedReadUserList(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user),
+                        userConverter.entityToReadDTO(user2)))));
 
         userService.removeUser(user.getId());
         Assert.assertThat("UserServiceTest createUsersTest removeUser1",
                 userService.getUser(user2.getId()), is(user2));
         Assert.assertThat("UserServiceTest createUsersTest getUsers2",
-                convertCollectionToListOrdered(userService.getUsers()), is(Arrays.asList(user2)));
+                orderedReadUserList(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user2)))));
 
-        userService.createUsers(new ArrayList<>());
+        userService.setUsers(new ArrayList<>());
         Assert.assertThat("UserServiceTest createUsersTest createEmptyUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(Arrays.asList(user2)));
+                orderedReadUserList(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList())));
 
-        userService.createUsers(Arrays.asList(user, user2));
+        userService.setUsers(Arrays.asList(userConverter.entityToWriteDTO(user),
+                userConverter.entityToWriteDTO(user2)));
         Assert.assertThat("UserServiceTest createUsersTest createUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user, user2))));
+                orderedReadUserList(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user),
+                        userConverter.entityToReadDTO(user2)))));
     }
 
 
@@ -97,17 +155,18 @@ public class UserServiceTest {
         User user = new User("test1","passw1");
 
 
-        userService.addUser(user);
+        userService.upsertUser(user);
         Assert.assertThat("UserServiceTest readWriteUsersTest addUser",
                 userService.getUser(user.getId()), is(user));
         Assert.assertThat("UserServiceTest readWriteUsersTest getUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user))));
+                orderedReadUserList(userService.getReadUsers()),
+                is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user)))));
         Assert.assertThat("UserServiceTest readWriteUsersTest getReadUser",
                 userService.getReadUser(user.getId()), is(UserConverter.getInstance().entityToReadDTO(user)));
         Assert.assertThat("UserServiceTest readWriteUsersTest getReadUsers",
                 convertReadCollectionToListOrdered(userService.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user)))));
-        userService.removeAllUsers();
+        userService.removeUsers();
         Assert.assertThat("UserServiceTest readWriteUsersTest removeAllUsers",
                 convertReadCollectionToListOrdered(userService.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList())));
@@ -120,7 +179,7 @@ public class UserServiceTest {
         Assert.assertThat("UserServiceTest readBadUsers getReadUser that not exists",
                 userService.getReadUser("15"), is(nullValue()));
         Assert.assertThat("UserServiceTest readBadUsers getReadUser that not exists",
-                userService.getWriteUser("15"), is(nullValue()));
+                userService.getReadUser("15"), is(nullValue()));
         Assert.assertThat("UserServiceTest readBadUsers getReadUsers null",
                 userService.getReadUsers(), is(new ArrayList<>()));
 
@@ -140,36 +199,32 @@ public class UserServiceTest {
         WriteUser writeUser2 = new WriteUser("test1","pass3", Arrays.asList(writeRole,writeRole2));
 
 
-        userService.createWriteUsers(Arrays.asList(writeUser));
+        userService.setUsers(Arrays.asList(writeUser));
         Assert.assertThat("UserServiceTest createWriteUsersTest addUser",
                 userService.getUser(user1.getId()), is(user1));
-        Assert.assertThat("UserServiceTest createWriteUsersTest getUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user1))));
         Assert.assertThat("UserServiceTest createWriteUsersTest getReadUser",
                 userService.getReadUser(user1.getId()), is(UserConverter.getInstance().entityToReadDTO(user1)));
         Assert.assertThat("UserServiceTest createWriteUsersTest getReadUsers",
                 convertReadCollectionToListOrdered(userService.getReadUsers()),
-                is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user1)))));
+                is(convertReadCollectionToListOrdered(Arrays.asList(userConverter.entityToReadDTO(user1)))));
 
-        userService.updateWriteUser(writeUser2);
+        userService.setUsers(Arrays.asList(writeUser2));
         Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getUser",
                 userService.getUser(user2.getId()), is(user2));
-        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getUsers",
-                convertCollectionToListOrdered(userService.getUsers()), is(orderedUserList(Arrays.asList(user2))));
+
         Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser",
                 userService.getReadUser(user2.getId()), is(UserConverter.getInstance().entityToReadDTO(user2)));
         Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getReadUsers",
                 convertReadCollectionToListOrdered(userService.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user2)))));
-        Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getWriteUser",
-                userService.getWriteUser(user2.getId()), is(writeUser2));
+
 
     }
 
     @Test
     public void validateUserTest() {
         User user = new User("mockUser","mockPassword");
-        userService.createUsers(Arrays.asList(user));
+        userService.upsertUser(user);
         User userNotCreated = new User("mockUser1","mockPassword");
         User userWithNullPassword = new User("mockUser1",null);
         User userWithBadPassword = new User("mockUser","mockBadPassword");

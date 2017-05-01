@@ -2,9 +2,9 @@ package com.onoguera.loginwebapp.service;
 
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,21 +14,21 @@ public interface UserServiceInterface {
 
     User validateUser(User user);
 
-    Collection<ReadUser> getReadUsers();
+    List<ReadUser> getReadUsers();
 
-    ReadUser getReadUser(String userId);
+    User getUser(final String userId);
 
-    WriteUser getWriteUser(String userId);
+    ReadUser getReadUser(final String userId);
 
-    void updateWriteUser(WriteUser writeUser);
+    boolean upsertUser(WriteUser writeUser);
 
-    void removeAllUsers();
+    boolean upsertUser(User user);
 
-    void createWriteUsers(List<WriteUser> usersBody);
+    void removeUser(final String id);
 
-    User getUser(String userId);
+    boolean setUsers(List<WriteUser> users);
 
-    void updateUser(User user);
+    boolean upsertRolesOfUser(String userId, List<WriteRole> newroles);
 
-    void removeUser(String userId);
+    void removeUsers();
 }

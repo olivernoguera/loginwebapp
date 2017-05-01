@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.restcontroller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.ReadUser;
@@ -15,7 +14,6 @@ import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.RoleServiceInterface;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 
@@ -44,15 +42,14 @@ public class UserControllerRest extends RestAuthController {
 
     private static final String PATH_ROLES = "roles";
 
-    private final RoleServiceInterface roleService;
+
 
     private static final Pattern p =
             Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+
                     PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
 
-    public UserControllerRest(UserServiceInterface userService, RoleServiceInterface roleService) {
+    public UserControllerRest(UserServiceInterface userService) {
         super(userService);
-        this.roleService = roleService;
     }
 
     @Override
@@ -158,8 +155,7 @@ public class UserControllerRest extends RestAuthController {
         try {
             List<WriteUser> usersBody = (List<WriteUser>)
                     jsonRequest.getBodyObject(new TypeReference<List<WriteUser>>() {});
-            userService.removeAllUsers();
-            userService.createWriteUsers(usersBody);
+            userService.setUsers(usersBody);
             return new JsonResponse(HttpURLConnection.HTTP_CREATED, usersBody);
         } catch (IOException e) {
             return new ResponseBadRequest();
@@ -167,17 +163,11 @@ public class UserControllerRest extends RestAuthController {
     }
 
     private Response createRoles(String userId, String roles, JsonRequest jsonRequest) {
-        WriteUser writeUser = userService.getWriteUser(userId);
-        if( writeUser == null){
-            return new ResponseNotFound();
-        }
-
         //only update roles
         try {
             List<WriteRole> rolesBody =
                     (List<WriteRole>) jsonRequest.getBodyObject(new TypeReference<List<WriteRole>>() {});
-            writeUser.setRoles(rolesBody);
-            userService.updateWriteUser(writeUser);
+            userService.upsertRolesOfUser(userId,rolesBody);
             return  new JsonResponse(HttpURLConnection.HTTP_CREATED, rolesBody);
         } catch (IOException io) {
             return new ResponseBadRequest();
@@ -249,10 +239,12 @@ public class UserControllerRest extends RestAuthController {
     private Response upsertUser(String userId, JsonRequest jsonRequest) {
         try {
             WriteUser writeUser = (WriteUser) jsonRequest.getBodyObject(WriteUser.class);
-            if( writeUser.getUsername() == null || !writeUser.getUsername().equals(userId)){
+            if( !userId.equals(writeUser.getUsername())){
                 return new ResponseBadRequest();
             }
-            userService.updateWriteUser(writeUser);
+            if( !userService.upsertUser(writeUser)){
+                return new ResponseBadRequest();
+            }
             return  new JsonResponse(HttpURLConnection.HTTP_CREATED, writeUser);
         } catch (IOException e) {
             return new ResponseBadRequest();
@@ -260,17 +252,11 @@ public class UserControllerRest extends RestAuthController {
     }
 
     private Response upsertRoleOfUser(String userId, String roleId) {
-        WriteUser writeUser = userService.getWriteUser(userId);
-        Role role = roleService.getRole(roleId);
-        User user = null;
-        if( role == null || writeUser == null){
-            return new ResponseNotFound();
-        }
 
-        user = userService.getUser(writeUser.getUsername());
-        user.addRole(role);
-        userService.updateUser(user);
-        return new JsonResponse(HttpURLConnection.HTTP_CREATED,  userService.getWriteUser(user.getId()));
+        if( !userService.upsertRolesOfUser(userId, Arrays.asList(new WriteRole(roleId)))){
+            return  new ResponseNotFound();
+        }
+        return new JsonResponse(HttpURLConnection.HTTP_CREATED,  userService.getReadUser(userId));
     }
 
 
@@ -304,7 +290,7 @@ public class UserControllerRest extends RestAuthController {
         Response response = new ResponseEmpty();
 
         if (pathParams == null || pathParams.isEmpty()) {
-            userService.removeAllUsers();
+            userService.removeUsers();
         }else {
 
             if (pathParams.get(USER_ID) == null) {
@@ -323,7 +309,9 @@ public class UserControllerRest extends RestAuthController {
             if (roles != null && !roles.isEmpty()) {
 
                 String roleId = pathParams.get(ROLE_ID);
-                this.deleteRoles(user, roleId);
+                if(!this.deleteRoles(user, roleId)){
+                    return new ResponseBadRequest();
+                }
             } else {
                 userService.removeUser(userId);
             }
@@ -332,7 +320,7 @@ public class UserControllerRest extends RestAuthController {
         return response;
     }
 
-    private void deleteRoles(User user, String roleId) {
+    private boolean deleteRoles(User user, String roleId) {
 
         if (roleId == null || roleId.isEmpty() ) {
             //Delete all roles
@@ -342,10 +330,8 @@ public class UserControllerRest extends RestAuthController {
             //Delete role
             user.removeRole(roleId);
         }
-        userService.updateUser(user);
+        return userService.upsertUser(user);
     }
 
-    public RoleServiceInterface getRoleService() {
-        return roleService;
-    }
+
 }

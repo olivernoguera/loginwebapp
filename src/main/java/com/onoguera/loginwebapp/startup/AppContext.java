@@ -25,6 +25,7 @@ public final class AppContext {
 
         UserService userService = UserService.getInstance();
         userService.setUserDao(UserDao.getInstance());
+        userService.setRoleService(roleService);
 
         SessionService sessionService = SessionService.getInstance();
         sessionService.setSessionDao(SessionDao.getInstance().getInstance());

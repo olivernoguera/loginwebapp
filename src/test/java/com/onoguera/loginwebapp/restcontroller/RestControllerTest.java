@@ -4,6 +4,7 @@ import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
+import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.request.RequestUtils;
@@ -75,7 +76,12 @@ public class RestControllerTest {
         }
 
         @Override
-        public Collection<ReadUser> getReadUsers() {
+        public List<ReadUser> getReadUsers() {
+            return null;
+        }
+
+        @Override
+        public User getUser(String userId) {
             return null;
         }
 
@@ -85,41 +91,35 @@ public class RestControllerTest {
         }
 
         @Override
-        public WriteUser getWriteUser(String userId) {
-            return null;
+        public boolean upsertUser(WriteUser writeUser) {
+            return false;
         }
 
         @Override
-        public void updateWriteUser(WriteUser writeUser) {
-
+        public boolean upsertUser(User user) {
+            return false;
         }
 
         @Override
-        public void removeAllUsers() {
-
-        }
-
-        @Override
-        public void createWriteUsers(List<WriteUser> usersBody) {
+        public void removeUser(String id) {
 
         }
 
         @Override
-        public User getUser(String userId) {
-            return null;
+        public boolean setUsers(List<WriteUser> users) {
+            return false;
         }
 
         @Override
-        public void updateUser(User user) {
-
+        public boolean upsertRolesOfUser(String userId, List<WriteRole> rolesBody) {
+            return false;
         }
 
         @Override
-        public void removeUser(String userId) {
+        public void removeUsers() {
 
         }
     }
-
 
     private class UserServiceWithRolesMock extends UserServiceMock {
 

@@ -34,7 +34,7 @@ public class ControllerContainer {
         SessionServiceInterface sessionService = SessionService.getInstance();
         RoleServiceInterface roleService = RoleService.getInstance();
 
-        UserControllerRest userController = new UserControllerRest(userService,roleService);
+        UserControllerRest userController = new UserControllerRest(userService);
         RoleControllerRest roleController = new RoleControllerRest(userService,roleService);
 
         LoginController loginController = new LoginController(sessionService,userService);

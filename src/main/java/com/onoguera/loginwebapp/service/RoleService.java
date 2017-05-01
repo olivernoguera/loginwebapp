@@ -46,6 +46,17 @@ public class RoleService implements RoleServiceInterface {
         this.roleDao.delete(id);
     }
 
+    @Override
+    public boolean existsRoles(List<Role> roles) {
+
+        for( Role role: roles){
+            if( role == null || roleDao.findOne(role.getId()) == null){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Role getRole(final String roleId) {
         return (Role)this.roleDao.findOne(roleId);
     }

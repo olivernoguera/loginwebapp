@@ -56,4 +56,9 @@ public class UserConverter implements Converter<ReadUser,WriteUser,User> {
                 dto.getRoles().stream().map(r -> RoleConverter.getInstance().writeDTOtoEntity(r)).collect(Collectors.toList());
         return new User(dto.getUsername(), dto.getPassword(),entityRoleList);
     }
+
+    public static List<User> writeDTOsToEntityList(List<WriteUser> writeUsers){
+        return writeUsers.stream().map(w -> userConverter.writeDTOtoEntity(w)).collect(Collectors.toList());
+    }
+
 }

@@ -23,4 +23,9 @@ public class Role extends Entity {
         int result = super.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Role{"+getId()+"}";
+    }
 }

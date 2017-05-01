@@ -5,6 +5,7 @@ import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by olivernoguera on 30/04/2017.
@@ -20,4 +21,6 @@ public interface RoleServiceInterface {
     void addWriteRole(WriteRole role);
 
     void removeRole(String roleId);
+
+    boolean existsRoles(List<Role> roles);
 }

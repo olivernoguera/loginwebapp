@@ -29,9 +29,8 @@ public final class LoaderEntities {
         userService.setUserDao(userDao);
 
         RoleService roleService = RoleService.getInstance();
+        LoaderEntities.createUsers(  userDao, 3);
 
-        List<User> users = LoaderEntities.createUsers(3);
-        userService.createUsers(users);
 
         List<Role> roles = LoaderEntities.createRoles(3);
         roleService.createRoles(roles);
@@ -43,22 +42,22 @@ public final class LoaderEntities {
 
         roleService.createRoles(Arrays.asList(RoleService.API_ROLE, RoleService.WRITER_API_ROLE));
 
-        userService.addUser(adminUser);
+        userDao.insert(adminUser);
 
 
     }
 
-    private static List<User> createUsers(Integer numUsers) {
-        List<User> users = new ArrayList<>();
+    private static void createUsers(UserDao userDao, Integer numUsers) {
 
         for (int i = 1; i <= numUsers; i++) {
             User user = new User(USER_PREFIX + i, PASSWORD_PREFIX + i);
             Role role = new Role(ROLE_PREFIX + i);
             user.addRole(role);
             user.addRole(RoleService.API_ROLE);
-            users.add(user);
+            userDao.insert(user);
+
         }
-        return users;
+
     }
 
     private static List<Role> createRoles(Integer numRoles) {
