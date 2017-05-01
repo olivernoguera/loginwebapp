@@ -1,0 +1,33 @@
+package com.onoguera.loginwebapp.controller;
+
+/**
+ * Created by olivernoguera on 01/05/2017.
+ */
+
+import com.onoguera.loginwebapp.entities.Session;
+import com.onoguera.loginwebapp.entities.User;
+import com.onoguera.loginwebapp.service.SessionServiceInterface;
+
+class SessionServiceWithSession implements SessionServiceInterface {
+
+    private final User mockUserSession;
+
+    public SessionServiceWithSession(User mockUserSession){
+        this.mockUserSession = mockUserSession;
+    }
+
+    @Override
+    public void delete(String id) {
+
+    }
+
+    @Override
+    public Session getSession(String sessionId) {
+        return new Session(mockUserSession,sessionId);
+    }
+
+    @Override
+    public Session createSession(User user) {
+        return null;
+    }
+}

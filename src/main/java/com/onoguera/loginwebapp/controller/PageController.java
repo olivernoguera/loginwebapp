@@ -71,7 +71,7 @@ public final class PageController extends HtmlController {
         return response;
     }
 
-    private Response getResponseFromUser(User user,String sessionID, String currentPage){
+    Response getResponseFromUser(User user,String sessionID, String currentPage){
         Response response = null;
         Map<String, String> values = new HashMap<>();
         List<Role> roles = user.getRoles();

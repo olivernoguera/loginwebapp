@@ -54,41 +54,7 @@ public class HtmlControllerTest {
         }
     }
 
-    private class SessionServiceWithoutSession implements SessionServiceInterface{
 
-        @Override
-        public void delete(String id) {
-
-        }
-
-        @Override
-        public Session getSession(String sessionId) {
-            return null;
-        }
-
-        @Override
-        public Session createSession(User user) {
-            return null;
-        }
-    }
-
-    private class SessionServiceWithSession implements SessionServiceInterface{
-
-        @Override
-        public void delete(String id) {
-
-        }
-
-        @Override
-        public Session getSession(String sessionId) {
-            return new Session(mockUserSession,sessionId);
-        }
-
-        @Override
-        public Session createSession(User user) {
-            return null;
-        }
-    }
 
     private static Request emptyRequest(){
         return new Request(null,new HashMap<>(),null,null);
@@ -202,7 +168,7 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithSession() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(mockUserSession));
 
         Headers headers = new Headers();
         String expectedSessionId = "14";
@@ -227,7 +193,7 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithSessionAndQueryParamsWithoutUrlEnconded() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(mockUserSession));
 
         Headers headers = new Headers();
         String expectedSessionId = "14";
@@ -254,7 +220,7 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithSessionAndQueryParamsWithUrlEnconded() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession());
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(mockUserSession));
 
         Headers headers = new Headers();
         String expectedSessionId = "14";

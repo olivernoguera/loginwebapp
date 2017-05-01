@@ -3,6 +3,7 @@ package com.onoguera.loginwebapp.controller;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
+import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
 import com.onoguera.loginwebapp.service.SessionServiceInterface;
 import com.onoguera.loginwebapp.view.LoginResponse;
@@ -56,12 +57,11 @@ public final class LogoutController  extends HtmlController {
         try {
             response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, values,"login");
         } catch (IOException e) {
-            response  = new ResponseInternalServerError();
+            response  = new ResponseBadRequest();
         }
 
         return response;
 
     }
-
 
 }
