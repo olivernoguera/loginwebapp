@@ -54,12 +54,9 @@ public final class PageController extends HtmlController {
         Map<String, String>  pathParams = request.getPathParams();
         String pageId = ROLE_PREFIX  + pathParams.get(PAGE_ID);
         Session session = request.getSession();
-        //TODO check expired session
+
         if( session != null ) {
             response = this.getResponseFromUser(session.getUser(),session.getId(),pageId.toLowerCase());
-
-            //has session must send to other page not login page
-            //response = new ResponseForbidden();
         }else{
             try {
                 response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, new HashMap<>(),"login");
@@ -71,10 +68,12 @@ public final class PageController extends HtmlController {
         return response;
     }
 
-    Response getResponseFromUser(User user,String sessionID, String currentPage){
+    private Response getResponseFromUser(User user,String sessionID, String currentPage){
+
         Response response = null;
         Map<String, String> values = new HashMap<>();
         List<Role> roles = user.getRoles();
+
         if( roles.isEmpty() ||
                 !roles.stream().filter(r->r.getId().equals(currentPage.toUpperCase())).findFirst().isPresent()){
             try {
@@ -85,10 +84,8 @@ public final class PageController extends HtmlController {
         }
         else{
             try {
-                //TODO multiple role
                 values.put("page", currentPage);
                 values.put("user", user.getId());
-
                 response = new PageResponse(HttpURLConnection.HTTP_OK, values ,sessionID,currentPage) {};
             } catch (IOException io) {
                 response = new ResponseInternalServerError();
@@ -97,7 +94,5 @@ public final class PageController extends HtmlController {
         return response;
 
     }
-
-
 
 }
