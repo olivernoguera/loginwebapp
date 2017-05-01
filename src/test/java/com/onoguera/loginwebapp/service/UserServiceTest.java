@@ -29,7 +29,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 public class UserServiceTest {
 
 
-
     private static final UserService userService = UserService.getInstance();
 
     private static final UserConverter userConverter = UserConverter.getInstance();
@@ -43,11 +42,11 @@ public class UserServiceTest {
 
         private static final Role role = new Role("role1");
         private static final Role role2 = new Role("role2");
-        private static final Map<String,Role> roles = new HashMap();
+        private static final Map<String, Role> roles = new HashMap();
 
-        public RoleServiceMock(){
-            roles.put(role.getId(),role);
-            roles.put(role2.getId(),role2);
+        public RoleServiceMock() {
+            roles.put(role.getId(), role);
+            roles.put(role2.getId(), role2);
         }
 
         @Override
@@ -57,7 +56,7 @@ public class UserServiceTest {
 
         @Override
         public Collection<ReadRole> getReadRoles() {
-            return roles.values().stream().map(r-> new ReadRole(r.getId())).collect(Collectors.toList());
+            return roles.values().stream().map(r -> new ReadRole(r.getId())).collect(Collectors.toList());
         }
 
         @Override
@@ -110,7 +109,7 @@ public class UserServiceTest {
     public void createUsersTest() {
 
 
-        User user = new User("test1","pass1");
+        User user = new User("test1", "pass1");
         User user2 = new User("test2", "pass2");
 
         userService.upsertUser(user);
@@ -152,7 +151,7 @@ public class UserServiceTest {
     @Test
     public void readWriteUsersTest() {
 
-        User user = new User("test1","passw1");
+        User user = new User("test1", "passw1");
 
 
         userService.upsertUser(user);
@@ -190,13 +189,13 @@ public class UserServiceTest {
 
         Role role = new Role("role1");
         Role role2 = new Role("role2");
-        User user1 = new User("test1","passw2",  Arrays.asList(role));
-        User user2 = new User("test1","passw3",  Arrays.asList(role,role2));
+        User user1 = new User("test1", "passw2", Arrays.asList(role));
+        User user2 = new User("test1", "passw3", Arrays.asList(role, role2));
 
         WriteRole writeRole = new WriteRole("role1");
         WriteRole writeRole2 = new WriteRole("role2");
-        WriteUser writeUser = new WriteUser("test1","passw2", Arrays.asList(writeRole));
-        WriteUser writeUser2 = new WriteUser("test1","pass3", Arrays.asList(writeRole,writeRole2));
+        WriteUser writeUser = new WriteUser("test1", "passw2", Arrays.asList(writeRole));
+        WriteUser writeUser2 = new WriteUser("test1", "pass3", Arrays.asList(writeRole, writeRole2));
 
 
         userService.setUsers(Arrays.asList(writeUser));
@@ -223,11 +222,11 @@ public class UserServiceTest {
 
     @Test
     public void validateUserTest() {
-        User user = new User("mockUser","mockPassword");
+        User user = new User("mockUser", "mockPassword");
         userService.upsertUser(user);
-        User userNotCreated = new User("mockUser1","mockPassword");
-        User userWithNullPassword = new User("mockUser1",null);
-        User userWithBadPassword = new User("mockUser","mockBadPassword");
+        User userNotCreated = new User("mockUser1", "mockPassword");
+        User userWithNullPassword = new User("mockUser1", null);
+        User userWithBadPassword = new User("mockUser", "mockBadPassword");
 
         Assert.assertThat("UserServiceTest validateUserTest validateUser exist user",
                 userService.validateUser(user), is(user));
@@ -239,5 +238,45 @@ public class UserServiceTest {
                 userService.validateUser(userWithBadPassword), is(nullValue()));
     }
 
+    @Test
+    public void upsertRolesOfUserTest() {
 
+        User user = new User("mockUser", null);
+        userService.upsertUser(user);
+        boolean result = userService.upsertRolesOfUser(user.getId(),new ArrayList<>());
+
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser password is null",
+                result, is(Boolean.FALSE));
+
+        result = userService.upsertRolesOfUser("badusers",null);
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser user not exists",
+                result, is(Boolean.FALSE));
+
+        result = userService.upsertRolesOfUser(user.getId(),Arrays.asList(new WriteRole("BADROLE")));
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser role not exists",
+                result, is(Boolean.FALSE));
+
+        user = new User("mockUser", "password");
+        userService.upsertUser(user);
+        result = userService.upsertRolesOfUser(user.getId(),Arrays.asList(new WriteRole("role1")));
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser role not exists",
+                result, is(Boolean.TRUE));
+        user.setRoles(Arrays.asList(new Role("role1")));
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser roles well updated",
+                userService.getUser(user.getId()), is(user));
+    }
+
+
+    @Test
+    public void upsertWriterUserTest() {
+
+        WriteUser user = new WriteUser("mockUser2", "test", new ArrayList<>());
+        boolean result = userService.upsertUser(user);
+
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertWriterUserTest good result",
+                result, is(Boolean.TRUE));
+
+        Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertWriterUserTest well saved user",
+                userService.getUser(user.getUsername()), is(userConverter.writeDTOtoEntity(user)));
+    }
 }

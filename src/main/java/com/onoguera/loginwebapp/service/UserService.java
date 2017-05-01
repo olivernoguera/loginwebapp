@@ -141,13 +141,8 @@ public class UserService implements UserServiceInterface {
         userRoles.addAll(roleConverter.writeDTOsToEntityList(roles));
         List<Role> updatedRoles = new ArrayList(userRoles);
         user.setRoles(updatedRoles);
-
-        if( checkUsers(Arrays.asList(user))){
-            this.userDao.update(user);
-            return true;
-        }else{
-            return false;
-        }
+        this.userDao.update(user);
+        return true;
 
     }
 
