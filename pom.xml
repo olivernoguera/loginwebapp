@@ -95,6 +95,7 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
 					</archive>
+					<finalName>test-web-application</finalName>
 				</configuration>
 				<executions>
 					<execution>
