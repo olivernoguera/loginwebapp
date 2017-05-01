@@ -14,7 +14,6 @@ import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.RoleServiceInterface;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 
 import java.io.IOException;

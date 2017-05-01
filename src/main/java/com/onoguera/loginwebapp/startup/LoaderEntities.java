@@ -24,13 +24,13 @@ public final class LoaderEntities {
 
 
     public static void loadEntities() {
+
         UserService userService = UserService.getInstance();
         UserDao userDao = UserDao.getInstance();
         userService.setUserDao(userDao);
 
         RoleService roleService = RoleService.getInstance();
         LoaderEntities.createUsers(  userDao, 3);
-
 
         List<Role> roles = LoaderEntities.createRoles(3);
         roleService.createRoles(roles);
@@ -43,8 +43,6 @@ public final class LoaderEntities {
         roleService.createRoles(Arrays.asList(RoleService.API_ROLE, RoleService.WRITER_API_ROLE));
 
         userDao.insert(adminUser);
-
-
     }
 
     private static void createUsers(UserDao userDao, Integer numUsers) {
@@ -57,7 +55,6 @@ public final class LoaderEntities {
             userDao.insert(user);
 
         }
-
     }
 
     private static List<Role> createRoles(Integer numRoles) {

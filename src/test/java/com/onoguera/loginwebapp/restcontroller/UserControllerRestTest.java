@@ -15,7 +15,6 @@ import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.RoleConverter;
-import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserConverter;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 import org.junit.Assert;

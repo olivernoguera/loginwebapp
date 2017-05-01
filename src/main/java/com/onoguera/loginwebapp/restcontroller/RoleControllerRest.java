@@ -8,7 +8,6 @@ import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
-import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.RoleServiceInterface;
 import com.onoguera.loginwebapp.service.UserServiceInterface;
 
@@ -97,6 +96,9 @@ public final class RoleControllerRest extends RestAuthController {
 
         Map<String, String> pathParams = request.getPathParams();
         String roleId = pathParams.get(ROLE_ID);
+        if( roleId == null){
+            return new ResponseBadRequest();
+        }
         roleService.removeRole(roleId);
         Response response = new ResponseEmpty();
         return response;

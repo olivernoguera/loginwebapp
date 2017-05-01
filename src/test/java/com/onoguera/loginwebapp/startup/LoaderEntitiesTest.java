@@ -1,7 +1,6 @@
 package com.onoguera.loginwebapp.startup;
 
 import com.onoguera.loginwebapp.entities.Role;
-import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.service.RoleService;
 import com.onoguera.loginwebapp.service.UserService;

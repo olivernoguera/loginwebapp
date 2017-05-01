@@ -6,7 +6,6 @@ import com.onoguera.loginwebapp.controller.LogoutController;
 import com.onoguera.loginwebapp.controller.PageController;
 import com.onoguera.loginwebapp.restcontroller.RoleControllerRest;
 import com.onoguera.loginwebapp.restcontroller.UserControllerRest;
-import com.onoguera.loginwebapp.restcontroller.UserControllerRestTest;
 import org.junit.Assert;
 import org.junit.Test;
 
