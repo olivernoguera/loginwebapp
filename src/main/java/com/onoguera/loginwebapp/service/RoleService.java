@@ -48,7 +48,9 @@ public class RoleService implements RoleServiceInterface {
 
     @Override
     public boolean existsRoles(List<Role> roles) {
-
+        if( roles == null || roles.isEmpty()){
+            return false;
+        }
         for( Role role: roles){
             if( role == null || roleDao.findOne(role.getId()) == null){
                 return false;

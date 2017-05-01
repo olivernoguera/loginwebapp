@@ -114,12 +114,35 @@ public class RoleServiceTest {
     }
 
     @Test
-    public void readBadRoles() {
+    public void readBadRolesTest() {
 
-        Assert.assertThat("RoleServiceTest readBadRoles getReadRole that not exists",
+        Assert.assertThat("RoleServiceTest readBadRolesTest getReadRole that not exists",
                 roleService.getReadRole("15"), is(nullValue()));
-        Assert.assertThat("RoleServiceTest readBadRoles getReadRoles null",
+        Assert.assertThat("RoleServiceTest readBadRolesTest getReadRoles null",
                 roleService.getReadRoles(), is(new ArrayList<>()));
 
+    }
+
+    @Test
+    public void existsRolesTest() {
+
+        Role mockRole = new Role("role1");
+        Role mockRole2 = new Role("role2");
+
+        Assert.assertThat("RoleServiceTest existsRolesTest empty list",
+                roleService.existsRoles(new ArrayList<>()), is(Boolean.FALSE));
+        Assert.assertThat("RoleServiceTest existsRolesTest role not exists",
+                roleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.FALSE));
+
+        roleService.addRole(mockRole);
+        Assert.assertThat("RoleServiceTest existsRolesTest role exists",
+                roleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.TRUE));
+
+        Assert.assertThat("RoleServiceTest existsRolesTest two roles one not exists",
+                roleService.existsRoles(Arrays.asList(mockRole,mockRole2)), is(Boolean.FALSE));
+
+        roleService.addRole(mockRole2);
+        Assert.assertThat("RoleServiceTest existsRolesTest two roles exist",
+                roleService.existsRoles(Arrays.asList(mockRole,mockRole2)), is(Boolean.TRUE));
     }
 }
