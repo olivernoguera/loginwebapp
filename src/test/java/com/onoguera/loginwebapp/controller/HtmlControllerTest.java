@@ -168,10 +168,12 @@ public class HtmlControllerTest {
     @Test
     public void getReponsWithSession() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(mockUserSession));
+        String expectedSessionId = "14";
+        Session sesion = new Session(mockUserSession, expectedSessionId);
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(sesion));
 
         Headers headers = new Headers();
-        String expectedSessionId = "14";
+
         headers.put(COOKIE, Arrays.asList("Session="+expectedSessionId));
 
         Request request =
@@ -187,16 +189,17 @@ public class HtmlControllerTest {
         Assert.assertThat("HtmlControllerTest getReponsWithSession rawBody",
                 request.getRawBody(), is(""));
         Assert.assertThat("HtmlControllerTest getReponsWithSession getSession",
-                request.getSession(), is(new Session(mockUserSession, expectedSessionId)));
+                request.getSession(), is(sesion));
     }
 
     @Test
     public void getReponsWithSessionAndQueryParamsWithoutUrlEnconded() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(mockUserSession));
+        String expectedSessionId = "14";
+        Session sesion = new Session(mockUserSession, expectedSessionId);
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(sesion));
 
         Headers headers = new Headers();
-        String expectedSessionId = "14";
         headers.put(COOKIE, Arrays.asList("Session="+expectedSessionId));
         String goodBody = "id1=14&id2=20";
         InputStream is = new ByteArrayInputStream(goodBody.getBytes(StandardCharsets.UTF_8));
@@ -214,16 +217,17 @@ public class HtmlControllerTest {
         Assert.assertThat("HtmlControllerTest getReponsWithSessionAndQueryParamsWithoutUrlEnconded rawBody",
                 request.getRawBody(), is(""));
         Assert.assertThat("HtmlControllerTest getReponsWithSessionAndQueryParamsWithoutUrlEnconded getSession",
-                request.getSession(), is(new Session(mockUserSession, expectedSessionId)));
+                request.getSession(), is(sesion));
     }
 
     @Test
     public void getReponsWithSessionAndQueryParamsWithUrlEnconded() throws IOException {
 
-        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(mockUserSession));
+        String expectedSessionId = "14";
+        Session sesion = new Session(mockUserSession, expectedSessionId);
+        MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(sesion));
 
         Headers headers = new Headers();
-        String expectedSessionId = "14";
         headers.put(COOKIE, Arrays.asList("Session="+expectedSessionId));
         String goodBody = "id1=14&id2=20";
         InputStream is = new ByteArrayInputStream(goodBody.getBytes(StandardCharsets.UTF_8));
@@ -242,6 +246,6 @@ public class HtmlControllerTest {
         Assert.assertThat("HtmlControllerTest getReponsWithSessionAndQueryParamsWithUrlEnconded rawBody",
                 request.getRawBody(), is(""));
         Assert.assertThat("HtmlControllerTest getReponsWithSessionAndQueryParamsWithUrlEnconded getSession",
-                request.getSession(), is(new Session(mockUserSession, expectedSessionId)));
+                request.getSession(), is(sesion));
     }
 }

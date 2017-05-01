@@ -33,5 +33,10 @@ public abstract class Entity {
         return id;
     }
 
-
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 }

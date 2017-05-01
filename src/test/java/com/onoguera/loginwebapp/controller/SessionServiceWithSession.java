@@ -10,10 +10,14 @@ import com.onoguera.loginwebapp.service.SessionServiceInterface;
 
 class SessionServiceWithSession implements SessionServiceInterface {
 
-    private final User mockUserSession;
+    static final String COOKIE = "Cookie";
 
-    public SessionServiceWithSession(User mockUserSession){
-        this.mockUserSession = mockUserSession;
+
+
+    private final Session  sesion;
+
+    public SessionServiceWithSession(Session sesion){
+        this.sesion = sesion;
     }
 
     @Override
@@ -23,11 +27,12 @@ class SessionServiceWithSession implements SessionServiceInterface {
 
     @Override
     public Session getSession(String sessionId) {
-        return new Session(mockUserSession,sessionId);
+        return sesion;
     }
 
     @Override
     public Session createSession(User user) {
-        return null;
+        return sesion;
+
     }
 }

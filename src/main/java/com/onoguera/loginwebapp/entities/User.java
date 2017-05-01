@@ -66,4 +66,12 @@ public class User extends Entity {
     public void removeRoles() {
         this.roles = new ArrayList<>();
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }

@@ -60,12 +60,8 @@ public final class LoginController extends HtmlController {
         Response response = null;
 
         Session session = request.getSession();
-        //TODO check expired session
         if( session != null ) {
             response = this.getResponseFromUser(session.getUser(),session.getId());
-
-            //has session must send to other page not login page
-            //response = new ResponseForbidden();
         }else{
             values.put("title", "Login user");
             values.put("message", "Put user and password");
@@ -85,14 +81,16 @@ public final class LoginController extends HtmlController {
         Response response = null;
         Map<String, String> queryParams = request.getQueryParams();
 
-        if( queryParams == null){
+        if( queryParams == null || queryParams.isEmpty()){
             return new ResponseBadRequest();
         }
         String username = queryParams.get("username");
         String password = queryParams.get("password");
+        if( username == null || password == null){
+            return new ResponseBadRequest();
+        }
         User user = new User(username, password);
         User validateUser = userService.validateUser(user);
-
 
         if( validateUser == null){
             response = new ResponseUnauthorized();
@@ -105,12 +103,11 @@ public final class LoginController extends HtmlController {
 
     }
 
-
     private Response getResponseFromUser(User user,String sessionID){
         Response response = null;
         Map<String, String> values = new HashMap<>();
         List<Role> roles = user.getRoles();
-        if( roles.isEmpty()){
+        if( roles == null || roles.isEmpty()){
             try {
                 response = new LoginResponse(HttpURLConnection.HTTP_OK, values,"login");
             } catch (IOException e) {
@@ -122,8 +119,8 @@ public final class LoginController extends HtmlController {
                 String rolePage = roles.stream().findFirst().get().getId();
                 values.put("page", rolePage);
                 values.put("user", user.getId());
-
-                response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, values,sessionID ,rolePage.toLowerCase()) {};
+                response = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP,
+                        values,sessionID ,rolePage.toLowerCase()) {};
             } catch (IOException io) {
                 response = new ResponseInternalServerError();
             }

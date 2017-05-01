@@ -29,4 +29,11 @@ public class Session extends Entity {
         return user != null ? user.equals(session.user) : session.user == null;
 
     }
+
+    @Override
+    public String toString() {
+        return "Session{id=" + getId()+
+                ",user=" + user +
+                '}';
+    }
 }
