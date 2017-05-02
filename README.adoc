@@ -107,6 +107,3 @@ Current implementation of rest api not need query params.That current program no
 But there are two ignore unit test  to make tdd for this future implemetation.
 
 
-
-- [ ]
-
