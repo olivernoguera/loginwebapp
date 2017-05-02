@@ -49,7 +49,7 @@ public class PageApiRoleService implements RoleService {
     @Override
     public boolean existsRoles(List<Role> roles) {
         if( roles == null || roles.isEmpty()){
-            return false;
+            return true;
         }
         for( Role role: roles){
             if( role == null || roleDao.findOne(role.getId()) == null){

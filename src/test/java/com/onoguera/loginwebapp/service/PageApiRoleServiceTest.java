@@ -130,7 +130,7 @@ public class PageApiRoleServiceTest {
         Role mockRole2 = new Role("role2");
 
         Assert.assertThat("RoleServiceTest existsRolesTest empty list",
-                pageApiRoleService.existsRoles(new ArrayList<>()), is(Boolean.FALSE));
+                pageApiRoleService.existsRoles(new ArrayList<>()), is(Boolean.TRUE));
         Assert.assertThat("RoleServiceTest existsRolesTest role not exists",
                 pageApiRoleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.FALSE));
 
