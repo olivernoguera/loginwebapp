@@ -20,7 +20,7 @@ public class LoaderEntitiesTest {
     @Test
     public void loadEntities() {
 
-        AppContext.startContext();
+        AppContext.startContext(0);
         LoaderEntities.loadEntities();
         Collection<ReadUser> userCollection = UserService.getInstance().getReadUsers();
         Collection<Role> rolesCollection = RoleService.getInstance().getRoles();

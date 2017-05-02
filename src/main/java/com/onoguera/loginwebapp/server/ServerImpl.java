@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
  *
  */
 public class ServerImpl implements Server {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerImpl.class);
     private static final String CONTEXT_PATH = "/";
 

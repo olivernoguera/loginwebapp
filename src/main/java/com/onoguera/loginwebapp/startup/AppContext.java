@@ -19,7 +19,8 @@ public final class AppContext {
     private AppContext(){}
 
 
-    public static void startContext(){
+    public static void startContext(int timeSessionMiliseconds){
+
         RoleService roleService = RoleService.getInstance();
         roleService.setRoleDao(RoleDao.getInstance());
 
@@ -29,7 +30,7 @@ public final class AppContext {
 
         SessionService sessionService = SessionService.getInstance();
         sessionService.setSessionDao(SessionDao.getInstance().getInstance());
-        sessionService.setPeriodTimeToExpiredSession(5 * 60 * 1000);
+        sessionService.setPeriodTimeToExpiredSession(timeSessionMiliseconds);
     }
 
 }
