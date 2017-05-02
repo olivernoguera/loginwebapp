@@ -10,8 +10,8 @@ import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseForbidden;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.RoleService;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.PageApiRoleService;
+import com.onoguera.loginwebapp.service.UserService;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 
@@ -31,10 +31,10 @@ import java.util.Objects;
  */
 public abstract class RestAuthController extends BaseController {
 
-    protected final UserServiceInterface userService;
+    protected final UserService userService;
 
 
-    public RestAuthController(UserServiceInterface userService) {
+    public RestAuthController(UserService userService) {
         this.userService = userService;
     }
 
@@ -42,7 +42,7 @@ public abstract class RestAuthController extends BaseController {
 
         List<Role> roles = this.getRoles(headers,contentType.getCharset());
 
-        if (roles.isEmpty()  && !roles.contains(RoleService.API_ROLE)) {
+        if (roles.isEmpty()  && !roles.contains(PageApiRoleService.API_ROLE)) {
             return new ResponseUnauthorized();
         }
         if (!RequestUtils.validMediaType( method, contentType)) {
@@ -50,7 +50,7 @@ public abstract class RestAuthController extends BaseController {
         }
         if (!method.equals(METHOD_GET)) {
             //Modify and create and delete
-            if (!roles.contains(RoleService.WRITER_API_ROLE)) {
+            if (!roles.contains(PageApiRoleService.WRITER_API_ROLE)) {
                 return new ResponseForbidden();
             }
         }
@@ -108,7 +108,7 @@ public abstract class RestAuthController extends BaseController {
 
     }
 
-    public UserServiceInterface getUserService() {
+    public UserService getUserService() {
         return userService;
     }
 }

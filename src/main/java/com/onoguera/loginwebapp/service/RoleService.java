@@ -1,89 +1,26 @@
 package com.onoguera.loginwebapp.service;
 
-import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.model.ReadRole;
 import com.onoguera.loginwebapp.model.WriteRole;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 /**
- * Created by oliver on 1/06/16.
- *
+ * Created by olivernoguera on 30/04/2017.
  */
-public class RoleService implements RoleServiceInterface {
+public interface RoleService {
 
-    private final static RoleService INSTANCE = new RoleService();
-    private Dao roleDao;
+    Role getRole(String roleId);
 
-    public final static Role API_ROLE = new Role("API");
-    public final static Role WRITER_API_ROLE = new Role("WRITER_API");
+    Collection<ReadRole> getReadRoles();
 
-    private RoleService() {
-        super();
-    }
+    ReadRole getReadRole(String roleId);
 
-    public static RoleService getInstance() {
-        return INSTANCE;
-    }
+    void addWriteRole(WriteRole role);
 
-    public void addRole(Role role) {
-        this.roleDao.insert(role);
-    }
+    void removeRole(String roleId);
 
-    public void createRoles(List<Role> roles) {
-        roles.forEach(role -> this.roleDao.insert(role));
-    }
-
-    public Collection<Role> getRoles() {
-        return this.roleDao.elements();
-    }
-
-    public void removeRole(final String id) {
-        this.roleDao.delete(id);
-    }
-
-    @Override
-    public boolean existsRoles(List<Role> roles) {
-        if( roles == null || roles.isEmpty()){
-            return false;
-        }
-        for( Role role: roles){
-            if( role == null || roleDao.findOne(role.getId()) == null){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public Role getRole(final String roleId) {
-        return (Role)this.roleDao.findOne(roleId);
-    }
-
-
-    public List<ReadRole> getReadRoles() {
-        Collection<Role> roles = this.getRoles();
-        return roles.stream().map(r -> RoleConverter.getInstance().entityToReadDTO(r)).collect(Collectors.toList());
-    }
-
-    public ReadRole getReadRole(String roleId) {
-        Role roleEntity = this.getRole(roleId);
-        if( roleEntity == null){
-            return null;
-        }
-        return  RoleConverter.getInstance().entityToReadDTO(roleEntity);
-    }
-
-    public void addWriteRole(WriteRole role) {
-        Role roleEntity = RoleConverter.getInstance().writeDTOtoEntity(role);
-        this.addRole(roleEntity);
-    }
-
-
-    public void setRoleDao(Dao roleDao) {
-        this.roleDao = roleDao;
-    }
+    boolean existsRoles(List<Role> roles);
 }

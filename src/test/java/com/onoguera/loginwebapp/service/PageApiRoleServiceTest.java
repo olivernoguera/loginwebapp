@@ -21,9 +21,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 /**
  * Created by olivernoguera on 23/04/2017.
  */
-public class RoleServiceTest {
+public class PageApiRoleServiceTest {
 
-    private static RoleService roleService = RoleService.getInstance();
+    private static PageApiRoleService pageApiRoleService = PageApiRoleService.getInstance();
 
     private static class MockRoleDao extends GenericDao<Role>
             implements Dao<Role> {
@@ -31,7 +31,7 @@ public class RoleServiceTest {
 
     @Before
     public void beforeTest() throws Exception {
-        roleService.setRoleDao(new MockRoleDao());
+        pageApiRoleService.setRoleDao(new MockRoleDao());
     }
 
     private static List<ReadRole> convertReadCollectionToListOrdered(Collection<ReadRole> rolesList) {
@@ -60,31 +60,31 @@ public class RoleServiceTest {
         Role role2 = new Role("test2");
 
 
-        roleService.addRole(role);
+        pageApiRoleService.addRole(role);
         Assert.assertThat("RoleServiceTest createRolesTest addRole",
-                roleService.getRole(role.getId()), is(role));
+                pageApiRoleService.getRole(role.getId()), is(role));
         Assert.assertThat("RoleServiceTest createRolesTest getRoles",
-                convertCollectionToListOrdered(roleService.getRoles()), is(orderedRoleList(Arrays.asList(role))));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(orderedRoleList(Arrays.asList(role))));
 
-        roleService.addRole(role2);
+        pageApiRoleService.addRole(role2);
         Assert.assertThat("RoleServiceTest createRolesTest addRole2",
-                roleService.getRole(role2.getId()), is(role2));
+                pageApiRoleService.getRole(role2.getId()), is(role2));
         Assert.assertThat("RoleServiceTest createRolesTest getRoles",
-                convertCollectionToListOrdered(roleService.getRoles()), is(orderedRoleList(Arrays.asList(role, role2))));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(orderedRoleList(Arrays.asList(role, role2))));
 
-        roleService.removeRole(role.getId());
+        pageApiRoleService.removeRole(role.getId());
         Assert.assertThat("RoleServiceTest createRolesTest removeRole1",
-                roleService.getRole(role2.getId()), is(role2));
+                pageApiRoleService.getRole(role2.getId()), is(role2));
         Assert.assertThat("RoleServiceTest createRolesTest getRoles2",
-                convertCollectionToListOrdered(roleService.getRoles()), is(Arrays.asList(role2)));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(Arrays.asList(role2)));
 
-        roleService.createRoles(new ArrayList<>());
+        pageApiRoleService.createRoles(new ArrayList<>());
         Assert.assertThat("RoleServiceTest createRolesTest createEmptyRoles",
-                convertCollectionToListOrdered(roleService.getRoles()), is(Arrays.asList(role2)));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(Arrays.asList(role2)));
 
-        roleService.createRoles(Arrays.asList(role, role2));
+        pageApiRoleService.createRoles(Arrays.asList(role, role2));
         Assert.assertThat("RoleServiceTest createRolesTest createRoles",
-                convertCollectionToListOrdered(roleService.getRoles()), is(orderedRoleList(Arrays.asList(role, role2))));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(orderedRoleList(Arrays.asList(role, role2))));
     }
 
 
@@ -94,32 +94,32 @@ public class RoleServiceTest {
         Role role = new Role("test1");
         WriteRole writeRole = new WriteRole("test2");
 
-        roleService.addRole(role);
+        pageApiRoleService.addRole(role);
         Assert.assertThat("RoleServiceTest readWriteRolesTest addRole",
-                roleService.getRole(role.getId()), is(role));
+                pageApiRoleService.getRole(role.getId()), is(role));
         Assert.assertThat("RoleServiceTest readWriteRolesTest getRoles",
-                convertCollectionToListOrdered(roleService.getRoles()), is(orderedRoleList(Arrays.asList(role))));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(orderedRoleList(Arrays.asList(role))));
         Assert.assertThat("RoleServiceTest readWriteRolesTest getReadRole",
-               roleService.getReadRole(role.getId()), is(RoleConverter.getInstance().entityToReadDTO(role)));
+               pageApiRoleService.getReadRole(role.getId()), is(RoleConverter.getInstance().entityToReadDTO(role)));
         Assert.assertThat("RoleServiceTest readWriteRolesTest getReadRoles",
-                convertReadCollectionToListOrdered(roleService.getReadRoles()),
+                convertReadCollectionToListOrdered(pageApiRoleService.getReadRoles()),
                 is(orderedReadRoleList(Arrays.asList(RoleConverter.getInstance().entityToReadDTO(role)))));
 
-        roleService.addWriteRole(writeRole);
+        pageApiRoleService.addWriteRole(writeRole);
         Role role2 = RoleConverter.getInstance().writeDTOtoEntity(writeRole);
         Assert.assertThat("RoleServiceTest createRolesTest addRole2",
-                roleService.getRole(writeRole.getRole()), is(role2));
+                pageApiRoleService.getRole(writeRole.getRole()), is(role2));
         Assert.assertThat("RoleServiceTest createRolesTest getRoles",
-                convertCollectionToListOrdered(roleService.getRoles()), is(orderedRoleList(Arrays.asList(role, role2))));
+                convertCollectionToListOrdered(pageApiRoleService.getRoles()), is(orderedRoleList(Arrays.asList(role, role2))));
     }
 
     @Test
     public void readBadRolesTest() {
 
         Assert.assertThat("RoleServiceTest readBadRolesTest getReadRole that not exists",
-                roleService.getReadRole("15"), is(nullValue()));
+                pageApiRoleService.getReadRole("15"), is(nullValue()));
         Assert.assertThat("RoleServiceTest readBadRolesTest getReadRoles null",
-                roleService.getReadRoles(), is(new ArrayList<>()));
+                pageApiRoleService.getReadRoles(), is(new ArrayList<>()));
 
     }
 
@@ -130,19 +130,19 @@ public class RoleServiceTest {
         Role mockRole2 = new Role("role2");
 
         Assert.assertThat("RoleServiceTest existsRolesTest empty list",
-                roleService.existsRoles(new ArrayList<>()), is(Boolean.FALSE));
+                pageApiRoleService.existsRoles(new ArrayList<>()), is(Boolean.FALSE));
         Assert.assertThat("RoleServiceTest existsRolesTest role not exists",
-                roleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.FALSE));
+                pageApiRoleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.FALSE));
 
-        roleService.addRole(mockRole);
+        pageApiRoleService.addRole(mockRole);
         Assert.assertThat("RoleServiceTest existsRolesTest role exists",
-                roleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.TRUE));
+                pageApiRoleService.existsRoles(Arrays.asList(mockRole)), is(Boolean.TRUE));
 
         Assert.assertThat("RoleServiceTest existsRolesTest two roles one not exists",
-                roleService.existsRoles(Arrays.asList(mockRole,mockRole2)), is(Boolean.FALSE));
+                pageApiRoleService.existsRoles(Arrays.asList(mockRole,mockRole2)), is(Boolean.FALSE));
 
-        roleService.addRole(mockRole2);
+        pageApiRoleService.addRole(mockRole2);
         Assert.assertThat("RoleServiceTest existsRolesTest two roles exist",
-                roleService.existsRoles(Arrays.asList(mockRole,mockRole2)), is(Boolean.TRUE));
+                pageApiRoleService.existsRoles(Arrays.asList(mockRole,mockRole2)), is(Boolean.TRUE));
     }
 }

@@ -8,8 +8,8 @@ import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
+import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +32,14 @@ public final class LoginController extends HtmlController {
 
     private static final String PATH = "/login";
     private static final Pattern p = Pattern.compile(PATH + "\\S*");
-    private UserServiceInterface userService;
+    private UserService userService;
 
-    public LoginController(SessionServiceInterface sessionService,UserServiceInterface userService) {
+    public LoginController(SessionService sessionService, UserService userService) {
         super(sessionService);
         this.userService  = userService;
     }
 
-    public UserServiceInterface getUserService() {
+    public UserService getUserService() {
         return userService;
     }
 

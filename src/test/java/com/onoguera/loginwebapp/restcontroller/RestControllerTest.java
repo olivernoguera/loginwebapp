@@ -11,8 +11,8 @@ import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.ResponseForbidden;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.RoleService;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.PageApiRoleService;
+import com.onoguera.loginwebapp.service.UserService;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
@@ -43,14 +43,14 @@ public class RestControllerTest {
     private static final User mockUserSession =
             new User("User","Pass:word", Arrays.asList(new Role("ROLE1")));
     private static final User mockUserSessionWriteAccess = new User("User","Pass:word",
-            Arrays.asList(RoleService.WRITER_API_ROLE));
+            Arrays.asList(PageApiRoleService.WRITER_API_ROLE));
     private static final String COOKIE = "Cookie";
     private static final String AUTH_HEADER = "Authorization";
 
     protected class MockRestAuthController extends RestAuthController {
 
 
-        public MockRestAuthController(UserServiceInterface userService) {
+        public MockRestAuthController(UserService userService) {
             super(userService);
         }
 
@@ -67,7 +67,7 @@ public class RestControllerTest {
 
     }
 
-    private class UserServiceMock implements UserServiceInterface {
+    private class UserServiceMock implements UserService {
 
         @Override
         public User validateUser(User user) {

@@ -5,7 +5,7 @@ import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.model.ReadUser;
 import com.onoguera.loginwebapp.model.WriteRole;
 import com.onoguera.loginwebapp.model.WriteUser;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.UserService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 class MockUserServices {
 
-    public static class UserServiceMockValidateOK  implements UserServiceInterface {
+    public static class UserServiceMockValidateOK  implements UserService {
 
 
         @Override
@@ -70,7 +70,7 @@ class MockUserServices {
     }
 
 
-    public static class UserServiceMockValidateOKWithRoles  implements UserServiceInterface {
+    public static class UserServiceMockValidateOKWithRoles  implements UserService {
 
 
         @Override
@@ -125,7 +125,7 @@ class MockUserServices {
         }
     }
 
-    public static class UserServiceMockValidateKO implements  UserServiceInterface{
+    public static class UserServiceMockValidateKO implements UserService {
 
         @Override
         public User validateUser(User user) {

@@ -26,10 +26,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 /**
  * Created by olivernoguera on 23/04/2017.
  */
-public class UserServiceTest {
+public class AuthorizationServiceTest {
 
 
-    private static final UserService userService = UserService.getInstance();
+    private static final AuthorizationService AUTHORIZATION_SERVICE = AuthorizationService.getInstance();
 
     private static final UserConverter userConverter = UserConverter.getInstance();
 
@@ -38,7 +38,7 @@ public class UserServiceTest {
 
     }
 
-    private static class RoleServiceMock implements RoleServiceInterface {
+    private static class RoleServiceMock implements RoleService {
 
         private static final Role role = new Role("role1");
         private static final Role role2 = new Role("role2");
@@ -82,8 +82,8 @@ public class UserServiceTest {
 
     @Before
     public void beforeTest() throws Exception {
-        userService.setUserDao(new MockUserDao());
-        userService.setRoleService(new RoleServiceMock());
+        AUTHORIZATION_SERVICE.setUserDao(new MockUserDao());
+        AUTHORIZATION_SERVICE.setRoleService(new RoleServiceMock());
     }
 
     private static List<ReadUser> convertReadCollectionToListOrdered(Collection<ReadUser> UsersList) {
@@ -112,37 +112,37 @@ public class UserServiceTest {
         User user = new User("test1", "pass1");
         User user2 = new User("test2", "pass2");
 
-        userService.upsertUser(user);
+        AUTHORIZATION_SERVICE.upsertUser(user);
         Assert.assertThat("UserServiceTest createUsersTest addUser",
-                userService.getUser(user.getId()), is(user));
+                AUTHORIZATION_SERVICE.getUser(user.getId()), is(user));
         Assert.assertThat("UserServiceTest createUsersTest getUsers",
-                convertReadCollectionToListOrdered(userService.getReadUsers())
+                convertReadCollectionToListOrdered(AUTHORIZATION_SERVICE.getReadUsers())
                 , is(convertReadCollectionToListOrdered(Arrays.asList(userConverter.entityToReadDTO(user)))));
 
-        userService.upsertUser(user2);
+        AUTHORIZATION_SERVICE.upsertUser(user2);
         Assert.assertThat("UserServiceTest createUsersTest addUser2",
-                userService.getUser(user2.getId()), is(user2));
+                AUTHORIZATION_SERVICE.getUser(user2.getId()), is(user2));
         Assert.assertThat("UserServiceTest createUsersTest getUsers",
-                orderedReadUserList(userService.getReadUsers()),
+                orderedReadUserList(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user),
                         userConverter.entityToReadDTO(user2)))));
 
-        userService.removeUser(user.getId());
+        AUTHORIZATION_SERVICE.removeUser(user.getId());
         Assert.assertThat("UserServiceTest createUsersTest removeUser1",
-                userService.getUser(user2.getId()), is(user2));
+                AUTHORIZATION_SERVICE.getUser(user2.getId()), is(user2));
         Assert.assertThat("UserServiceTest createUsersTest getUsers2",
-                orderedReadUserList(userService.getReadUsers()),
+                orderedReadUserList(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user2)))));
 
-        userService.setUsers(new ArrayList<>());
+        AUTHORIZATION_SERVICE.setUsers(new ArrayList<>());
         Assert.assertThat("UserServiceTest createUsersTest createEmptyUsers",
-                orderedReadUserList(userService.getReadUsers()),
+                orderedReadUserList(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList())));
 
-        userService.setUsers(Arrays.asList(userConverter.entityToWriteDTO(user),
+        AUTHORIZATION_SERVICE.setUsers(Arrays.asList(userConverter.entityToWriteDTO(user),
                 userConverter.entityToWriteDTO(user2)));
         Assert.assertThat("UserServiceTest createUsersTest createUsers",
-                orderedReadUserList(userService.getReadUsers()),
+                orderedReadUserList(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user),
                         userConverter.entityToReadDTO(user2)))));
     }
@@ -154,20 +154,20 @@ public class UserServiceTest {
         User user = new User("test1", "passw1");
 
 
-        userService.upsertUser(user);
+        AUTHORIZATION_SERVICE.upsertUser(user);
         Assert.assertThat("UserServiceTest readWriteUsersTest addUser",
-                userService.getUser(user.getId()), is(user));
+                AUTHORIZATION_SERVICE.getUser(user.getId()), is(user));
         Assert.assertThat("UserServiceTest readWriteUsersTest getUsers",
-                orderedReadUserList(userService.getReadUsers()),
+                orderedReadUserList(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(userConverter.entityToReadDTO(user)))));
         Assert.assertThat("UserServiceTest readWriteUsersTest getReadUser",
-                userService.getReadUser(user.getId()), is(UserConverter.getInstance().entityToReadDTO(user)));
+                AUTHORIZATION_SERVICE.getReadUser(user.getId()), is(UserConverter.getInstance().entityToReadDTO(user)));
         Assert.assertThat("UserServiceTest readWriteUsersTest getReadUsers",
-                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                convertReadCollectionToListOrdered(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user)))));
-        userService.removeUsers();
+        AUTHORIZATION_SERVICE.removeUsers();
         Assert.assertThat("UserServiceTest readWriteUsersTest removeAllUsers",
-                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                convertReadCollectionToListOrdered(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList())));
 
     }
@@ -176,11 +176,11 @@ public class UserServiceTest {
     public void readBadUsersTest() {
 
         Assert.assertThat("UserServiceTest readBadUsers getReadUser that not exists",
-                userService.getReadUser("15"), is(nullValue()));
+                AUTHORIZATION_SERVICE.getReadUser("15"), is(nullValue()));
         Assert.assertThat("UserServiceTest readBadUsers getReadUser that not exists",
-                userService.getReadUser("15"), is(nullValue()));
+                AUTHORIZATION_SERVICE.getReadUser("15"), is(nullValue()));
         Assert.assertThat("UserServiceTest readBadUsers getReadUsers null",
-                userService.getReadUsers(), is(new ArrayList<>()));
+                AUTHORIZATION_SERVICE.getReadUsers(), is(new ArrayList<>()));
 
     }
 
@@ -198,23 +198,23 @@ public class UserServiceTest {
         WriteUser writeUser2 = new WriteUser("test1", "pass3", Arrays.asList(writeRole, writeRole2));
 
 
-        userService.setUsers(Arrays.asList(writeUser));
+        AUTHORIZATION_SERVICE.setUsers(Arrays.asList(writeUser));
         Assert.assertThat("UserServiceTest createWriteUsersTest addUser",
-                userService.getUser(user1.getId()), is(user1));
+                AUTHORIZATION_SERVICE.getUser(user1.getId()), is(user1));
         Assert.assertThat("UserServiceTest createWriteUsersTest getReadUser",
-                userService.getReadUser(user1.getId()), is(UserConverter.getInstance().entityToReadDTO(user1)));
+                AUTHORIZATION_SERVICE.getReadUser(user1.getId()), is(UserConverter.getInstance().entityToReadDTO(user1)));
         Assert.assertThat("UserServiceTest createWriteUsersTest getReadUsers",
-                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                convertReadCollectionToListOrdered(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(convertReadCollectionToListOrdered(Arrays.asList(userConverter.entityToReadDTO(user1)))));
 
-        userService.setUsers(Arrays.asList(writeUser2));
+        AUTHORIZATION_SERVICE.setUsers(Arrays.asList(writeUser2));
         Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getUser",
-                userService.getUser(user2.getId()), is(user2));
+                AUTHORIZATION_SERVICE.getUser(user2.getId()), is(user2));
 
         Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser",
-                userService.getReadUser(user2.getId()), is(UserConverter.getInstance().entityToReadDTO(user2)));
+                AUTHORIZATION_SERVICE.getReadUser(user2.getId()), is(UserConverter.getInstance().entityToReadDTO(user2)));
         Assert.assertThat("UserServiceTest createWriteUsersTest updateWriteUser getReadUsers",
-                convertReadCollectionToListOrdered(userService.getReadUsers()),
+                convertReadCollectionToListOrdered(AUTHORIZATION_SERVICE.getReadUsers()),
                 is(orderedReadUserList(Arrays.asList(UserConverter.getInstance().entityToReadDTO(user2)))));
 
 
@@ -223,47 +223,47 @@ public class UserServiceTest {
     @Test
     public void validateUserTest() {
         User user = new User("mockUser", "mockPassword");
-        userService.upsertUser(user);
+        AUTHORIZATION_SERVICE.upsertUser(user);
         User userNotCreated = new User("mockUser1", "mockPassword");
         User userWithNullPassword = new User("mockUser1", null);
         User userWithBadPassword = new User("mockUser", "mockBadPassword");
 
         Assert.assertThat("UserServiceTest validateUserTest validateUser exist user",
-                userService.validateUser(user), is(user));
+                AUTHORIZATION_SERVICE.validateUser(user), is(user));
         Assert.assertThat("UserServiceTest validateUserTest validateUser that not exists",
-                userService.validateUser(userNotCreated), is(nullValue()));
+                AUTHORIZATION_SERVICE.validateUser(userNotCreated), is(nullValue()));
         Assert.assertThat("UserServiceTest validateUserTest validateUser user with null password",
-                userService.validateUser(userWithNullPassword), is(nullValue()));
+                AUTHORIZATION_SERVICE.validateUser(userWithNullPassword), is(nullValue()));
         Assert.assertThat("UserServiceTest validateUserTest validateUser user with bad password",
-                userService.validateUser(userWithBadPassword), is(nullValue()));
+                AUTHORIZATION_SERVICE.validateUser(userWithBadPassword), is(nullValue()));
     }
 
     @Test
     public void upsertRolesOfUserTest() {
 
         User user = new User("mockUser", null);
-        userService.upsertUser(user);
-        boolean result = userService.upsertRolesOfUser(user.getId(),new ArrayList<>());
+        AUTHORIZATION_SERVICE.upsertUser(user);
+        boolean result = AUTHORIZATION_SERVICE.upsertRolesOfUser(user.getId(),new ArrayList<>());
 
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser password is null",
                 result, is(Boolean.FALSE));
 
-        result = userService.upsertRolesOfUser("badusers",null);
+        result = AUTHORIZATION_SERVICE.upsertRolesOfUser("badusers",null);
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser user not exists",
                 result, is(Boolean.FALSE));
 
-        result = userService.upsertRolesOfUser(user.getId(),Arrays.asList(new WriteRole("BADROLE")));
+        result = AUTHORIZATION_SERVICE.upsertRolesOfUser(user.getId(),Arrays.asList(new WriteRole("BADROLE")));
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser role not exists",
                 result, is(Boolean.FALSE));
 
         user = new User("mockUser", "password");
-        userService.upsertUser(user);
-        result = userService.upsertRolesOfUser(user.getId(),Arrays.asList(new WriteRole("role1")));
+        AUTHORIZATION_SERVICE.upsertUser(user);
+        result = AUTHORIZATION_SERVICE.upsertRolesOfUser(user.getId(),Arrays.asList(new WriteRole("role1")));
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser role not exists",
                 result, is(Boolean.TRUE));
         user.setRoles(Arrays.asList(new Role("role1")));
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertRolesOfUser roles well updated",
-                userService.getUser(user.getId()), is(user));
+                AUTHORIZATION_SERVICE.getUser(user.getId()), is(user));
     }
 
 
@@ -271,12 +271,12 @@ public class UserServiceTest {
     public void upsertWriterUserTest() {
 
         WriteUser user = new WriteUser("mockUser2", "test", new ArrayList<>());
-        boolean result = userService.upsertUser(user);
+        boolean result = AUTHORIZATION_SERVICE.upsertUser(user);
 
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertWriterUserTest good result",
                 result, is(Boolean.TRUE));
 
         Assert.assertThat("UserServiceTest upsertRolesOfUserTest upsertWriterUserTest well saved user",
-                userService.getUser(user.getUsername()), is(userConverter.writeDTOtoEntity(user)));
+                AUTHORIZATION_SERVICE.getUser(user.getUsername()), is(userConverter.writeDTOtoEntity(user)));
     }
 }

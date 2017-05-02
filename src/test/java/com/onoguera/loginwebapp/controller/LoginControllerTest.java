@@ -7,7 +7,7 @@ import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseUnauthorized;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.UserService;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.sun.net.httpserver.Headers;
 import org.junit.Assert;
@@ -92,8 +92,8 @@ public class LoginControllerTest {
         Assert.assertThat("LoginControllerTest doPostGoodCasesTest without roles", response, is(expectedResponse));
 
 
-        UserServiceInterface userServiceInterface =  new MockUserServices.UserServiceMockValidateOKWithRoles();
-        loginController = new LoginController (new SessionServiceWithSession(sesion),userServiceInterface);
+        UserService userService =  new MockUserServices.UserServiceMockValidateOKWithRoles();
+        loginController = new LoginController (new SessionServiceWithSession(sesion), userService);
         queryParams.put("username", new SessionServiceWithSession(sesion).getSession("1").getUser().getId());
         queryParams.put("password", new SessionServiceWithSession(sesion).getSession("1").getUser().getPassword());
         expectedResponse = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP,
@@ -122,8 +122,8 @@ public class LoginControllerTest {
 
         Map<String, String> queryParams = new HashMap<>();
         Map<String, String> pathParams = new HashMap<>();
-        UserServiceInterface userServiceInterface =  new MockUserServices.UserServiceMockValidateOKWithRoles();
-        LoginController loginController = new LoginController (new SessionServiceWithSession(sesion),userServiceInterface);
+        UserService userService =  new MockUserServices.UserServiceMockValidateOKWithRoles();
+        LoginController loginController = new LoginController (new SessionServiceWithSession(sesion), userService);
         Session session = new SessionServiceWithSession(sesion).getSession(expectedSessionId);
 
         queryParams.put("username", session.getUser().getId());

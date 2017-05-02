@@ -5,7 +5,7 @@ import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 import org.junit.Assert;
@@ -38,7 +38,7 @@ public class HtmlControllerTest {
 
     private class MockHtmlController extends  HtmlController{
 
-        public MockHtmlController(SessionServiceInterface sessionService) {
+        public MockHtmlController(SessionService sessionService) {
             super(sessionService);
         }
 

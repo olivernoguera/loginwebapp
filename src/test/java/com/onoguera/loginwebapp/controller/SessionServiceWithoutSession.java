@@ -2,12 +2,12 @@ package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
 
 /**
  * Created by olivernoguera on 01/05/2017.
  */
-class SessionServiceWithoutSession implements SessionServiceInterface {
+class SessionServiceWithoutSession implements SessionService {
 
     @Override
     public void delete(String id) {

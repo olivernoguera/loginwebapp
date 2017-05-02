@@ -13,8 +13,8 @@ import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.service.RoleConverter;
-import com.onoguera.loginwebapp.service.RoleServiceInterface;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class RoleControllerTest {
 
     private static final RoleConverter roleConverter =  RoleConverter.getInstance();
 
-    private class RoleServiceMock implements RoleServiceInterface{
+    private class RoleServiceMock implements RoleService {
 
         protected Set<Role> roles;
         protected Set<String> roleIds;
@@ -91,7 +91,7 @@ public class RoleControllerTest {
         }
     }
 
-    private class UserServiceMock implements  UserServiceInterface{
+    private class UserServiceMock implements UserService {
 
         @Override
         public User validateUser(User user) {
@@ -155,7 +155,7 @@ public class RoleControllerTest {
 
         List<Role> roles = Arrays.asList(MOCK_ROLE1,MOCK_ROLE2);
         List<ReadRole> readRoles = Arrays.asList(new ReadRole(MOCK_ROLE1.getId()),new ReadRole(MOCK_ROLE2.getId()));
-        RoleServiceInterface roleServiceMock =
+        RoleService roleServiceMock =
                 new RoleServiceMock(roles);
         RoleControllerRest roleControllerRest = new RoleControllerRest(new UserServiceMock(),roleServiceMock);
 
@@ -196,7 +196,7 @@ public class RoleControllerTest {
 
         List<Role> roles = Arrays.asList(MOCK_ROLE1,MOCK_ROLE2);
         List<ReadRole> readRoles = Arrays.asList(new ReadRole(MOCK_ROLE1.getId()),new ReadRole(MOCK_ROLE2.getId()));
-        RoleServiceInterface roleServiceMock =
+        RoleService roleServiceMock =
                 new RoleServiceMock(new ArrayList<>());
         RoleControllerRest roleControllerRest = new RoleControllerRest(new UserServiceMock(),roleServiceMock);
 
@@ -237,7 +237,7 @@ public class RoleControllerTest {
 
         List<Role> roles = Arrays.asList(MOCK_ROLE1,MOCK_ROLE2);
 
-        RoleServiceInterface roleServiceMock = new RoleServiceMock(roles);
+        RoleService roleServiceMock = new RoleServiceMock(roles);
         RoleControllerRest roleControllerRest = new RoleControllerRest(new UserServiceMock(),roleServiceMock);
 
         Map<String, String> queryParams = null;

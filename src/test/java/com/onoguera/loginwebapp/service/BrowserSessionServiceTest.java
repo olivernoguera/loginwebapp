@@ -14,9 +14,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 /**
  * Created by olivernoguera on 23/04/2017.
  */
-public class SessionServiceTest {
+public class BrowserSessionServiceTest {
 
-    private static SessionService sessionService = SessionService.getInstance();
+    private static BrowserSessionService browserSessionService = BrowserSessionService.getInstance();
 
     private static class MockSessionDao extends GenericDao<Session>
             implements Dao<Session> {
@@ -26,30 +26,30 @@ public class SessionServiceTest {
 
     @Before
     public void beforeTest() throws Exception {
-        sessionService.setSessionDao(new MockSessionDao());
-        sessionService.setPeriodTimeToExpiredSession(1000);
+        browserSessionService.setSessionDao(new MockSessionDao());
+        browserSessionService.setPeriodTimeToExpiredSession(1000);
     }
 
     @Test
     public void createSessionTest() throws InterruptedException {
 
         User user1 = new User("mockUserId", "mockPassword");
-        Session session = sessionService.createSession(user1);
+        Session session = browserSessionService.createSession(user1);
 
         Assert.assertThat("SessionServiceTest createSessionTest createSession",
-                sessionService.getSession(session.getId()), is(session));
+                browserSessionService.getSession(session.getId()), is(session));
 
-        sessionService.delete(session.getId());
+        browserSessionService.delete(session.getId());
         Assert.assertThat("SessionServiceTest createSessionTest deleteSession",
-                sessionService.getSession(session.getId()), is(nullValue()));
+                browserSessionService.getSession(session.getId()), is(nullValue()));
 
-        sessionService.setPeriodTimeToExpiredSession(1);
-        session = sessionService.createSession(user1);
+        browserSessionService.setPeriodTimeToExpiredSession(1);
+        session = browserSessionService.createSession(user1);
         Assert.assertThat("SessionServiceTest createSessionTest createSession with 10 miliseconds expired",
-                sessionService.getSession(session.getId()), is(session));
+                browserSessionService.getSession(session.getId()), is(session));
         Thread.sleep(10);
         Assert.assertThat("SessionServiceTest createSessionTest createSession after 20 miliseconds session expierd",
-                sessionService.getSession(session.getId()), is(nullValue()));
+                browserSessionService.getSession(session.getId()), is(nullValue()));
 
     }
 

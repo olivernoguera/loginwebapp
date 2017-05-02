@@ -4,8 +4,7 @@ import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
-import com.onoguera.loginwebapp.response.ResponseInternalServerError;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ public final class LogoutController  extends HtmlController {
     private static final Pattern p = Pattern.compile(PATH + "\\S*");
 
 
-    public LogoutController(SessionServiceInterface sessionService) {
+    public LogoutController(SessionService sessionService) {
         super(sessionService);
 
     }

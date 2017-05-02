@@ -16,7 +16,7 @@ import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
 import com.onoguera.loginwebapp.service.RoleConverter;
 import com.onoguera.loginwebapp.service.UserConverter;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -62,7 +62,7 @@ public class UserControllerRestTest {
         return user;
     }
 
-    private class UserServiceMock  implements UserServiceInterface {
+    private class UserServiceMock  implements UserService {
 
         protected Set<User> users;
         protected Set<String> usersIds;
@@ -253,7 +253,7 @@ public class UserControllerRestTest {
     @Test
     public void doGetCollectionUsers(){
 
-        UserServiceInterface userServiceMock =
+        UserService userServiceMock =
                 new UserServiceMock(Arrays.asList(),Arrays.asList(MOCK_ROLE1,MOCK_ROLE2));
         UserControllerRest userControllerRest = new UserControllerRest(userServiceMock);
 

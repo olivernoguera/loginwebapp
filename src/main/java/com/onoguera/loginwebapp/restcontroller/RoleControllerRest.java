@@ -8,8 +8,8 @@ import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseBadRequest;
 import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
-import com.onoguera.loginwebapp.service.RoleServiceInterface;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.RoleService;
+import com.onoguera.loginwebapp.service.UserService;
 
 import java.net.HttpURLConnection;
 import java.util.Arrays;
@@ -28,11 +28,11 @@ public final class RoleControllerRest extends RestAuthController {
 
     private static final String ROLE_ID = "roleId";
 
-    private final RoleServiceInterface roleService;
+    private final RoleService roleService;
 
     private static final Pattern p = Pattern.compile(PATH + "/*(?<" + ROLE_ID + ">\\S*)");
 
-    public RoleControllerRest(UserServiceInterface userService, RoleServiceInterface roleService) {
+    public RoleControllerRest(UserService userService, RoleService roleService) {
         super(userService);
         this.roleService = roleService;
     }
@@ -104,7 +104,7 @@ public final class RoleControllerRest extends RestAuthController {
         return response;
     }
 
-    public RoleServiceInterface getRoleService() {
+    public RoleService getRoleService() {
         return roleService;
     }
 }

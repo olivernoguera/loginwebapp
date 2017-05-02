@@ -4,7 +4,7 @@ import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.request.RequestUtils;
 import com.onoguera.loginwebapp.response.Response;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
 import com.sun.net.httpserver.Headers;
 import org.apache.http.entity.ContentType;
 
@@ -20,9 +20,9 @@ import java.util.Objects;
  */
 public abstract class HtmlController extends BaseController {
 
-    protected final SessionServiceInterface sessionService;
+    protected final SessionService sessionService;
 
-    public HtmlController(SessionServiceInterface sessionService) {
+    public HtmlController(SessionService sessionService) {
 
         this.sessionService = sessionService;
     }
@@ -73,7 +73,7 @@ public abstract class HtmlController extends BaseController {
 
     }
 
-    public SessionServiceInterface getSessionService() {
+    public SessionService getSessionService() {
         return sessionService;
     }
 }

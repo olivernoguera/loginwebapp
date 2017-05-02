@@ -6,7 +6,7 @@ import com.onoguera.loginwebapp.entities.User;
 import com.onoguera.loginwebapp.request.Request;
 import com.onoguera.loginwebapp.response.Response;
 import com.onoguera.loginwebapp.response.ResponseInternalServerError;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
 import com.onoguera.loginwebapp.view.LoginResponse;
 import com.onoguera.loginwebapp.view.PageResponse;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public final class PageController extends HtmlController {
     private static final String ROLE_PREFIX = "PAGE_";
     private static final Pattern p = Pattern.compile(PATH + "/*(?<" + PAGE_ID + ">\\S*)");
 
-    public PageController(SessionServiceInterface sessionService) {
+    public PageController(SessionService sessionService) {
         super(sessionService);
 
     }

@@ -4,8 +4,8 @@ package com.onoguera.loginwebapp.startup;
 import com.onoguera.loginwebapp.dao.UserDao;
 import com.onoguera.loginwebapp.entities.Role;
 import com.onoguera.loginwebapp.entities.User;
-import com.onoguera.loginwebapp.service.RoleService;
-import com.onoguera.loginwebapp.service.UserService;
+import com.onoguera.loginwebapp.service.PageApiRoleService;
+import com.onoguera.loginwebapp.service.AuthorizationService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,22 +25,22 @@ public final class LoaderEntities {
 
     public static void loadEntities() {
 
-        UserService userService = UserService.getInstance();
+        AuthorizationService authorizationService = AuthorizationService.getInstance();
         UserDao userDao = UserDao.getInstance();
-        userService.setUserDao(userDao);
+        authorizationService.setUserDao(userDao);
 
-        RoleService roleService = RoleService.getInstance();
+        PageApiRoleService pageApiRoleService = PageApiRoleService.getInstance();
         LoaderEntities.createUsers(  userDao, 3);
 
         List<Role> roles = LoaderEntities.createRoles(3);
-        roleService.createRoles(roles);
+        pageApiRoleService.createRoles(roles);
 
         User adminUser = new User("ADMIN", "ADMIN");
         adminUser.addRoles(roles);
-        adminUser.addRole(RoleService.API_ROLE);
-        adminUser.addRole(RoleService.WRITER_API_ROLE);
+        adminUser.addRole(PageApiRoleService.API_ROLE);
+        adminUser.addRole(PageApiRoleService.WRITER_API_ROLE);
 
-        roleService.createRoles(Arrays.asList(RoleService.API_ROLE, RoleService.WRITER_API_ROLE));
+        pageApiRoleService.createRoles(Arrays.asList(PageApiRoleService.API_ROLE, PageApiRoleService.WRITER_API_ROLE));
 
         userDao.insert(adminUser);
     }
@@ -51,7 +51,7 @@ public final class LoaderEntities {
             User user = new User(USER_PREFIX + i, PASSWORD_PREFIX + i);
             Role role = new Role(ROLE_PREFIX + i);
             user.addRole(role);
-            user.addRole(RoleService.API_ROLE);
+            user.addRole(PageApiRoleService.API_ROLE);
             userDao.insert(user);
 
         }

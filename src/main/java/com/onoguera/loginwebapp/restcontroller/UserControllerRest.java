@@ -14,7 +14,7 @@ import com.onoguera.loginwebapp.response.ResponseEmpty;
 import com.onoguera.loginwebapp.response.ResponseNotFound;
 import com.onoguera.loginwebapp.response.ResponseNotImplemented;
 import com.onoguera.loginwebapp.response.ResponseUnsupportedMediaType;
-import com.onoguera.loginwebapp.service.UserServiceInterface;
+import com.onoguera.loginwebapp.service.UserService;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -47,7 +47,7 @@ public class UserControllerRest extends RestAuthController {
             Pattern.compile(PATH + "/*(?<" + USER_ID + ">[^:\\/\\s]+)?\\/?(?<" + PATH_ROLES + ">"+
                     PATH_ROLES+")?\\/?(?<" + ROLE_ID + ">[^:\\/\\s]+)?");
 
-    public UserControllerRest(UserServiceInterface userService) {
+    public UserControllerRest(UserService userService) {
         super(userService);
     }
 

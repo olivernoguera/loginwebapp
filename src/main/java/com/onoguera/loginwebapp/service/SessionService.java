@@ -1,63 +1,18 @@
 package com.onoguera.loginwebapp.service;
 
-import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
 
-import java.util.UUID;
-
 /**
- * Created by olivernoguera on 25/06/2016.
+ * Created by olivernoguera on 26/06/2016.
  */
-public class SessionService implements  SessionServiceInterface {
+public interface SessionService {
 
-    private final static SessionService INSTANCE = new SessionService();
-    private Dao sessionDao;
-    protected Integer periodTimeToExpiredSession;
+    void delete(String id);
 
-    private SessionService(){}
+    Session getSession(String sessionId);
 
-    public Session createSession(final User user){
-        Session session = new Session(user, calcTimeToExpire().toString());
-        sessionDao.insert(session);
-        return session;
-    }
+    Session createSession(final User user);
 
-    public static SessionService getInstance() {
-        return INSTANCE;
-    }
-
-    public Session getSession(String sessionId) {
-       Session session = (Session) sessionDao.findOne(sessionId);
-       if( session != null){
-           Long timeToExpireCurrentSession = Long.parseLong(session.getId());
-           Long now = System.currentTimeMillis();
-           sessionDao.delete(sessionId);
-           if( timeToExpireCurrentSession + periodTimeToExpiredSession < now){
-                return null;
-           }else{
-                return this.createSession(session.getUser());
-           }
-       }
-       return null;
-
-    }
-
-    public void delete(String id) {
-        this.sessionDao.delete(id);
-    }
-
-    public void setSessionDao(Dao sessionDao) {
-         this.sessionDao = sessionDao;
-    }
-
-    private Long calcTimeToExpire(){
-        Long now = System.currentTimeMillis();
-        Long timeToExpire = now + periodTimeToExpiredSession;
-        return timeToExpire;
-    }
-
-    public void setPeriodTimeToExpiredSession(Integer periodTimeToExpiredSession) {
-        this.periodTimeToExpiredSession = periodTimeToExpiredSession;
-    }
+    void setPeriodTimeToExpiredSession(Integer periodTimeToExpiredSession);
 }

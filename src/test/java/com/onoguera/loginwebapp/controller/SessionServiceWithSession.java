@@ -6,9 +6,9 @@ package com.onoguera.loginwebapp.controller;
 
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
-import com.onoguera.loginwebapp.service.SessionServiceInterface;
+import com.onoguera.loginwebapp.service.SessionService;
 
-class SessionServiceWithSession implements SessionServiceInterface {
+class SessionServiceWithSession implements SessionService {
 
     static final String COOKIE = "Cookie";
 
