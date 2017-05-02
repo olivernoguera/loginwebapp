@@ -40,9 +40,11 @@ public abstract class  HtmlResponse extends Response {
     }
 
     public void setHeadersResponse(Headers headers){
-
-        headers.add("Set-Cookie", session);
+        if( session != null || session.equals("0")) {
+            headers.add("Set-Cookie", session);
+        }
         headers.add("Location", location);
+
     }
 
     public String getSession() {

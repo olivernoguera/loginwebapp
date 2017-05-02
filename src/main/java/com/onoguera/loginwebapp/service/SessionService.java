@@ -13,11 +13,12 @@ public class SessionService implements  SessionServiceInterface {
 
     private final static SessionService INSTANCE = new SessionService();
     private Dao sessionDao;
+    private Integer TIME_PERIOD_TO_EXPIRED = 1 * 60 * 1000;
 
     private SessionService(){}
 
     public Session createSession(final User user){
-        Session session = new Session(user, UUID.randomUUID().toString());
+        Session session = new Session(user, calcTimeToExpire().toString());
         sessionDao.insert(session);
         return session;
     }
@@ -27,7 +28,19 @@ public class SessionService implements  SessionServiceInterface {
     }
 
     public Session getSession(String sessionId) {
-        return (Session) sessionDao.findOne(sessionId);
+       Session session = (Session) sessionDao.findOne(sessionId);
+       if( session != null){
+           Long timeToExpireCurrentSession = Long.parseLong(session.getId());
+           Long now = System.currentTimeMillis();
+           sessionDao.delete(sessionId);
+           if( timeToExpireCurrentSession + TIME_PERIOD_TO_EXPIRED < now){
+                return null;
+           }else{
+                return this.createSession(session.getUser());
+           }
+       }
+       return null;
+
     }
 
     public void delete(String id) {
@@ -38,5 +51,10 @@ public class SessionService implements  SessionServiceInterface {
          this.sessionDao = sessionDao;
     }
 
+    private Long calcTimeToExpire(){
+        Long now = System.currentTimeMillis();
+        Long timeToExpire = now + TIME_PERIOD_TO_EXPIRED;
+        return timeToExpire;
+    }
 
 }
