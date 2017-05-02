@@ -35,4 +35,10 @@ class SessionServiceWithSession implements SessionServiceInterface {
         return sesion;
 
     }
+
+    @Override
+    public void setPeriodTimeToExpiredSession(Integer periodTimeToExpiredSession){
+
+    }
+
 }

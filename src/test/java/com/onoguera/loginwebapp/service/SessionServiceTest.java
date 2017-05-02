@@ -27,23 +27,30 @@ public class SessionServiceTest {
     @Before
     public void beforeTest() throws Exception {
         sessionService.setSessionDao(new MockSessionDao());
+        sessionService.setPeriodTimeToExpiredSession(1000);
     }
 
     @Test
-    public void createSessionTest() {
+    public void createSessionTest() throws InterruptedException {
 
         User user1 = new User("mockUserId", "mockPassword");
         Session session = sessionService.createSession(user1);
-        Session session1 = new Session(session.getUser(),session.getId());
 
         Assert.assertThat("SessionServiceTest createSessionTest createSession",
                 sessionService.getSession(session.getId()), is(session));
 
-        Assert.assertThat("SessionServiceTest createSessionTest getSession",
-                sessionService.getSession(session.getId()), is(session1));
         sessionService.delete(session.getId());
         Assert.assertThat("SessionServiceTest createSessionTest deleteSession",
                 sessionService.getSession(session.getId()), is(nullValue()));
+
+        sessionService.setPeriodTimeToExpiredSession(1);
+        session = sessionService.createSession(user1);
+        Assert.assertThat("SessionServiceTest createSessionTest createSession with 10 miliseconds expired",
+                sessionService.getSession(session.getId()), is(session));
+        Thread.sleep(10);
+        Assert.assertThat("SessionServiceTest createSessionTest createSession after 20 miliseconds session expierd",
+                sessionService.getSession(session.getId()), is(nullValue()));
+
     }
 
 

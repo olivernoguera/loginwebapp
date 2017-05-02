@@ -29,6 +29,7 @@ public final class AppContext {
 
         SessionService sessionService = SessionService.getInstance();
         sessionService.setSessionDao(SessionDao.getInstance().getInstance());
+        sessionService.setPeriodTimeToExpiredSession(5 * 60 * 1000);
     }
 
 }

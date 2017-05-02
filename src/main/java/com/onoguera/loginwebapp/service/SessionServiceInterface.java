@@ -13,4 +13,6 @@ public interface SessionServiceInterface {
     Session getSession(String sessionId);
 
     Session createSession(final User user);
+
+    void setPeriodTimeToExpiredSession(Integer periodTimeToExpiredSession);
 }

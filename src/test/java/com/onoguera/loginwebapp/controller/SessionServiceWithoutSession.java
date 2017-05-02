@@ -23,4 +23,9 @@ class SessionServiceWithoutSession implements SessionServiceInterface {
     public Session createSession(User user) {
         return null;
     }
+
+    @Override
+    public void setPeriodTimeToExpiredSession(Integer periodTimeToExpiredSession){
+
+    }
 }
