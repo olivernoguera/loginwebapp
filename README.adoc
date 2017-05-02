@@ -44,8 +44,19 @@ To run application:
 
 [source,Shell]
 ----
-java -jar target/test-web-application.jar
+java -jar target/test-web-application.jar [periodToExpiredSessions]
+
+Where timeToExpiredSessions is optional argument that means the period of time to expired browser sessions.
 ----
+
+
+// **********************************************************************************
+
+=== Webapp
+
+
+To access webapp go to http://localhost:8080/login .
+
 
 
 // **********************************************************************************
@@ -72,6 +83,7 @@ Api rest.
 
 more detail of this bellow.
 
+
 // **********************************************************************************
 
 === Rest API
@@ -96,7 +108,10 @@ import with postman sample request of this api.
 
 == TODOs
 
-This is the TODO list of improvements and refactorings, this does not include business requirements.
+Current implementation of rest api not need query params.That current program not support.
+But there are two ignore unit test  to make tdd for this future implemetation.
+
+
 
 - [ ]
 

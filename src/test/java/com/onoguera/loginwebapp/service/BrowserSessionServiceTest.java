@@ -47,7 +47,7 @@ public class BrowserSessionServiceTest {
         session = browserSessionService.createSession(user1);
         Assert.assertThat("SessionServiceTest createSessionTest createSession with 10 miliseconds expired",
                 browserSessionService.getSession(session.getId()), is(session));
-        Thread.sleep(10);
+        Thread.sleep(100);
         Assert.assertThat("SessionServiceTest createSessionTest createSession after 20 miliseconds session expierd",
                 browserSessionService.getSession(session.getId()), is(nullValue()));
 
