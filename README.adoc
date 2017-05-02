@@ -31,12 +31,7 @@ To compile the application use:
 mvn clean package
 ----
 
-To deploy documentation:
 
-[source,Shell]
-----
-mvn clean site-deploy
-----
 
 == Runnning
 
