@@ -38,7 +38,7 @@ public class LogoutControllerTest {
         String expectedSessionId = "14";
         headers.put(SessionServiceWithSession.COOKIE, Arrays.asList("Session="+expectedSessionId));
         User userSession = new User("1","2");
-        Session session = new Session(userSession,expectedSessionId);
+        Session session = new Session(userSession,expectedSessionId,0L);
         logoutController = new LogoutController (new SessionServiceWithSession(session));
         expectedResponse = new LoginResponse(HttpURLConnection.HTTP_MOVED_TEMP, queryParams,"login");
         request = new Request(queryParams,pathParams,null, session);

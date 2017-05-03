@@ -305,7 +305,7 @@ public class RestControllerTest {
         Assert.assertThat("RestControllerTest getReponsWithSessionAndQueryParamsWithoutUrlEnconded rawBody",
                 request.getRawBody(), is(""));
         Assert.assertThat("RestControllerTest getReponsWithSessionAndQueryParamsWithoutUrlEnconded getSession",
-                request.getSession(), is(new Session(mockUserSession, expectedSessionId)));
+                request.getSession(), is(new Session(mockUserSession, expectedSessionId,0L)));
     }
 
     @Test
@@ -339,6 +339,6 @@ public class RestControllerTest {
         Assert.assertThat("RestControllerTest getReponsWithSessionAndQueryParamsWithUrlEnconded rawBody",
                 request.getRawBody(), is(""));
         Assert.assertThat("RestControllerTest getReponsWithSessionAndQueryParamsWithUrlEnconded getSession",
-                request.getSession(), is(new Session(mockUserSession, expectedSessionId)));
+                request.getSession(), is(new Session(mockUserSession, expectedSessionId,0L)));
     }
 }

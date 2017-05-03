@@ -4,6 +4,8 @@ import com.onoguera.loginwebapp.dao.Dao;
 import com.onoguera.loginwebapp.entities.Session;
 import com.onoguera.loginwebapp.entities.User;
 
+import java.util.UUID;
+
 /**
  * Created by olivernoguera on 25/06/2016.
  */
@@ -16,7 +18,7 @@ public class BrowserSessionService implements SessionService {
     private BrowserSessionService(){}
 
     public Session createSession(final User user){
-        Session session = new Session(user, calcTimeToExpire().toString());
+        Session session = new Session(user, UUID.randomUUID().toString(), calcTimeToExpire());
         sessionDao.insert(session);
         return session;
     }
@@ -28,13 +30,16 @@ public class BrowserSessionService implements SessionService {
     public Session getSession(String sessionId) {
        Session session = (Session) sessionDao.findOne(sessionId);
        if( session != null){
-           Long timeToExpireCurrentSession = Long.parseLong(session.getId());
+           Long timeToExpireCurrentSession = session.getTimeToExpire();
            Long now = System.currentTimeMillis();
-           sessionDao.delete(sessionId);
+
            if( timeToExpireCurrentSession + periodTimeToExpiredSession < now){
+                sessionDao.delete(sessionId);
                 return null;
            }else{
-                return this.createSession(session.getUser());
+               session.setTimeToExpire(calcTimeToExpire());
+               this.sessionDao.update(session);
+               return session;
            }
        }
        return null;

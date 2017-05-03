@@ -14,7 +14,7 @@ public class SessionTest {
     public void createSession() {
         User user = new User("mockusername", "mockpassword");
         String sessionId = "sessionmock1";
-        Session sessionToTest = new Session(user, sessionId);
+        Session sessionToTest = new Session(user, sessionId,0L);
 
         Assert.assertThat("SessionTest createSession getUser", sessionToTest.getUser(), is(user));
         Assert.assertThat("SessionTest createSession getId", sessionToTest.getId(), is(sessionId));

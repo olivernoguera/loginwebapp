@@ -169,7 +169,7 @@ public class HtmlControllerTest {
     public void getReponsWithSession() throws IOException {
 
         String expectedSessionId = "14";
-        Session sesion = new Session(mockUserSession, expectedSessionId);
+        Session sesion = new Session(mockUserSession, expectedSessionId,0L);
         MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(sesion));
 
         Headers headers = new Headers();
@@ -196,7 +196,7 @@ public class HtmlControllerTest {
     public void getReponsWithSessionAndQueryParamsWithoutUrlEnconded() throws IOException {
 
         String expectedSessionId = "14";
-        Session sesion = new Session(mockUserSession, expectedSessionId);
+        Session sesion = new Session(mockUserSession, expectedSessionId,0L);
         MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(sesion));
 
         Headers headers = new Headers();
@@ -224,7 +224,7 @@ public class HtmlControllerTest {
     public void getReponsWithSessionAndQueryParamsWithUrlEnconded() throws IOException {
 
         String expectedSessionId = "14";
-        Session sesion = new Session(mockUserSession, expectedSessionId);
+        Session sesion = new Session(mockUserSession, expectedSessionId,0L);
         MockHtmlController mockHtmlController = new MockHtmlController(new SessionServiceWithSession(sesion));
 
         Headers headers = new Headers();

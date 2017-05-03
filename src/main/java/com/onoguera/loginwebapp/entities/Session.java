@@ -7,10 +7,12 @@ package com.onoguera.loginwebapp.entities;
 public class Session extends Entity {
 
     private final User user;
+    private Long timeToExpire;
 
-    public Session(User user, String id) {
+    public Session(User user, String id, Long timeToExpire) {
         super(id);
         this.user = user;
+        this.timeToExpire = timeToExpire;
     }
 
     public User getUser() {
@@ -35,5 +37,13 @@ public class Session extends Entity {
         return "Session{id=" + getId()+
                 ",user=" + user +
                 '}';
+    }
+
+    public Long getTimeToExpire() {
+        return timeToExpire;
+    }
+
+    public void setTimeToExpire(Long timeToExpire) {
+        this.timeToExpire = timeToExpire;
     }
 }

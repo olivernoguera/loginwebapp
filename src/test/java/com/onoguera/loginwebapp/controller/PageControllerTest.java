@@ -35,7 +35,7 @@ public class PageControllerTest {
         String expectedSessionId = "1";
         headers.put(SessionServiceWithSession.COOKIE, Arrays.asList("Session="+expectedSessionId));
         User userSession = new User("1","2", Arrays.asList(new Role("PAGE_1")));
-        Session sesion = new Session(userSession, expectedSessionId);
+        Session sesion = new Session(userSession, expectedSessionId,0L);
 
         Map<String, String> queryParams = new HashMap<>();
         Map<String, String> pathParams = new HashMap<>();
